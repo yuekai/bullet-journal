@@ -40,3 +40,6 @@
 - [x] **Set up agent-maintained bullet journal** (`~/bullet-journal` @ `0cc3f39`)
 	The previous journal (~/second-brain) was maintained by hand, and agents working in other repos had no shared place to record finished work. This repo keeps the second-brain layout and adds a bullet-journaling skill, installed for Claude Code, Codex, DSH and Kimi Code, that has agents log each completed task as a commit-message-style entry with their session trailer. A linter run from a pre-commit hook enforces the format, and agents edit logs only with Edit tools rather than a locked write script, to keep the machinery small.
 	Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483
+- [x] **Prefix log commits and add global log reminder** (`~/bullet-journal` @ `0816918`)
+	Journal-entry commits reused the entry's subject, so an agent's change to this repo and the commit logging it looked identical in git log. They now start with "Log: ", enforced by a commit-msg hook, and the one earlier log commit was renamed to match. Agents also only logged when a skill happened to trigger, so each harness's global instructions (Claude Code, Codex, DSH, Kimi Code) now carry the same Bullet Journal reminder, along with the renamed Repository Long-term Memory section.
+	Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483
