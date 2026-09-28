@@ -206,16 +206,15 @@ def test_nested_notes_under_monthly_tasks(tmp_path):
 # ---- agent entries ----------------------------------------------------
 
 
-def test_missing_trailer(tmp_path):
-    make_log(tmp_path, day("- [x] **Add retry logic**\n\tBody text.\n"))
-    assert_one_error(tmp_path, "must end with a session trailer")
+def test_trailer_marks_agent_entries(tmp_path):
+    # Without a trailer, a bold task is the user's own, and agent-entry rules don't apply.
+    make_log(tmp_path, day("- [x] **my own bold task.**\n\tsome notes\n"))
+    assert lint(tmp_path) == []
 
 
 def test_trailer_after_blank_line(tmp_path):
     make_log(tmp_path, day(f"- [x] **Add retry logic**\n\n\t{SESSION}\n"))
-    errors = lint(tmp_path)
-    assert any("must end with a session trailer" in e for e in errors), errors
-    assert any("outside an agent entry" in e for e in errors), errors
+    assert_one_error(tmp_path, "outside an agent entry")
 
 
 def test_trailer_not_last(tmp_path):
@@ -258,9 +257,28 @@ def test_nested_agent_entry(tmp_path):
     assert_one_error(tmp_path, "must be top-level")
 
 
-def test_stray_trailer(tmp_path):
-    make_log(tmp_path, day(f"- a note\n\t{SESSION}\n"))
+@pytest.mark.parametrize(
+    "body",
+    [
+        f"- a note\n\t{SESSION}\n",
+        f"- a note\n\t- {SESSION}\n",
+        f"- [x] plain task\n\t{SESSION}\n",
+    ],
+)
+def test_trailer_on_non_entry(tmp_path, body):
+    make_log(tmp_path, day(body))
+    assert_one_error(tmp_path, "first line isn't")
+
+
+@pytest.mark.parametrize("trailer", [SESSION, f"- {SESSION}"])
+def test_top_level_trailer(tmp_path, trailer):
+    make_log(tmp_path, day(f"{trailer}\n"))
     assert_one_error(tmp_path, "outside an agent entry")
+
+
+def test_agent_entry_under_monthly_tasks(tmp_path):
+    make_log(tmp_path, f"\n- [x] **Add retry logic**\n\t{SESSION}\n")
+    assert_one_error(tmp_path, "daily section")
 
 
 # ---- notes ------------------------------------------------------------

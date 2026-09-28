@@ -38,7 +38,18 @@ Example:
   - Because the two match, `git log --grep` in a repo and `grep` in this journal find the same session.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
 
-The linter treats any line starting `- [x] **` as an agent entry. Any line that looks like a `…-session:` trailer must be the last line of one.
+### How the linter recognizes agent entries
+
+The session trailer is what marks an entry as an agent's, not its formatting:
+
+- An item is an **agent entry if and only if it has a session-trailer line** (`…-session: …`) one level under its top-level bullet. The linter then applies every rule on this page to it.
+- A `- [x] **Bold**` item with no trailer is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
+- A trailer anywhere else is an error:
+  - nested deeper than one level, which means the entry sits under another item;
+  - not the last line of its entry;
+  - on a line of its own;
+  - under a first line that isn't `- [x] **Subject**`;
+  - in an item under `**Tasks:**`.
 
 ## Editing rules
 

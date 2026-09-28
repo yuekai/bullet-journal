@@ -33,13 +33,12 @@ VALID_MARKERS = {" ", "x", ">"}
 DROPPED_RE = re.compile(r"^- \[ \] ~~(?P<text>.+)~~$")
 OTHER_BULLET_RE = re.compile(r"^(?:[*+]|\d+[.)])\s")
 TAB_WIDTH = 4  # columns a tab counts for when comparing indents
-AGENT_START_RE = re.compile(r"^(?P<indent>\t*)- \[x\] \*\*")
 AGENT_FIRST_RE = re.compile(
-    r"^\t*- \[x\] \*\*(?P<subject>[^*]+)\*\*"
+    r"^- \[x\] \*\*(?P<subject>[^*]+)\*\*"
     r"(?: \(`(?P<repo>[^`]+)`(?: @ `(?P<commit>[0-9a-f]{7,40})`)?\))?$"
 )
 TRAILER_RE = re.compile(r"^[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: \S+$")
-TRAILER_LIKE_RE = re.compile(r"^\s*[A-Za-z-]+-session:")
+TRAILER_LIKE_RE = re.compile(r"^\s*(?:- )?[A-Za-z-]+-session:")  # plain or bulleted
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 
 
@@ -155,6 +154,10 @@ class Linter:
             text = line.lstrip(" \t")
             indent = line[: len(line) - len(text)]
             if not indent:
+                if TRAILER_LIKE_RE.match(text):
+                    self.stray_trailer(path, i)
+                    item = None
+                    continue
                 if not text.startswith("- "):
                     self.error(path, i + 1, self.not_a_bullet(text), FORMAT_DOC)
                     item = None
@@ -165,9 +168,7 @@ class Linter:
                 continue
             if item is None:
                 if TRAILER_LIKE_RE.match(text):
-                    self.error(path, i + 1, "session trailer outside an agent entry; it must be the last "
-                               "indented line under a '- [x] **Subject**' bullet, with no blank line before it",
-                               AGENT_DOC)
+                    self.stray_trailer(path, i)
                 else:
                     self.error(path, i + 1, "indented line is not under an item; a blank line or heading ends "
                                "an item, so delete the blank line above it or unindent it", FORMAT_DOC)
@@ -188,6 +189,10 @@ class Linter:
         for item, in_daily in items:
             self.lint_item(path, item, in_daily)
 
+    def stray_trailer(self, path, i: int) -> None:
+        self.error(path, i + 1, "session trailer outside an agent entry; it must be the last indented line "
+                   "under a '- [x] **Subject**' bullet, with no blank line before it", AGENT_DOC)
+
     @staticmethod
     def not_a_bullet(text: str) -> str:
         if OTHER_BULLET_RE.match(text):
@@ -196,33 +201,41 @@ class Linter:
                 "or a line indented under one")
 
     def lint_item(self, path, item: list[Line], in_daily: bool) -> None:
+        """Lint one item. A session trailer one level under the bullet makes it an agent entry."""
         first = item[0]
-        agent = AGENT_START_RE.match(first.text) is not None
         if not in_daily and not TASK_RE.match(first.text):
             self.error(path, first.i + 1, "top-level items under '**Tasks:**' must be tasks ('- [ ] text'); "
                        "put notes in a daily section", FORMAT_DOC)
 
-        nested_agent_level = None
+        trailers = [line for line in item[1:] if TRAILER_LIKE_RE.match(line.text)]
+        for line in trailers:
+            if line.level > 1:
+                self.error(path, line.i + 1, "agent entries must be top-level bullets in the daily section, "
+                           "not nested under another item; unindent the entry this session trailer ends",
+                           AGENT_DOC)
+        agent = any(line.level == 1 for line in trailers)
+        if TRAILER_LIKE_RE.match(first.text):
+            self.stray_trailer(path, first.i)
+
         for prev, line in zip([None, *item], item):
-            if nested_agent_level is not None and line.level <= nested_agent_level:
-                nested_agent_level = None
             if line.is_bullet:
                 self.lint_bullet(path, line)
-                if line.level and AGENT_START_RE.match(line.text):
-                    self.error(path, line.i + 1, "agent entries must be top-level bullets in the daily section, "
-                               "not nested under another item; unindent it", AGENT_DOC)
-                    nested_agent_level = line.level
             elif OTHER_BULLET_RE.match(line.text):
                 self.error(path, line.i + 1, "bullets start with '- ', not '*', '+' or a number", FORMAT_DOC)
             elif not agent and line.level != prev.level + prev.is_bullet:
                 self.error(path, line.i + 1, "continuation line must be indented one level deeper than the "
                            "bullet it continues", FORMAT_DOC)
-            if not agent and nested_agent_level is None and TRAILER_LIKE_RE.match(line.text):
-                self.error(path, line.i + 1, "session trailer outside an agent entry; it must be the last "
-                           "indented line under a '- [x] **Subject**' bullet, with no blank line before it",
-                           AGENT_DOC)
-        if agent:
+
+        if not agent:
+            return
+        if not in_daily:
+            self.error(path, first.i + 1, "agent entries go in a daily section, not under '**Tasks:**'", AGENT_DOC)
+        if first.text.startswith("- [x] **"):
             self.lint_agent_entry(path, item)
+        else:
+            self.error(path, first.i + 1, "this item has a session trailer, which marks an agent entry, but its "
+                       "first line isn't '- [x] **Subject**'; fix the first line, or remove the trailer if "
+                       "this isn't an agent entry", AGENT_DOC)
 
     def lint_bullet(self, path, line: Line) -> None:
         t = TASK_RE.match(line.text)
@@ -272,15 +285,7 @@ class Linter:
                        "'- [x] **Subject**' optionally followed by \" (`~/repo` @ `abc1234`)\" or \" (`~/repo`)\"",
                        AGENT_DOC)
         else:
-            subject = m["subject"]
-            if len(subject) > 50:
-                self.error(path, first.i + 1, f"subject is {len(subject)} chars; shorten it to 50 or fewer", AGENT_DOC)
-            if not subject[:1].isupper():
-                self.error(path, first.i + 1, "subject must start with a capital letter", AGENT_DOC)
-            if subject.endswith("."):
-                self.error(path, first.i + 1, "subject must not end with a period", AGENT_DOC)
-            if subject != subject.strip():
-                self.error(path, first.i + 1, "subject must not have leading/trailing spaces inside '**'", AGENT_DOC)
+            self.lint_subject(path, first, m["subject"])
 
         body = item[1:]
         for line in body:
@@ -299,6 +304,16 @@ class Linter:
             if TRAILER_LIKE_RE.match(line.text):
                 self.error(path, line.i + 1, "only one session trailer per entry, and it must be the last line",
                            AGENT_DOC)
+
+    def lint_subject(self, path, first: Line, subject: str) -> None:
+        if len(subject) > 50:
+            self.error(path, first.i + 1, f"subject is {len(subject)} chars; shorten it to 50 or fewer", AGENT_DOC)
+        if not subject[:1].isupper():
+            self.error(path, first.i + 1, "subject must start with a capital letter", AGENT_DOC)
+        if subject.endswith("."):
+            self.error(path, first.i + 1, "subject must not end with a period", AGENT_DOC)
+        if subject != subject.strip():
+            self.error(path, first.i + 1, "subject must not have leading/trailing spaces inside '**'", AGENT_DOC)
 
     # ---- notes --------------------------------------------------------
 
