@@ -171,6 +171,9 @@ class Linter:
     def lint_agent_entry(self, path, lines, start, indent) -> int:
         """Lint the agent entry starting at `start`; return the index after it."""
         first = lines[start]
+        if indent:
+            self.error(path, start + 1, "agent entries must be top-level bullets in the daily section, "
+                       "not nested under another item; remove the leading tabs", AGENT_DOC)
         m = AGENT_FIRST_RE.match(first)
         if not m:
             self.error(path, start + 1, "malformed agent entry first line; use "

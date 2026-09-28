@@ -60,8 +60,8 @@ def test_full_valid_log(tmp_path):
         "- [x] **Fix typo in README** (`~/HDP-2`)\n"
         "\tDSH-session: 0b0c305f-1f0e-42a4-bd8a-4190b40dc507\n"
         "\n## Tue, Sep 29, 2026\n\n"
-        "\t- [x] **Nested agent entry**\n"
-        "\t\tCodex-session: 01e7ac7b-e41f-4a97-b0db-b9523ac774df\n"
+        "- [x] **Tidy up notes**\n"
+        "\tCodex-session: 01e7ac7b-e41f-4a97-b0db-b9523ac774df\n"
     )
     path = make_log(tmp_path, body)
     path.write_text(path.read_text().replace("8 Tu\n", "8 Tu  : dentist appt; lunch\n"))
@@ -204,6 +204,11 @@ def test_space_indented_continuation(tmp_path):
 def test_nested_bullet_in_agent_entry(tmp_path):
     make_log(tmp_path, day(f"- [x] **Add retry logic**\n\t- a sub-bullet\n\t{SESSION}\n"))
     assert_one_error(tmp_path, "no nested bullets")
+
+
+def test_nested_agent_entry(tmp_path):
+    make_log(tmp_path, day(f"- [ ] fix uploader\n\t- [x] **Add retry logic**\n\t\t{SESSION}\n"))
+    assert_one_error(tmp_path, "must be top-level")
 
 
 def test_stray_trailer(tmp_path):

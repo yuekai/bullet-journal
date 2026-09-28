@@ -66,7 +66,8 @@ git -C ~/bullet-journal commit -m "<Subject>" -m "<your session trailer>" -- YYY
 ```
 
 - **Lint and hook failures:** if lint or the pre-commit hook reports errors, fix *your* entry with the Edit tool as the message says, then retry.
-- **Errors in someone else's entry:** don't rewrite another session's entry. Mention the error to the user instead.
+- **Errors in someone else's entry:** don't rewrite another session's entry. That session is probably fixing it, so wait a few seconds and retry the commit. If it still fails, tell the user.
+- **`.git/index.lock` exists:** another session is committing. Wait a few seconds and retry.
 - **Commit scope:** commit only the log file you edited (`-- YYYY-MM/LOG.md`).
 
 Full spec: `~/bullet-journal/docs/agent-entries.md`. Journal format: `~/bullet-journal/docs/journal-format.md`.
