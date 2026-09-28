@@ -1,0 +1,17 @@
+[workspace]
+authors = ["Yuekai Sun <yuekai@gmail.com>"]
+channels = ["conda-forge"]
+name = "bullet-journal"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+init-monthly-log = { cmd = "python scripts/init_monthly_log.py", description = "Create YYYY-MM/LOG.md (the only way a monthly log is created)" }
+lint = { cmd = "python scripts/lint.py", description = "Lint monthly logs, agent entries, and notes" }
+test = { cmd = "pytest tests/", description = "Run the test suite" }
+check = { depends-on = ["lint", "test"], description = "Lint and test" }
+install = { cmd = "bash scripts/install.sh", description = "Enable git hooks and link the bullet-journaling skill into each harness" }
+
+[dependencies]
+python = ">=3.14.7,<3.15"
+pytest = ">=9.1.1,<10"
