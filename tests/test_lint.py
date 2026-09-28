@@ -148,15 +148,62 @@ def test_invalid_task_marker(tmp_path):
 
 
 def test_links_are_not_task_markers(tmp_path):
-    make_log(tmp_path, "\n- [x](https://x.com) link\n- [Some blog post](https://example.com)\n- [a]()\n")
+    make_log(tmp_path, day("- [x](https://x.com) link\n- [Some blog post](https://example.com)\n- [a]()\n"))
     assert lint(tmp_path) == []
 
 
-# ---- agent entries ----------------------------------------------------
+# ---- entries ----------------------------------------------------------
 
 
 def day(entry: str) -> str:
     return "\n## Mon, Sep 28, 2026\n\n" + entry
+
+
+def test_space_indentation(tmp_path):
+    make_log(tmp_path, day("- note\n  - child\n    - grandchild\n  - child\n"))
+    assert lint(tmp_path) == []
+
+
+def test_continuation_lines(tmp_path):
+    make_log(tmp_path, day("- note\n\tmore of the note\n\t- child\n\t\tmore of the child\n"))
+    assert lint(tmp_path) == []
+
+
+@pytest.mark.parametrize(
+    "body, fragment",
+    [
+        ("* star bullet\n", "start with '- '"),
+        ("+ plus bullet\n", "start with '- '"),
+        ("1. numbered\n", "start with '- '"),
+        ("- note\n\t* star child\n", "start with '- '"),
+        ("just prose\n", "not an entry"),
+        ("- note\n\n\tindented after a blank line\n", "not under an item"),
+        ("- note\n\t \t- mixed indent\n", "mixes tabs and spaces"),
+        ("- note\n    - child\n  - misaligned\n", "inconsistent indentation"),
+        ("- note\n\t- child\n\tcontinuation at the child's level\n", "one level deeper"),
+        ("- [ ]\n", "empty entry"),
+        ("- \n", "empty entry"),
+        ("- [x] ~~done~~\n", "dropped task only"),
+        ("- ~~struck note~~\n", "dropped task only"),
+        ("- [ ] ~~half~~ struck\n", "dropped task only"),
+    ],
+)
+def test_malformed_entries(tmp_path, body, fragment):
+    make_log(tmp_path, day(body))
+    assert_one_error(tmp_path, fragment)
+
+
+def test_monthly_tasks_must_be_tasks(tmp_path):
+    make_log(tmp_path, "\n- [ ] a task\n- a note\n")
+    assert_one_error(tmp_path, "must be tasks")
+
+
+def test_nested_notes_under_monthly_tasks(tmp_path):
+    make_log(tmp_path, "\n- [ ] a task\n\t- a note about it\n")
+    assert lint(tmp_path) == []
+
+
+# ---- agent entries ----------------------------------------------------
 
 
 def test_missing_trailer(tmp_path):
@@ -197,8 +244,8 @@ def test_malformed_location_suffix(tmp_path):
 
 
 def test_space_indented_continuation(tmp_path):
-    make_log(tmp_path, day(f"- [x] **Add retry logic**\n    {SESSION}\n"))
-    assert_one_error(tmp_path, "indented with exactly 1 tab")
+    make_log(tmp_path, day(f"- [x] **Add retry logic**\n    Body text.\n    {SESSION}\n"))
+    assert lint(tmp_path) == []
 
 
 def test_nested_bullet_in_agent_entry(tmp_path):

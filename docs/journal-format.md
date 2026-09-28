@@ -83,7 +83,19 @@ Larger efforts that span days or weeks are listed under `**Tasks:**`.
 | Note | `- text` |
 | Agent work | `- [x] **Subject** …` plus body and trailer (see [agent-entries.md](agent-entries.md)) |
 
-- **Nesting:** indent nested items and continuation lines with tabs. A continuation line belongs to the entry above it and ends at the next item at the same or a shallower depth, a heading, a blank line, or the end of the file.
+The linter checks every entry, whoever wrote it:
+
+- **Every line is part of an entry.** After `**Tasks:**`, each non-blank line is one of three things: a daily header, a bullet starting with `- `, or an indented line under a bullet. `*`, `+` and numbered bullets are not allowed, and neither is unindented prose.
+- **An item ends at a blank line or a heading.** An item is a top-level bullet plus the indented lines under it. An indented line after a blank line belongs to no item, which is an error.
+- **Indentation:** use tabs or spaces, but don't mix them within one line's indent. A tab counts as 4 columns.
+  - A line indented more than the line above it is one level deeper.
+  - To step back out, match the indent of an enclosing line exactly. A width between two enclosing levels is an error.
+- **Continuation lines:** a line that isn't a bullet continues the bullet above it. It sits one level deeper than that bullet, or at the same level as the continuation line above it.
+- **Tasks:**
+  - Markers are only `[ ]`, `[x]` and `[>]`.
+  - No entry is empty.
+  - `~~strikethrough~~` appears only in a dropped task, `- [ ] ~~text~~`, and covers the whole text.
+- **Monthly tasks:** top-level items under `**Tasks:**` must be tasks. Notes can nest under them.
 - **Links:** `- [label](url)` is a note, not a task. Only `[ ]`, `[x]` and `[>]` count as task markers.
 
 ## Notes (`notes/<slug>.md`)

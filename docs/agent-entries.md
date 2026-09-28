@@ -28,7 +28,7 @@ Example:
   - Include the hash when the work was committed. The entry then points to that repo's commit history, which holds the detailed per-repo memory.
   - Leave the location out for work that isn't in a repo, such as computer use.
 - **Body (optional; leave it out only for self-explanatory work):**
-  - Write one line per paragraph, indented with exactly one tab more than the bullet.
+  - Write one line per paragraph, indented one level under the bullet. Write a tab; the linter also accepts spaces, as it does for every entry.
   - No blank lines and no nested bullets: a blank line would end the list item.
   - Explain how things worked before and what was wrong with that, how they work now, and why it was done this way.
   - Leave out how it was implemented; the commit and the code record that.

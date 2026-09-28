@@ -24,4 +24,5 @@ Core beliefs and the reasons behind the decisions that shape this repo. When a d
 
   The remaining race, two sessions editing the same few lines at the same instant, is accepted.
 - **The linter is strict for new content.** It rejects the loose habits of the old journal: empty calendar ` :`, headers without a weekday, wrong weekdays. The linter only has to be correct for logs this repo creates.
+- **The linter checks every entry, not only agent entries.** The user's own bullets follow the same format, so malformed items (stray prose, `*` bullets, broken nesting, misused strikethrough) are caught whoever wrote them. Indentation may use tabs or spaces, because the user edits in Obsidian and other editors, which don't agree on which to insert. Levels are compared by relative width, not a fixed unit.
 - **One skill, installed as symlinks.** `skills/bullet-journaling` is linked into each harness's user skills directory by `pixi run install`. Symlinks mean an edit in this repo reaches every harness immediately.
