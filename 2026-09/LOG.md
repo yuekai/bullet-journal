@@ -1,0 +1,42 @@
+# September 2026
+
+**Calendar:**
+
+1 Tu
+2 W
+3 Th
+4 F
+5 Sa
+6 Su
+7 M
+8 Tu
+9 W
+10 Th
+11 F
+12 Sa
+13 Su
+14 M
+15 Tu
+16 W
+17 Th
+18 F
+19 Sa
+20 Su
+21 M
+22 Tu
+23 W
+24 Th
+25 F
+26 Sa
+27 Su
+28 M
+29 Tu
+30 W
+
+**Tasks:**
+
+## Mon, Sep 28, 2026
+
+- [x] **Set up agent-maintained bullet journal** (`~/bullet-journal` @ `0cc3f39`)
+	The previous journal (~/second-brain) was maintained by hand, and agents working in other repos had no shared place to record finished work. This repo keeps the second-brain layout and adds a bullet-journaling skill, installed for Claude Code, Codex, DSH and Kimi Code, that has agents log each completed task as a commit-message-style entry with their session trailer. A linter run from a pre-commit hook enforces the format, and agents edit logs only with Edit tools rather than a locked write script, to keep the machinery small.
+	Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483
