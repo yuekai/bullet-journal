@@ -16,6 +16,7 @@ Core beliefs and the reasons behind the decisions that shape this repo. When a d
 - **No index and no future log.** The file tree is the index. Future tasks go straight into the target month's log.
 - **Agent work is logged as a completed task (`- [x] **Subject**`).** The user chose this over note bullets so finished work reads as done at a glance. The bold subject distinguishes agent entries from the user's own tasks, and lets the linter recognize them.
 - **Entries read like commit messages, with the same session trailer.** Each repo's git history is already its detailed memory, following the global commit-message guidelines. The journal is the cross-repo timeline. Sharing the trailer (`Claude-session:`, `Codex-session:`, …) and the commit hash lets one grep connect the two.
+- **Journal-entry commits are prefixed `Log: `.** Without the prefix, an agent's change commit to this repo and the commit logging that change would share a subject, and `git log --oneline` would stop reading as an index. A commit-msg hook enforces the prefix.
 - **Agents edit `LOG.md` directly; there is no write script.** A dedicated append script with a file lock was considered and rejected as more machinery than a journal needs. To keep the risk of lost updates small instead:
   - agents must use the Edit tool (targeted replacement) and never overwrite the whole file,
   - new months are created only by `init-monthly-log`,

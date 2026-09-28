@@ -66,9 +66,14 @@ Every entry is committed right away, and only the file that was touched:
 
 ```bash
 git -C ~/bullet-journal add YYYY-MM/LOG.md
-git -C ~/bullet-journal commit -m "<Subject>" -m "<Harness>-session: <id>" -- YYYY-MM/LOG.md
+git -C ~/bullet-journal commit -m "Log: <Subject>" -m "<Harness>-session: <id>" -- YYYY-MM/LOG.md
 ```
 
-- **Commit message:** the subject is the entry's subject, and the trailer is the entry's trailer. The entry itself serves as the body.
+- **Commit message:** the subject is `Log: ` followed by the entry's subject, and the trailer is the entry's trailer. The entry itself serves as the body.
+  - The prefix keeps `git log --oneline` readable when an agent logs work on this repo, where the change commit and its log commit would otherwise share a subject.
+  - The prefix can push the subject past 50 characters; that's accepted.
 - **`-- <path>`:** commits only that file, even if another session has something else staged.
 - **Pre-commit hook:** runs `pixi run lint`. If it fails, fix the reported lines with the Edit tool and commit again.
+- **Commit-msg hook:** runs `scripts/check_commit_msg.py`.
+  - A commit that touches only `YYYY-MM/LOG.md` files must have a `Log: ` subject and a session trailer.
+  - A `Log: ` subject on a commit that touches anything else is rejected.

@@ -1,0 +1,3 @@
+#!/bin/sh
+# Journal-entry commits need a `Log: ` subject and a session trailer.
+exec pixi run --quiet --manifest-path "$(git rev-parse --show-toplevel)/pixi.toml" python scripts/check_commit_msg.py "$1"
