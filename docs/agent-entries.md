@@ -3,7 +3,7 @@
 Agents write two kinds of entry in today's daily log section. This page is the spec for both, and `scripts/lint.py` enforces it.
 
 - **Task entries:** when a coding or computer-use agent finishes a task, in any directory, it logs the work as one entry. The entry is written like a git commit message, so the journal reads as a single timeline of what was done across all repos and machines, and why. Procedure: [`skills/log-task/SKILL.md`](../skills/log-task/SKILL.md).
-- **Conversation entries:** when the user asks, and only then, an agent logs what a conversation concluded, such as a brainstorm's decisions and open questions. Procedure: [`skills/log-conversation/SKILL.md`](../skills/log-conversation/SKILL.md).
+- **Conversation entries:** when the user asks, and only then, an agent logs what a conversation concluded, such as a brainstorm's decisions and open questions. An agent may offer to log one when a session doesn't complete tasks/work but reaches conclusions worth keeping; log only if the user agrees. Procedure: [`skills/log-conversation/SKILL.md`](../skills/log-conversation/SKILL.md).
 
 ## Task entries
 
