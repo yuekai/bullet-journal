@@ -35,13 +35,16 @@ OTHER_BULLET_RE = re.compile(r"^(?:[*+]|\d+[.)])\s")
 TAB_WIDTH = 2  # columns a tab counts for when comparing indents
 AGENT_INDENT = "  "  # agent entries indent each level with 2 spaces
 TASK_START_RE = re.compile(r"^- \[x\] \*\*[^*]+\*\* \(`")  # a bold [x] with a location is a task entry
-CONVO_START_RE = re.compile(r"^- \*\*.*-session:")  # a bold note with a session is a conversation entry
+CONVO_START_RE = re.compile(r"^- \[?\*\*.*-session:")  # a bold (or linked) note with a session is a conversation entry
 TASK_FIRST_RE = re.compile(
     r"^- \[x\] \*\*(?P<subject>[^*]+)\*\* \(`(?P<repo>[^`]+)`(?: @ `(?P<commit>[0-9a-f]{7,40})`)?\)$"
 )
-CONVO_FIRST_RE = re.compile(
-    r"^- \*\*(?P<subject>[^*]+)\*\* \(`(?P<trailer>[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: [^`\s]+)`\)$"
+SESSION_TRAILER = r"\(`(?P<trailer>[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: [^`\s]+)`\)"
+CONVO_FIRST_RE = re.compile(r"^- \*\*(?P<subject>[^*]+)\*\* " + SESSION_TRAILER + "$")
+LINKED_CONVO_FIRST_RE = re.compile(
+    r"^- \[\*\*(?P<subject>[^*]+)\*\*\]\(\.\./notes/(?P<note>[^)/]+\.md)\) " + SESSION_TRAILER + "$"
 )
+CONVO_BODY_MAX = 500  # chars of body text; longer conversations go in a linked note
 TRAILER_LIKE_RE = re.compile(r"^\s*(?:- )?[A-Za-z-]+-session:")  # plain or bulleted
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 
@@ -304,17 +307,34 @@ class Linter:
 
     def lint_convo_entry(self, path, item: list[Line]) -> None:
         first = item[0]
-        m = CONVO_FIRST_RE.match(first.text)
+        linked = LINKED_CONVO_FIRST_RE.match(first.text)
+        m = linked or CONVO_FIRST_RE.match(first.text)
         if not m:
             self.error(path, first.i + 1, "malformed conversation entry first line; use '- **Subject** "
-                       "(`Claude-session: <session-uuid>`)', with the trailer your harness's user-global "
-                       "AGENTS.md/CLAUDE.md prescribes for git commits, and nothing else after it", AGENT_DOC)
+                       "(`Claude-session: <session-uuid>`)', or '- [**Subject**](../notes/<slug>.md) "
+                       "(`Claude-session: <session-uuid>`)' for a long one, with the trailer your harness's "
+                       "user-global AGENTS.md/CLAUDE.md prescribes for git commits, and nothing else after it",
+                       AGENT_DOC)
         else:
             self.lint_subject(path, first, m["subject"])
-        if len(item) == 1:
+        body = item[1:]
+        if first.text.startswith("- [**"):  # the linked form, even if malformed
+            if linked and not (self.root / "notes" / linked["note"]).is_file():
+                self.error(path, first.i + 1, f"linked note notes/{linked['note']} doesn't exist; write it or "
+                           "fix the link", AGENT_DOC)
+            if body:
+                self.error(path, body[0].i + 1, "a linked conversation entry has no body; move these lines "
+                           "into the linked note", AGENT_DOC)
+            return
+        if not body:
             self.error(path, first.i + 1, "conversation entry has no body; add its conclusions under it",
                        AGENT_DOC)
-        self.lint_entry_body(path, item[1:])
+        size = sum(len(line.text) for line in body)
+        if size > CONVO_BODY_MAX:
+            self.error(path, first.i + 1, f"conversation entry body is {size} chars; over {CONVO_BODY_MAX}, "
+                       "write it as a note in notes/<slug>.md and link the subject to it, "
+                       "'- [**Subject**](../notes/<slug>.md) (`…-session: …`)', with no body", AGENT_DOC)
+        self.lint_entry_body(path, body)
 
     def lint_entry_body(self, path, body: list[Line]) -> None:
         """Task and conversation bodies: prose lines first, then one level of sub-bullets, 2-space indents."""

@@ -84,7 +84,7 @@ Larger efforts that span days or weeks are listed under `**Tasks:**`.
 | Dropped task | `- [ ] ~~text~~` |
 | Note | `- text` |
 | Agent work | ``- [x] **Subject** (`~/repo` …)`` plus an optional body (see [agent-entries.md](agent-entries.md)) |
-| Agent conversation summary | ``- **Subject** (`Claude-session: <id>`)`` plus prose and sub-bullets (see [agent-entries.md](agent-entries.md#conversation-entries)) |
+| Agent conversation summary | ``- **Subject** (`Claude-session: <id>`)`` plus prose and sub-bullets, or ``- [**Subject**](../notes/<slug>.md) (`Claude-session: <id>`)`` alone for a long one (see [agent-entries.md](agent-entries.md#conversation-entries)) |
 
 The linter checks every entry, whoever wrote it:
 

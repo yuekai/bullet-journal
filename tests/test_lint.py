@@ -20,8 +20,13 @@ CONVO = (
     f"- **Journal summaries for conversations** (`{SESSION}`)\n"
     "  Conversations reach conclusions that are lost with the transcript.\n"
     "  - Conversations are logged only on request\n"
-    "  - Details: [journal-summaries](../notes/journal-summaries.md)\n"
 )
+LINKED_CONVO = f"- [**Logging Claude Desktop conversations**](../notes/desktop.md) (`{SESSION}`)\n"
+
+
+def make_note(root: Path, name: str = "desktop.md") -> None:
+    (root / "notes").mkdir(exist_ok=True)
+    (root / "notes" / name).write_text("---\ntitle: T\ndescription: D\n---\n")
 
 
 def make_log(root: Path, body: str = "", month: str = "2026-09") -> Path:
@@ -333,6 +338,41 @@ def test_bold_note_is_not_an_entry(tmp_path):
 def test_malformed_convo_entry(tmp_path, body, fragment):
     make_log(tmp_path, day(body))
     assert_one_error(tmp_path, fragment)
+
+
+def test_linked_convo_entry(tmp_path):
+    make_note(tmp_path)
+    make_log(tmp_path, day(LINKED_CONVO))
+    assert lint(tmp_path) == []
+
+
+@pytest.mark.parametrize(
+    "body, fragment",
+    [
+        (LINKED_CONVO + "  - a conclusion\n", "has no body"),
+        ("- [**Topic**](../notes/desktop.md)\n", None),  # no session: a plain link note, not an entry
+        (f"- [**Topic**](../notes/desktop.md) ({SESSION})\n", "malformed conversation entry"),
+        (f"- [**{'A' * 51}**](../notes/desktop.md) (`{SESSION}`)\n", "shorten it to 50"),
+        (f"- [**Topic**](../notes/missing.md) (`{SESSION}`)\n", "notes/missing.md doesn't exist"),
+    ],
+)
+def test_malformed_linked_convo_entry(tmp_path, body, fragment):
+    make_note(tmp_path)
+    make_log(tmp_path, day(body))
+    if fragment is None:
+        assert lint(tmp_path) == []
+    else:
+        assert_one_error(tmp_path, fragment)
+
+
+@pytest.mark.parametrize("size, errors", [(500, 0), (501, 1)])
+def test_convo_body_limit(tmp_path, size, errors):
+    line = "- " + "a" * (size - 2)
+    make_log(tmp_path, day(f"- **Topic** (`{SESSION}`)\n  {line}\n"))
+    found = lint(tmp_path)
+    assert len(found) == errors, found
+    if errors:
+        assert "501 chars" in found[0]
 
 
 # ---- notes ------------------------------------------------------------

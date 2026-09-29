@@ -45,26 +45,32 @@ Example:
   - <…>
 ```
 
-Example:
+A long conversation, whose body would run past 500 characters, goes in a note instead, and the entry is just a linked subject:
+
+```markdown
+- [**<Subject>**](../notes/<slug>.md) (`<Harness>-session: <session-id>`)
+```
+
+Examples:
 
 ```markdown
 - **Journal summaries for conversations** (`Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef`)
   Conversation conclusions were lost with the transcript, so they are now logged on request.
   - Entries are note bullets, not [x] tasks, so "discussed" reads differently from "done"
   - Open: Claude Desktop chats need a paste-back step
-  - Details: [journal-summaries-for-conversations](../notes/journal-summaries-for-conversations.md)
+- [**Logging Claude Desktop conversations**](../notes/logging-claude-desktop-conversations.md) (`Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef`)
 ```
 
 - **When:** only when the user asks, for example "log this conversation". Never on the agent's own initiative.
 - **Marker:** a note bullet (`- `), not a task, because a conversation reached conclusions rather than finishing work. Like a task entry, it is a new top-level bullet in today's section.
 - **Subject:** bold, at most 50 characters, capitalized, no trailing period. It is a noun phrase naming the topic or its conclusion, such as "Pricing options for the Q4 plan", not an imperative.
 - **Session (required):** `` (`<Harness>-session: <id>`) `` after the subject. It's the same trailer, with the same session ID, that the agent's harness writes in git commits, as prescribed by that harness's user-global `AGENTS.md` or `CLAUDE.md`. For example, Claude Code writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``. It takes the place a task entry's location has. There's no repo location, and there's no commit to point to, so the ID goes in the entry itself.
-- **Body (required):** see [Body](#body).
+- **Body (required, at most 500 characters):** see [Body](#body). The count is the body's text, without indentation.
   - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
-  - Keep it to about 7 lines. If the conversation needs more, write a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)) and link it as a `Details:` sub-bullet.
-  - Put chat exports in `YYYY-MM/assets/` and link them the same way.
+  - Put chat exports in `YYYY-MM/assets/` and link them from a sub-bullet.
+- **Long conversations:** if the body would run past 500 characters, write it as a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
-- **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing).
+- **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing). A note is committed first, in its own commit without the `Log: ` prefix.
 
 ## Body
 
@@ -80,7 +86,7 @@ Task and conversation entries share one body shape:
 The first line marks an entry as an agent's:
 
 - **Task entry:** a top-level line starting ``- [x] **Subject** (` ``, that is, a bold completed task followed by a backticked location. The linter then checks the whole location, the subject and the body.
-- **Conversation entry:** a top-level `- **…` line containing `-session:`.
+- **Conversation entry:** a top-level `- **…` or `- [**…` line containing `-session:`. The linter checks the subject, the session, and the body's shape and length. For a linked entry, it checks that the note exists and that there's no body.
 - **Anything else is the user's own:** a `- [x] **Bold**` task with no location, or with a plain parenthetical such as `(Oahu)`, is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
 - **Errors:**
   - an agent entry nested under another item;
