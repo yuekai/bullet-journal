@@ -3,9 +3,9 @@
 Agents write two kinds of entry in today's daily log section. This page is the spec for both, and `scripts/lint.py` enforces it.
 
 - **Task entries:** when a coding or computer-use agent finishes a task, in any directory, it logs the work as one entry. The entry is written like a git commit message, so the journal reads as a single timeline of what was done across all repos and machines, and why. Procedure: [`skills/log-task/SKILL.md`](../skills/log-task/SKILL.md).
-- **Conversation entries:** when the user asks, and only then, an agent logs what a conversation concluded, such as a brainstorm's decisions and open questions. Procedure: [`skills/log-conversation/SKILL.md`](../skills/log-conversation/SKILL.md). See [Conversation entries](#conversation-entries).
+- **Conversation entries:** when the user asks, and only then, an agent logs what a conversation concluded, such as a brainstorm's decisions and open questions. Procedure: [`skills/log-conversation/SKILL.md`](../skills/log-conversation/SKILL.md).
 
-## Grammar
+## Task entries
 
 ```markdown
 - [x] **<Subject>**[ (`<repo>`[ @ `<commit>`])]
@@ -29,35 +29,12 @@ Example:
   - Include the hash when the work was committed. The entry then points to that repo's commit history, which holds the detailed per-repo memory.
   - Leave the location out for work that isn't in a repo, such as computer use.
   - The location is also what tells the linter that the entry is an agent's (see [below](#how-the-linter-recognizes-agent-entries)).
-- **Body (optional; leave it out only for self-explanatory work):** shaped like a [conversation entry's body](#body).
+- **Body (optional; leave it out only for self-explanatory work):** see [Body](#body).
   - Explain how things worked before and what was wrong with that, how they work now, and why it was done this way.
   - Leave out how it was implemented; the commit and the code record that.
   - When the work produced a commit, reuse the commit body.
 - **No session trailer.** The session is recorded in the commit the location cites and in the `Log:` commit that adds the entry (see [Committing](#committing)), so `git log --grep` in a repo, or `git log -S '<Subject>'` here, finds it.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
-
-### Body
-
-Task and conversation entries share one body shape:
-
-- Indent every line with 2 spaces, never tabs.
-- Prose paragraphs come first, one line each, one level under the bullet. Sub-bullets follow, one level only. A prose line after a sub-bullet would render as part of that sub-bullet.
-- No blank lines: a blank line would end the list item.
-- No lines that look like old-style session trailers (`Claude-session: …` or `- Claude-session: …`).
-
-### How the linter recognizes agent entries
-
-The first line marks an entry as an agent's:
-
-- **Task entry:** a top-level line starting ``- [x] **Subject** (` ``, that is, a bold completed task followed by a backticked location. The linter then checks the whole location, the subject and the body.
-- **Conversation entry:** a top-level `- **…` line containing `-session:`.
-- **Anything else is the user's own:** a `- [x] **Bold**` task with no location, or with a plain parenthetical such as `(Oahu)`, is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
-- **Errors:**
-  - an agent entry nested under another item;
-  - an agent entry under `**Tasks:**`;
-  - a session trailer on a line of its own, anywhere.
-
-This is a heuristic: an agent's computer-use task entry has no location, so it is linted only by the general rules.
 
 ## Conversation entries
 
@@ -88,6 +65,29 @@ Example:
   - Put chat exports in `YYYY-MM/assets/` and link them the same way.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
 - **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing).
+
+## Body
+
+Task and conversation entries share one body shape:
+
+- Indent every line with 2 spaces, never tabs.
+- Prose paragraphs come first, one line each, one level under the bullet. Sub-bullets follow, one level only. A prose line after a sub-bullet would render as part of that sub-bullet.
+- No blank lines: a blank line would end the list item.
+- No lines that look like old-style session trailers (`Claude-session: …` or `- Claude-session: …`).
+
+## How the linter recognizes agent entries
+
+The first line marks an entry as an agent's:
+
+- **Task entry:** a top-level line starting ``- [x] **Subject** (` ``, that is, a bold completed task followed by a backticked location. The linter then checks the whole location, the subject and the body.
+- **Conversation entry:** a top-level `- **…` line containing `-session:`.
+- **Anything else is the user's own:** a `- [x] **Bold**` task with no location, or with a plain parenthetical such as `(Oahu)`, is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
+- **Errors:**
+  - an agent entry nested under another item;
+  - an agent entry under `**Tasks:**`;
+  - a session trailer on a line of its own, anywhere.
+
+This is a heuristic: an agent's computer-use task entry has no location, so it is linted only by the general rules.
 
 ## Editing rules
 
