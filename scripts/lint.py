@@ -32,24 +32,29 @@ TASK_RE = re.compile(r"^\s*- \[(?P<marker>[^\]]{0,2})\](?!\()")  # not a markdow
 VALID_MARKERS = {" ", "x", ">"}
 DROPPED_RE = re.compile(r"^- \[ \] ~~(?P<text>.+)~~$")
 OTHER_BULLET_RE = re.compile(r"^(?:[*+]|\d+[.)])\s")
-TAB_WIDTH = 4  # columns a tab counts for when comparing indents
-AGENT_FIRST_RE = re.compile(
-    r"^- \[x\] \*\*(?P<subject>[^*]+)\*\*"
-    r"(?: \(`(?P<repo>[^`]+)`(?: @ `(?P<commit>[0-9a-f]{7,40})`)?\))?$"
+TAB_WIDTH = 2  # columns a tab counts for when comparing indents
+AGENT_INDENT = "  "  # agent entries indent each level with 2 spaces
+TASK_START_RE = re.compile(r"^- \[x\] \*\*[^*]+\*\* \(`")  # a bold [x] with a location is a task entry
+CONVO_START_RE = re.compile(r"^- \*\*.*-session:")  # a bold note with a session is a conversation entry
+TASK_FIRST_RE = re.compile(
+    r"^- \[x\] \*\*(?P<subject>[^*]+)\*\* \(`(?P<repo>[^`]+)`(?: @ `(?P<commit>[0-9a-f]{7,40})`)?\)$"
 )
-CONVO_FIRST_RE = re.compile(r"^- \*\*(?P<subject>[^*]+)\*\*(?: \(`(?P<repo>[^`]+)`\))?$")
-TRAILER_RE = re.compile(r"^[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: \S+$")
+CONVO_FIRST_RE = re.compile(
+    r"^- \*\*(?P<subject>[^*]+)\*\* \(`(?P<trailer>[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: [^`\s]+)`\)$"
+)
 TRAILER_LIKE_RE = re.compile(r"^\s*(?:- )?[A-Za-z-]+-session:")  # plain or bulleted
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 
 
 @dataclass
 class Line:
-    """A non-blank line of an item: its index in the file, its text without indentation, and its nesting level."""
+    """A non-blank line of an item: its index in the file, its text without indentation, its nesting level,
+    and its raw indentation."""
 
     i: int
     text: str
     level: int
+    indent: str = ""
 
     @property
     def is_bullet(self) -> bool:
@@ -185,15 +190,16 @@ class Linter:
                 widths.pop()
             if widths[-1] < width:
                 widths.append(width)
-            item.append(Line(i, text, len(widths) - 1))
+            item.append(Line(i, text, len(widths) - 1, indent))
 
         for item, in_daily in items:
             self.lint_item(path, item, in_daily)
 
     def stray_trailer(self, path, i: int) -> None:
-        self.error(path, i + 1, "session trailer outside an agent entry; it must be the last line one level "
-                   "under a '- [x] **Subject**' (task) or '- **Subject**' (conversation) bullet, with no blank "
-                   "line before it", AGENT_DOC)
+        self.error(path, i + 1, "session trailer on its own line; entries no longer end in a trailer line. A "
+                   "conversation entry puts it after the subject, '- **Subject** (`Claude-session: <id>`)', and "
+                   "a task entry carries none (its commit and the 'Log:' commit do); delete this line",
+                   AGENT_DOC)
 
     @staticmethod
     def not_a_bullet(text: str) -> str:
@@ -203,43 +209,47 @@ class Linter:
                 "or a line indented under one")
 
     def lint_item(self, path, item: list[Line], in_daily: bool) -> None:
-        """Lint one item. A session trailer one level under the bullet makes it an agent entry."""
+        """Lint one item. Its first line decides whether it is an agent entry (see entry_kind)."""
         first = item[0]
         if not in_daily and not TASK_RE.match(first.text):
             self.error(path, first.i + 1, "top-level items under '**Tasks:**' must be tasks ('- [ ] text'); "
                        "put notes in a daily section", FORMAT_DOC)
 
-        trailers = [line for line in item[1:] if TRAILER_LIKE_RE.match(line.text)]
-        for line in trailers:
-            if line.level > 1:
+        for line in item[1:]:
+            if self.entry_kind(line.text):
                 self.error(path, line.i + 1, "agent entries must be top-level bullets in the daily section, "
-                           "not nested under another item; unindent the entry this session trailer ends",
-                           AGENT_DOC)
-        agent = any(line.level == 1 for line in trailers)
-        if TRAILER_LIKE_RE.match(first.text):
-            self.stray_trailer(path, first.i)
+                           "not nested under another item; unindent this entry", AGENT_DOC)
+        kind = self.entry_kind(first.text)
 
         for prev, line in zip([None, *item], item):
             if line.is_bullet:
                 self.lint_bullet(path, line)
             elif OTHER_BULLET_RE.match(line.text):
                 self.error(path, line.i + 1, "bullets start with '- ', not '*', '+' or a number", FORMAT_DOC)
-            elif not agent and line.level != prev.level + prev.is_bullet:
+            elif not kind and line.level != prev.level + prev.is_bullet:
                 self.error(path, line.i + 1, "continuation line must be indented one level deeper than the "
                            "bullet it continues", FORMAT_DOC)
 
-        if not agent:
+        if not kind:
+            for line in item[1:]:
+                if TRAILER_LIKE_RE.match(line.text):
+                    self.stray_trailer(path, line.i)
             return
         if not in_daily:
             self.error(path, first.i + 1, "agent entries go in a daily section, not under '**Tasks:**'", AGENT_DOC)
-        if first.text.startswith("- [x] **"):
-            self.lint_agent_entry(path, item)
-        elif first.text.startswith("- **"):
-            self.lint_convo_entry(path, item)
+        if kind == "task":
+            self.lint_task_entry(path, item)
         else:
-            self.error(path, first.i + 1, "this item has a session trailer, which marks an agent entry, but its "
-                       "first line isn't '- [x] **Subject**' (task) or '- **Subject**' (conversation); fix the "
-                       "first line, or remove the trailer if this isn't an agent entry", AGENT_DOC)
+            self.lint_convo_entry(path, item)
+
+    @staticmethod
+    def entry_kind(text: str) -> str | None:
+        """'task' for a bold [x] with a location, 'convo' for a bold note with a session, else None."""
+        if TASK_START_RE.match(text):
+            return "task"
+        if CONVO_START_RE.match(text):
+            return "convo"
+        return None
 
     def lint_bullet(self, path, line: Line) -> None:
         t = TASK_RE.match(line.text)
@@ -281,61 +291,52 @@ class Linter:
 
     # ---- agent entries ------------------------------------------------
 
-    def lint_agent_entry(self, path, item: list[Line]) -> None:
+    def lint_task_entry(self, path, item: list[Line]) -> None:
         first = item[0]
-        m = AGENT_FIRST_RE.match(first.text)
+        m = TASK_FIRST_RE.match(first.text)
         if not m:
-            self.error(path, first.i + 1, "malformed agent entry first line; use "
-                       "'- [x] **Subject**' optionally followed by \" (`~/repo` @ `abc1234`)\" or \" (`~/repo`)\"",
+            self.error(path, first.i + 1, "malformed task entry first line; use "
+                       "'- [x] **Subject**' followed by \" (`~/repo` @ `abc1234`)\" or \" (`~/repo`)\"",
                        AGENT_DOC)
         else:
             self.lint_subject(path, first, m["subject"])
-
-        body = item[1:]
-        for line in body:
-            if line.is_bullet:
-                self.error(path, line.i + 1, "no nested bullets inside an agent entry; write body paragraphs as "
-                           "plain indented lines", AGENT_DOC)
-            elif line.level != 1:
-                self.error(path, line.i + 1, "agent entry body lines must all be indented one level under the "
-                           "bullet", AGENT_DOC)
-
-        if not body or not TRAILER_RE.match(body[-1].text):
-            self.error(path, first.i + 1, "agent entry must end with a session trailer line, e.g. "
-                       "'\\tClaude-session: <session-uuid>', using the trailer your harness's user-global "
-                       "AGENTS.md/CLAUDE.md prescribes for git commits; no blank line before it", AGENT_DOC)
-        for line in body[:-1]:
-            if TRAILER_LIKE_RE.match(line.text):
-                self.error(path, line.i + 1, "only one session trailer per entry, and it must be the last line",
-                           AGENT_DOC)
+        self.lint_entry_body(path, item[1:])
 
     def lint_convo_entry(self, path, item: list[Line]) -> None:
         first = item[0]
         m = CONVO_FIRST_RE.match(first.text)
         if not m:
-            self.error(path, first.i + 1, "malformed conversation entry first line; use '- **Subject**' "
-                       "optionally followed by \" (`~/repo`)\", with nothing else after it", AGENT_DOC)
+            self.error(path, first.i + 1, "malformed conversation entry first line; use '- **Subject** "
+                       "(`Claude-session: <session-uuid>`)', with the trailer your harness's user-global "
+                       "AGENTS.md/CLAUDE.md prescribes for git commits, and nothing else after it", AGENT_DOC)
         else:
             self.lint_subject(path, first, m["subject"])
+        if len(item) == 1:
+            self.error(path, first.i + 1, "conversation entry has no body; add its conclusions under it",
+                       AGENT_DOC)
+        self.lint_entry_body(path, item[1:])
 
-        children = item[1:]
-        for line in children:
-            if not line.is_bullet:
-                self.error(path, line.i + 1, "conversation entries hold only '- ' sub-bullets; turn this line "
-                           "into a sub-bullet, or move long prose into a note in notes/", AGENT_DOC)
-            elif line.level > 1 and not TRAILER_LIKE_RE.match(line.text):
-                self.error(path, line.i + 1, "conversation entries have one level of sub-bullets; don't nest "
-                           "deeper", AGENT_DOC)
-
-        last = children[-1] if children else None
-        if not last or not (last.is_bullet and TRAILER_RE.match(last.text[2:])):
-            self.error(path, first.i + 1, "conversation entry must end with a session trailer sub-bullet, e.g. "
-                       "'\\t- Claude-session: <session-uuid>', using the trailer your harness's user-global "
-                       "AGENTS.md/CLAUDE.md prescribes for git commits", AGENT_DOC)
-        for line in children[:-1]:
+    def lint_entry_body(self, path, body: list[Line]) -> None:
+        """Task and conversation bodies: prose lines first, then one level of sub-bullets, 2-space indents."""
+        seen_bullet = False
+        for line in body:
             if TRAILER_LIKE_RE.match(line.text):
-                self.error(path, line.i + 1, "only one session trailer per entry, and it must be the last "
-                           "sub-bullet", AGENT_DOC)
+                self.stray_trailer(path, line.i)
+                continue
+            if line.indent != AGENT_INDENT * line.level:
+                self.error(path, line.i + 1, "indent agent entries with 2 spaces per level, not tabs",
+                           AGENT_DOC)
+            if line.is_bullet:
+                seen_bullet = True
+                if line.level != 1:
+                    self.error(path, line.i + 1, "agent entries have one level of sub-bullets; don't nest "
+                               "deeper", AGENT_DOC)
+            elif line.level != 1:
+                self.error(path, line.i + 1, "prose lines in an agent entry are indented one level under the "
+                           "bullet", AGENT_DOC)
+            elif seen_bullet:
+                self.error(path, line.i + 1, "prose goes before the sub-bullets; after one, it would render "
+                           "as part of that sub-bullet", AGENT_DOC)
 
     def lint_subject(self, path, first: Line, subject: str) -> None:
         if len(subject) > 50:

@@ -13,14 +13,14 @@ from lint import Linter  # noqa: E402
 SESSION = "Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483"
 ENTRY = (
     "- [x] **Add retry logic to dataset uploader** (`~/HDP-lib` @ `a1b2c3d`)\n"
-    "\tUploads failed outright on transient 5xx errors. The uploader now retries with backoff.\n"
-    f"\t{SESSION}\n"
+    "  Uploads failed outright on transient 5xx errors. The uploader now retries with backoff.\n"
+    "  - Backoff over a persistent queue: failures are rare and short\n"
 )
 CONVO = (
-    "- **Journal summaries for conversations** (`~/bullet-journal`)\n"
-    "\t- Conversations are logged only on request\n"
-    "\t- Details: [journal-summaries](../notes/journal-summaries.md)\n"
-    f"\t- {SESSION}\n"
+    f"- **Journal summaries for conversations** (`{SESSION}`)\n"
+    "  Conversations reach conclusions that are lost with the transcript.\n"
+    "  - Conversations are logged only on request\n"
+    "  - Details: [journal-summaries](../notes/journal-summaries.md)\n"
 )
 
 
@@ -63,12 +63,11 @@ def test_full_valid_log(tmp_path):
         + ENTRY
         + CONVO
         + "- [x] **Book flights to Oahu**\n"
-        "\tKimi-Code-session: 4a6c613c-a29a-47ba-a59b-a1bb83306afd\n"
         "- [x] **Fix typo in README** (`~/HDP-2`)\n"
-        "\tDSH-session: 0b0c305f-1f0e-42a4-bd8a-4190b40dc507\n"
         "\n## Tue, Sep 29, 2026\n\n"
-        "- [x] **Tidy up notes**\n"
-        "\tCodex-session: 01e7ac7b-e41f-4a97-b0db-b9523ac774df\n"
+        "- [x] **Tidy up notes** (`~/notes` @ `0cc3f39`)\n"
+        "- **Pick a venue** (`Kimi-Code-session: 4a6c613c-a29a-47ba-a59b-a1bb83306afd`)\n"
+        "  - The lodge; the barn has no heating\n"
     )
     path = make_log(tmp_path, body)
     path.write_text(path.read_text().replace("8 Tu\n", "8 Tu  : dentist appt; lunch\n"))
@@ -213,22 +212,46 @@ def test_nested_notes_under_monthly_tasks(tmp_path):
 # ---- agent entries ----------------------------------------------------
 
 
-def test_trailer_marks_agent_entries(tmp_path):
-    # Without a trailer, a bold task is the user's own, and agent-entry rules don't apply.
-    make_log(tmp_path, day("- [x] **my own bold task.**\n\tsome notes\n"))
+TASK = "- [x] **Add retry logic** (`~/HDP-lib` @ `a1b2c3d`)\n"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        "- [x] **my own bold task.**\n\tsome notes\n\t\t- deep\n",
+        "- [x] **Book flights** (Oahu)\n",
+    ],
+)
+def test_location_marks_task_entries(tmp_path, body):
+    # Without a backticked location, a bold task is the user's own, and agent-entry rules don't apply.
+    make_log(tmp_path, day(body))
     assert lint(tmp_path) == []
 
 
+def test_task_entry_without_body(tmp_path):
+    make_log(tmp_path, day(TASK))
+    assert lint(tmp_path) == []
+
+
+@pytest.mark.parametrize(
+    "body, fragment",
+    [
+        (TASK + f"  {SESSION}\n", "own line"),
+        (TASK + f"  Body.\n  - {SESSION}\n", "own line"),
+        (TASK + "\tBody.\n", "2 spaces"),
+        (TASK + "    Body.\n", "2 spaces"),
+        (TASK + "  - a point\n  prose after it\n", "prose goes before"),
+        (TASK + "  - a point\n    - too deep\n", "one level of sub-bullets"),
+    ],
+)
+def test_malformed_task_body(tmp_path, body, fragment):
+    make_log(tmp_path, day(body))
+    assert_one_error(tmp_path, fragment)
+
+
 def test_trailer_after_blank_line(tmp_path):
-    make_log(tmp_path, day(f"- [x] **Add retry logic**\n\n\t{SESSION}\n"))
-    assert_one_error(tmp_path, "outside an agent entry")
-
-
-def test_trailer_not_last(tmp_path):
-    make_log(tmp_path, day(f"- [x] **Add retry logic**\n\t{SESSION}\n\tBody after trailer.\n"))
-    errors = lint(tmp_path)
-    assert any("must end with a session trailer" in e for e in errors), errors
-    assert any("only one session trailer" in e for e in errors), errors
+    make_log(tmp_path, day(f"{TASK}\n  {SESSION}\n"))
+    assert_one_error(tmp_path, "own line")
 
 
 @pytest.mark.parametrize(
@@ -240,27 +263,17 @@ def test_trailer_not_last(tmp_path):
     ],
 )
 def test_bad_subject(tmp_path, subject, fragment):
-    make_log(tmp_path, day(f"- [x] **{subject}**\n\t{SESSION}\n"))
+    make_log(tmp_path, day(f"- [x] **{subject}** (`~/HDP-lib`)\n"))
     assert_one_error(tmp_path, fragment)
 
 
 def test_malformed_location_suffix(tmp_path):
-    make_log(tmp_path, day(f"- [x] **Add retry logic** (~/HDP-lib, a1b2c3d)\n\t{SESSION}\n"))
-    assert_one_error(tmp_path, "malformed agent entry first line")
-
-
-def test_space_indented_continuation(tmp_path):
-    make_log(tmp_path, day(f"- [x] **Add retry logic**\n    Body text.\n    {SESSION}\n"))
-    assert lint(tmp_path) == []
-
-
-def test_nested_bullet_in_agent_entry(tmp_path):
-    make_log(tmp_path, day(f"- [x] **Add retry logic**\n\t- a sub-bullet\n\t{SESSION}\n"))
-    assert_one_error(tmp_path, "no nested bullets")
+    make_log(tmp_path, day("- [x] **Add retry logic** (`~/HDP-lib`, `a1b2c3d`)\n"))
+    assert_one_error(tmp_path, "malformed task entry first line")
 
 
 def test_nested_agent_entry(tmp_path):
-    make_log(tmp_path, day(f"- [ ] fix uploader\n\t- [x] **Add retry logic**\n\t\t{SESSION}\n"))
+    make_log(tmp_path, day(f"- [ ] fix uploader\n\t{TASK}"))
     assert_one_error(tmp_path, "must be top-level")
 
 
@@ -274,25 +287,25 @@ def test_nested_agent_entry(tmp_path):
 )
 def test_trailer_on_non_entry(tmp_path, body):
     make_log(tmp_path, day(body))
-    assert_one_error(tmp_path, "first line isn't")
+    assert_one_error(tmp_path, "own line")
 
 
 @pytest.mark.parametrize("trailer", [SESSION, f"- {SESSION}"])
 def test_top_level_trailer(tmp_path, trailer):
     make_log(tmp_path, day(f"{trailer}\n"))
-    assert_one_error(tmp_path, "outside an agent entry")
+    assert_one_error(tmp_path, "own line")
 
 
 def test_agent_entry_under_monthly_tasks(tmp_path):
-    make_log(tmp_path, f"\n- [x] **Add retry logic**\n\t{SESSION}\n")
+    make_log(tmp_path, f"\n{TASK}")
     assert_one_error(tmp_path, "daily section")
 
 
 # ---- conversation entries ---------------------------------------------
 
 
-def test_convo_entry_without_location(tmp_path):
-    make_log(tmp_path, day(f"- **Pricing options for the Q4 plan**\n\t- Go with tiered pricing\n\t- {SESSION}\n"))
+def test_convo_entry_with_only_bullets(tmp_path):
+    make_log(tmp_path, day(f"- **Pricing options for the Q4 plan** (`{SESSION}`)\n  - Go with tiered pricing\n"))
     assert lint(tmp_path) == []
 
 
@@ -304,26 +317,22 @@ def test_bold_note_is_not_an_entry(tmp_path):
 @pytest.mark.parametrize(
     "body, fragment",
     [
-        (f"- **Topic**\n\t- a conclusion\n\t- {SESSION}\n\t- after the trailer\n", "must end with a session trailer"),
-        (f"- **Topic**\n\t- a conclusion\n\t\t- too deep\n\t- {SESSION}\n", "one level of sub-bullets"),
-        (f"- **Topic**\n\tprose instead of a sub-bullet\n\t- {SESSION}\n", "only '- ' sub-bullets"),
-        (f"- **Topic** with trailing text\n\t- {SESSION}\n", "malformed conversation entry"),
-        (f"- **topic**\n\t- {SESSION}\n", "capital letter"),
-        (f"- **{'A' * 51}**\n\t- {SESSION}\n", "shorten it to 50"),
-        (f"- [ ] a task\n\t- **Topic**\n\t\t- {SESSION}\n", "must be top-level"),
+        (f"- **Topic** (`{SESSION}`)\n  - a conclusion\n    - too deep\n", "one level of sub-bullets"),
+        (f"- **Topic** (`{SESSION}`)\n  - a conclusion\n  prose after it\n", "prose goes before"),
+        (f"- **Topic** (`{SESSION}`)\n\t- tab-indented\n", "2 spaces"),
+        (f"- **Topic** (`{SESSION}`)\n  - a conclusion\n  - {SESSION}\n", "own line"),
+        (f"- **Topic** (`{SESSION}`)\n", "no body"),
+        (f"- **Topic** (`~/repo`, `{SESSION}`)\n  - a conclusion\n", "malformed conversation entry"),
+        (f"- **Topic** ({SESSION})\n  - a conclusion\n", "malformed conversation entry"),
+        (f"- **Topic** (`{SESSION}`) trailing text\n  - a conclusion\n", "malformed conversation entry"),
+        (f"- **topic** (`{SESSION}`)\n  - a conclusion\n", "capital letter"),
+        (f"- **{'A' * 51}** (`{SESSION}`)\n  - a conclusion\n", "shorten it to 50"),
+        (f"- [ ] a task\n  - **Topic** (`{SESSION}`)\n    - a conclusion\n", "must be top-level"),
     ],
 )
 def test_malformed_convo_entry(tmp_path, body, fragment):
     make_log(tmp_path, day(body))
-    errors = lint(tmp_path)
-    assert any(fragment in e for e in errors), errors
-
-
-def test_convo_entry_trailer_not_last(tmp_path):
-    make_log(tmp_path, day(f"- **Topic**\n\t- {SESSION}\n\t- a conclusion\n"))
-    errors = lint(tmp_path)
-    assert len(errors) == 2, errors
-    assert any("only one session trailer" in e for e in errors), errors
+    assert_one_error(tmp_path, fragment)
 
 
 # ---- notes ------------------------------------------------------------

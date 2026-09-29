@@ -9,79 +9,83 @@ Agents write two kinds of entry in today's daily log section. This page is the s
 
 ```markdown
 - [x] **<Subject>**[ (`<repo>`[ @ `<commit>`])]
-	<body paragraph>
-	<body paragraph>
-	<Harness>-session: <session-id>
+  <body paragraph>
+  <body paragraph>
+  - <sub-bullet>
 ```
 
 Example:
 
 ```markdown
 - [x] **Add retry logic to dataset uploader** (`~/HDP-lib` @ `a1b2c3d`)
-	Uploads to the Hub failed outright on transient 5xx errors, so long runs lost hours of work. The uploader now retries with exponential backoff; chose backoff over a persistent queue because failures are rare and short-lived.
-	Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483
+  Uploads to the Hub failed outright on transient 5xx errors, so long runs lost hours of work. The uploader now retries with exponential backoff.
+  - Chose backoff over a persistent queue because failures are rare and short-lived
 ```
 
 - **Marker:** always `- [x]`, because the entry records finished work. An agent entry is a new top-level bullet in today's section. It is never nested under one of the user's tasks.
 - **Subject:** bold, at most 50 characters, capitalized, imperative mood ("If applied, this will ___"), no trailing period. It names the change.
-- **Location (optional):** `` (`~/repo`) `` or `` (`~/repo` @ `<short hash>`) ``.
+- **Location (whenever the work is in a repo):** `` (`~/repo`) `` or `` (`~/repo` @ `<short hash>`) ``.
   - Abbreviate the repo path with `~`.
   - Include the hash when the work was committed. The entry then points to that repo's commit history, which holds the detailed per-repo memory.
   - Leave the location out for work that isn't in a repo, such as computer use.
-- **Body (optional; leave it out only for self-explanatory work):**
-  - Write one line per paragraph, indented one level under the bullet. Write a tab; the linter also accepts spaces, as it does for every entry.
-  - No blank lines and no nested bullets: a blank line would end the list item.
+  - The location is also what tells the linter that the entry is an agent's (see [below](#how-the-linter-recognizes-agent-entries)).
+- **Body (optional; leave it out only for self-explanatory work):** shaped like a [conversation entry's body](#body).
   - Explain how things worked before and what was wrong with that, how they work now, and why it was done this way.
   - Leave out how it was implemented; the commit and the code record that.
   - When the work produced a commit, reuse the commit body.
-- **Trailer (required, last line):** `<Harness>-session: <id>`.
-  - It is the same trailer, with the same session ID, that the agent's harness writes in git commits, as prescribed by that harness's user-global `AGENTS.md` or `CLAUDE.md`. For example, Claude Code writes `Claude-session: $CLAUDE_CODE_SESSION_ID`.
-  - Because the two match, `git log --grep` in a repo and `grep` in this journal find the same session.
+- **No session trailer.** The session is recorded in the commit the location cites and in the `Log:` commit that adds the entry (see [Committing](#committing)), so `git log --grep` in a repo, or `git log -S '<Subject>'` here, finds it.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
+
+### Body
+
+Task and conversation entries share one body shape:
+
+- Indent every line with 2 spaces, never tabs.
+- Prose paragraphs come first, one line each, one level under the bullet. Sub-bullets follow, one level only. A prose line after a sub-bullet would render as part of that sub-bullet.
+- No blank lines: a blank line would end the list item.
+- No lines that look like old-style session trailers (`Claude-session: …` or `- Claude-session: …`).
 
 ### How the linter recognizes agent entries
 
-The session trailer is what marks an entry as an agent's, not its formatting:
+The first line marks an entry as an agent's:
 
-- An item is an **agent entry if and only if it has a session-trailer line** one level under its top-level bullet. For a task entry that's `…-session: …`; for a conversation entry it's `- …-session: …`. The linter then applies the rules for that kind of entry.
-- A `- [x] **Bold**` item with no trailer is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
-- A trailer anywhere else is an error:
-  - nested deeper than one level, which means the entry sits under another item;
-  - not the last line of its entry;
-  - on a line of its own;
-  - under a first line that isn't `- [x] **Subject**` (task) or `- **Subject**` (conversation);
-  - in an item under `**Tasks:**`.
+- **Task entry:** a top-level line starting ``- [x] **Subject** (` ``, that is, a bold completed task followed by a backticked location. The linter then checks the whole location, the subject and the body.
+- **Conversation entry:** a top-level `- **…` line containing `-session:`.
+- **Anything else is the user's own:** a `- [x] **Bold**` task with no location, or with a plain parenthetical such as `(Oahu)`, is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
+- **Errors:**
+  - an agent entry nested under another item;
+  - an agent entry under `**Tasks:**`;
+  - a session trailer on a line of its own, anywhere.
+
+This is a heuristic: an agent's computer-use task entry has no location, so it is linted only by the general rules.
 
 ## Conversation entries
 
 ```markdown
-- **<Subject>**[ (`<repo>`)]
-	- <conclusion, decision or open question>
-	- <…>
-	- <Harness>-session: <session-id>
+- **<Subject>** (`<Harness>-session: <session-id>`)
+  <optional prose paragraph>
+  - <conclusion, decision or open question>
+  - <…>
 ```
 
 Example:
 
 ```markdown
-- **Journal summaries for conversations** (`~/bullet-journal`)
-	- Conversations are logged only when the user asks, never automatically
-	- Entries are note bullets, not [x] tasks, so "discussed" reads differently from "done"
-	- Open: Claude Desktop chats need a paste-back step
-	- Details: [journal-summaries-for-conversations](../notes/journal-summaries-for-conversations.md)
-	- Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
+- **Journal summaries for conversations** (`Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef`)
+  Conversation conclusions were lost with the transcript, so they are now logged on request.
+  - Entries are note bullets, not [x] tasks, so "discussed" reads differently from "done"
+  - Open: Claude Desktop chats need a paste-back step
+  - Details: [journal-summaries-for-conversations](../notes/journal-summaries-for-conversations.md)
 ```
 
 - **When:** only when the user asks, for example "log this conversation". Never on the agent's own initiative.
 - **Marker:** a note bullet (`- `), not a task, because a conversation reached conclusions rather than finishing work. Like a task entry, it is a new top-level bullet in today's section.
 - **Subject:** bold, at most 50 characters, capitalized, no trailing period. It is a noun phrase naming the topic or its conclusion, such as "Pricing options for the Q4 plan", not an imperative.
-- **Location (optional):** `` (`~/repo`) `` when the conversation was about a repo. There's no commit hash, since nothing was committed.
-- **Sub-bullets:**
-  - One level only: no deeper nesting and no prose lines.
+- **Session (required):** `` (`<Harness>-session: <id>`) `` after the subject. It's the same trailer, with the same session ID, that the agent's harness writes in git commits, as prescribed by that harness's user-global `AGENTS.md` or `CLAUDE.md`. For example, Claude Code writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``. It takes the place a task entry's location has. There's no repo location, and there's no commit to point to, so the ID goes in the entry itself.
+- **Body (required):** see [Body](#body).
   - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
-  - Keep it to about 7 sub-bullets. If the conversation needs more, or needs prose to make sense, write a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)) and link it as a `Details:` sub-bullet.
+  - Keep it to about 7 lines. If the conversation needs more, write a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)) and link it as a `Details:` sub-bullet.
   - Put chat exports in `YYYY-MM/assets/` and link them the same way.
-- **Trailer (required, last sub-bullet):** `- <Harness>-session: <id>`, the same trailer as in git commits. It's a sub-bullet so that it renders as its own line under the other sub-bullets.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
 - **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing).
 
@@ -114,7 +118,8 @@ git -C ~/bullet-journal add YYYY-MM/LOG.md
 git -C ~/bullet-journal commit -m "Log: <Subject>" -m "<Harness>-session: <id>" -- YYYY-MM/LOG.md
 ```
 
-- **Commit message:** the subject is `Log: ` followed by the entry's subject, and the trailer is the entry's trailer. The entry itself serves as the body.
+- **Commit message:** the subject is `Log: ` followed by the entry's subject, and the trailer is the agent's session trailer. The entry itself serves as the body.
+  - For a task entry, which carries no trailer, this commit is what ties the entry to its session.
   - The prefix keeps `git log --oneline` readable when an agent logs work on this repo, where the change commit and its log commit would otherwise share a subject.
   - The prefix can push the subject past 50 characters; that's accepted.
 - **`-- <path>`:** commits only that file, even if another session has something else staged.

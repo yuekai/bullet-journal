@@ -12,36 +12,28 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 ## 1. Write the entry
 
 ```markdown
-- **Pricing options for the Q4 plan**
-	- Go with tiered pricing; a flat fee undercharges heavy users
-	- Launch the free tier after the paid tiers, once support load is known
-	- Open: whether to grandfather existing customers
-	- Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
+- **Pricing options for the Q4 plan** (`Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef`)
+  Tiered pricing won because heavy users drive most of the support cost.
+  - Go with tiered pricing; a flat fee undercharges heavy users
+  - Launch the free tier after the paid tiers, once support load is known
+  - Open: whether to grandfather existing customers
 ```
 
 - **Subject:** bold, at most 50 characters, capitalized, no trailing period.
   - Use a noun phrase naming the topic or its conclusion, not an imperative.
-  - Add `` (`~/repo`) `` after it when the conversation was about a repo. Abbreviate the path with `~`.
-- **Sub-bullets:** one level only, each indented with a single tab. No deeper nesting and no prose lines.
+- **Session (in parentheses after the subject):** `` (`<trailer>`) ``, where `<trailer>` is the same session trailer your harness's user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
+- **Body:** indent every line with 2 spaces (never tabs). No blank lines.
+  - Optional prose first, one line per paragraph, then sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
   - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
   - Record what was concluded, not the back-and-forth that led there.
-  - Write each one so it makes sense without the transcript.
+  - Write each line so it makes sense without the transcript.
 - **Long conversations:**
-  - If you need more than about 7 sub-bullets, or prose to make sense, write the details as a note in `~/bullet-journal/notes/<slug>.md`, with `title` and `description` frontmatter; see `~/bullet-journal/docs/journal-format.md`.
+  - If the entry would run past about 7 lines, write the details as a note in `~/bullet-journal/notes/<slug>.md`, with `title` and `description` frontmatter; see `~/bullet-journal/docs/journal-format.md`.
   - Link it with a sub-bullet such as `- Details: [<slug>](../notes/<slug>.md)`.
-- **Trailer (last sub-bullet):** `- ` followed by the same session trailer your harness's user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `- Claude-session: $CLAUDE_CODE_SESSION_ID`.
 - **Never include** secrets, credentials, tokens, private personal data, or sensitive operational details. If the conversation touched on any, leave them out.
-- **Summarizing a pasted chat:** if the user pastes a summary or transcript from another app, such as a Claude Desktop chat, write the entry from it with your own trailer. Add a `- Source: <link or app name>` sub-bullet before the trailer.
+- **Summarizing a pasted chat:** if the user pastes a summary or transcript from another app, such as a Claude Desktop chat, write the entry from it with your own session ID. Add a `- Source: <link or app name>` sub-bullet as the last sub-bullet.
 
-Weak entry:
-
-```markdown
-- **Discussed pricing.**
-	- We talked about a lot of options and the user asked about tiers, then I explained flat fees
-		- flat fees are simpler
-```
-
-This has a trailing period. It narrates the conversation instead of stating conclusions, nests a second level, and has no trailer.
+Avoid entries that narrate the conversation instead of stating its conclusions, or that nest sub-bullets a second level deep.
 
 ## 2. Add it to today's log and commit
 
