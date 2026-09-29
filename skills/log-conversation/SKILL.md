@@ -26,7 +26,7 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
   - Optional prose first, one line per paragraph, then sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
   - Record the conclusions, decisions made (with their reason when it isn't obvious), and any unresolved questions; omit the back-and-forth that led there.
   - Write each line so it makes sense without the transcript.
-- **Long conversations:** if the body would run past 500 chars (not counting indentation), write it as a note in `~/bullet-journal/notes/<slug>.md` with `title` and `description` frontmatter (see `~/bullet-journal/docs/journal-format.md`). The entry is then just the subject, linked to the note, plus the session, with no body: `` - [**<Subject>**](../notes/<slug>.md) (`<trailer>`) ``.
+- **Long conversations:** if the body exceeds 500 chars (not counting indentation), write it as a note in `~/bullet-journal/notes/<slug>.md` with `title` and `description` frontmatter (see `~/bullet-journal/docs/journal-format.md`). The entry is then just the subject, linked to the note, plus the session, with no body: `` - [**<Subject>**](../notes/<slug>.md) (`<trailer>`) ``.
 - **Never include** secrets, credentials, tokens, private personal data, or sensitive operational details. If the conversation touched on any, leave them out.
 
 ## 2. Add it to today's log and commit

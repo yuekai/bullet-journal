@@ -45,7 +45,7 @@ Example:
   - <…>
 ```
 
-A long conversation, whose body would run past 500 characters, goes in a note instead, and the entry is just a linked subject:
+Conversation entries whose body exceeds 500 characters, are written as notes; the entries are merely linked subjects:
 
 ```markdown
 - [**<Subject>**](../notes/<slug>.md) (`<Harness>-session: <session-id>`)
