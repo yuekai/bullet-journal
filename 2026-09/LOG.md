@@ -57,3 +57,8 @@
 - [x] **Link long conversation entries to notes** (`~/bullet-journal` @ `37a5f76`)
   Conversation entries were capped at a vague "about 7 lines", with overflow linked as a Details: sub-bullet, and nothing enforced it. A body over 500 chars now fails lint and goes in a note that the subject links to, so the log reads one line per long conversation.
   - Migrated "Logging Claude Desktop conversations" to notes/logging-claude-desktop-conversations.md
+
+## Tue, Sep 29, 2026
+
+- [x] **Require notes to be self-contained** (`~/bullet-journal` @ `b8bca9c`)
+  Notes had no content rule, so a note could lean on a transcript that may later vanish. Notes are now mostly self-contained: they link journal artifacts and retrieved sources but never the transcript. Session rules now name the trailer from the user-global instructions.
