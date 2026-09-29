@@ -49,3 +49,6 @@
 - [x] **Recognize agent entries by session trailer** (`~/bullet-journal` @ `214209c`)
 	The linter treated every "- [x] **" line as an agent entry, so a user's own bold task drew a "missing trailer" error. An item is now an agent entry only if it carries a session trailer, the one thing only agents write. The trade-off is that an agent entry that forgets its trailer reads as a user task, though the general entry rules still check it.
 	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
+- [x] **Rename bullet-journaling skill to log-task** (`~/bullet-journal` @ `4d5af27`)
+	With a second, conversation-logging skill coming, the generic name no longer said which kind of logging the skill does. install.sh now links every skill in skills/ and removes links left under a retired name. The Bullet Journal reminder in each harness's global instructions (Claude Code, Codex, DSH, Kimi Code) now names log-task.
+	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
