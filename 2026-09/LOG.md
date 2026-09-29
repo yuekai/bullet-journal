@@ -55,3 +55,12 @@
 - [x] **Add log-conversation skill and entry format** (`~/bullet-journal` @ `acc8c2c`)
 	Agents logged only finished work, so the conclusions of brainstorming conversations were lost with the transcript. When the user asks, and only then, an agent now logs a note bullet whose one level of sub-bullets holds the conclusions, decisions and open questions, ending in a session-trailer sub-bullet. It's a separate skill from log-task because the two fire under opposite conditions (automatically vs. on request), and the global reminders now say so.
 	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
+- **Logging Claude Desktop conversations**
+	- Code tab is Claude Code: skills, Edit/Bash and session ID all work, so "log this conversation" works as-is
+	- Cowork doesn't load ~/.claude/skills; the skills would have to be uploaded to the claude.ai account (Customize → Skills)
+	- Cowork exposes no session ID; a trailer like "Cowork-session: <conversation URL>" would still pass the commit hook
+	- Chat tab has no disk access, shell or session ID; recommended path is paste-back: ask Chat for an entry, paste it into Claude Code with "log this conversation"
+	- A filesystem connector would let Chat edit LOG.md, but not lint or commit, so it isn't worth it
+	- Open: whether Cowork has targeted file edits and can run git/pixi (unverified in docs; test by asking Cowork to log a test entry)
+	- Source: code.claude.com/docs/en/desktop.md, skills.md, claude.com/docs/cowork/overview.md
+	- Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
