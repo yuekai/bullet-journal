@@ -70,3 +70,6 @@
   The subsection was a placeholder. It now explains the two-stage scaling-law prediction (loss laws, then per-benchmark regressions) and how it reversed the 1.5B ranking: SFT-heavy was best measured but predicted worst at 32B, so we chose the web-heavy mix. Adds tables, a TikZ schematic and pies.
   - Numbers from the m2 bbq-data-scaling-laws report and mix JSONs; user will prune sensitive ones before public release
   - Full paper doesn't compile under tectonic (pre-existing xcolor clash), so the section was verified standalone
+- [x] **Add O*NET tool-use data pipeline to K2 V3 report** (`~/K2_V3_Tech_Report`)
+  The Tool use subsection had only a placeholder for the O*NET pipeline. It now adapts the scenario generator of arXiv:2606.26118 (Smithery MCP servers, embedding-based task–server matching, LLM-generated requests and answer keys, withheld-info variants, virtual tools, role-inverted user) as an SFT data source, with a TikZ schematic.
+  - Scope is the scenario pipeline only, with no K2 V3 scale numbers (user's choice); the WildChat economic index is omitted
