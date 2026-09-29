@@ -1,8 +1,9 @@
 # Agent entries
 
-When a coding or computer-use agent finishes a task, in any directory, it logs the work as one entry in today's daily log section. The entry is written like a git commit message, so the journal reads as a single timeline of what was done across all repos and machines, and why.
+Agents write two kinds of entry in today's daily log section. This page is the spec for both, and `scripts/lint.py` enforces it.
 
-The procedure agents follow lives in the skill, [`skills/log-task/SKILL.md`](../skills/log-task/SKILL.md). This page is the spec that `scripts/lint.py` enforces.
+- **Task entries:** when a coding or computer-use agent finishes a task, in any directory, it logs the work as one entry. The entry is written like a git commit message, so the journal reads as a single timeline of what was done across all repos and machines, and why. Procedure: [`skills/log-task/SKILL.md`](../skills/log-task/SKILL.md).
+- **Conversation entries:** when the user asks, and only then, an agent logs what a conversation concluded, such as a brainstorm's decisions and open questions. Procedure: [`skills/log-conversation/SKILL.md`](../skills/log-conversation/SKILL.md). See [Conversation entries](#conversation-entries).
 
 ## Grammar
 
@@ -42,14 +43,47 @@ Example:
 
 The session trailer is what marks an entry as an agent's, not its formatting:
 
-- An item is an **agent entry if and only if it has a session-trailer line** (`…-session: …`) one level under its top-level bullet. The linter then applies every rule on this page to it.
+- An item is an **agent entry if and only if it has a session-trailer line** one level under its top-level bullet. For a task entry that's `…-session: …`; for a conversation entry it's `- …-session: …`. The linter then applies the rules for that kind of entry.
 - A `- [x] **Bold**` item with no trailer is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
 - A trailer anywhere else is an error:
   - nested deeper than one level, which means the entry sits under another item;
   - not the last line of its entry;
   - on a line of its own;
-  - under a first line that isn't `- [x] **Subject**`;
+  - under a first line that isn't `- [x] **Subject**` (task) or `- **Subject**` (conversation);
   - in an item under `**Tasks:**`.
+
+## Conversation entries
+
+```markdown
+- **<Subject>**[ (`<repo>`)]
+	- <conclusion, decision or open question>
+	- <…>
+	- <Harness>-session: <session-id>
+```
+
+Example:
+
+```markdown
+- **Journal summaries for conversations** (`~/bullet-journal`)
+	- Conversations are logged only when the user asks, never automatically
+	- Entries are note bullets, not [x] tasks, so "discussed" reads differently from "done"
+	- Open: Claude Desktop chats need a paste-back step
+	- Details: [journal-summaries-for-conversations](../notes/journal-summaries-for-conversations.md)
+	- Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
+```
+
+- **When:** only when the user asks, for example "log this conversation". Never on the agent's own initiative.
+- **Marker:** a note bullet (`- `), not a task, because a conversation reached conclusions rather than finishing work. Like a task entry, it is a new top-level bullet in today's section.
+- **Subject:** bold, at most 50 characters, capitalized, no trailing period. It is a noun phrase naming the topic or its conclusion, such as "Pricing options for the Q4 plan", not an imperative.
+- **Location (optional):** `` (`~/repo`) `` when the conversation was about a repo. There's no commit hash, since nothing was committed.
+- **Sub-bullets:**
+  - One level only: no deeper nesting and no prose lines.
+  - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
+  - Keep it to about 7 sub-bullets. If the conversation needs more, or needs prose to make sense, write a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)) and link it as a `Details:` sub-bullet.
+  - Put chat exports in `YYYY-MM/assets/` and link them the same way.
+- **Trailer (required, last sub-bullet):** `- <Harness>-session: <id>`, the same trailer as in git commits. It's a sub-bullet so that it renders as its own line under the other sub-bullets.
+- **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
+- **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing).
 
 ## Editing rules
 

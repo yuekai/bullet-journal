@@ -16,6 +16,12 @@ ENTRY = (
     "\tUploads failed outright on transient 5xx errors. The uploader now retries with backoff.\n"
     f"\t{SESSION}\n"
 )
+CONVO = (
+    "- **Journal summaries for conversations** (`~/bullet-journal`)\n"
+    "\t- Conversations are logged only on request\n"
+    "\t- Details: [journal-summaries](../notes/journal-summaries.md)\n"
+    f"\t- {SESSION}\n"
+)
 
 
 def make_log(root: Path, body: str = "", month: str = "2026-09") -> Path:
@@ -55,6 +61,7 @@ def test_full_valid_log(tmp_path):
         "- a group of pugs is called a grumble\n"
         "\t- nested note\n"
         + ENTRY
+        + CONVO
         + "- [x] **Book flights to Oahu**\n"
         "\tKimi-Code-session: 4a6c613c-a29a-47ba-a59b-a1bb83306afd\n"
         "- [x] **Fix typo in README** (`~/HDP-2`)\n"
@@ -279,6 +286,44 @@ def test_top_level_trailer(tmp_path, trailer):
 def test_agent_entry_under_monthly_tasks(tmp_path):
     make_log(tmp_path, f"\n- [x] **Add retry logic**\n\t{SESSION}\n")
     assert_one_error(tmp_path, "daily section")
+
+
+# ---- conversation entries ---------------------------------------------
+
+
+def test_convo_entry_without_location(tmp_path):
+    make_log(tmp_path, day(f"- **Pricing options for the Q4 plan**\n\t- Go with tiered pricing\n\t- {SESSION}\n"))
+    assert lint(tmp_path) == []
+
+
+def test_bold_note_is_not_an_entry(tmp_path):
+    make_log(tmp_path, day("- **Idea**: a plain note of the user's\n\t- with a child\n\t\t- and a grandchild\n"))
+    assert lint(tmp_path) == []
+
+
+@pytest.mark.parametrize(
+    "body, fragment",
+    [
+        (f"- **Topic**\n\t- a conclusion\n\t- {SESSION}\n\t- after the trailer\n", "must end with a session trailer"),
+        (f"- **Topic**\n\t- a conclusion\n\t\t- too deep\n\t- {SESSION}\n", "one level of sub-bullets"),
+        (f"- **Topic**\n\tprose instead of a sub-bullet\n\t- {SESSION}\n", "only '- ' sub-bullets"),
+        (f"- **Topic** with trailing text\n\t- {SESSION}\n", "malformed conversation entry"),
+        (f"- **topic**\n\t- {SESSION}\n", "capital letter"),
+        (f"- **{'A' * 51}**\n\t- {SESSION}\n", "shorten it to 50"),
+        (f"- [ ] a task\n\t- **Topic**\n\t\t- {SESSION}\n", "must be top-level"),
+    ],
+)
+def test_malformed_convo_entry(tmp_path, body, fragment):
+    make_log(tmp_path, day(body))
+    errors = lint(tmp_path)
+    assert any(fragment in e for e in errors), errors
+
+
+def test_convo_entry_trailer_not_last(tmp_path):
+    make_log(tmp_path, day(f"- **Topic**\n\t- {SESSION}\n\t- a conclusion\n"))
+    errors = lint(tmp_path)
+    assert len(errors) == 2, errors
+    assert any("only one session trailer" in e for e in errors), errors
 
 
 # ---- notes ------------------------------------------------------------

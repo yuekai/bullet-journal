@@ -2,7 +2,7 @@
 
 The format of monthly logs and notes. `scripts/lint.py` enforces every rule on this page that can be checked mechanically. If you change a rule, update this page, the linter, and `tests/test_lint.py` in the same commit.
 
-Agent work entries have their own spec: [agent-entries.md](agent-entries.md).
+Entries written by agents (task and conversation entries) have their own spec: [agent-entries.md](agent-entries.md).
 
 ## File layout
 
@@ -49,6 +49,10 @@ Create a monthly log only with `pixi run init-monthly-log YYYY-MM`. From another
 - [x] **Add retry logic to dataset uploader** (`~/HDP-lib` @ `a1b2c3d`)
 	Uploads failed outright on transient 5xx errors, so long runs lost hours of work. …
 	Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483
+- **Pricing options for the Q4 plan**
+	- Go with tiered pricing; a flat fee undercharges heavy users
+	- Open: whether to grandfather existing customers
+	- Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
 ```
 
 ### Title
@@ -82,6 +86,7 @@ Larger efforts that span days or weeks are listed under `**Tasks:**`.
 | Dropped task | `- [ ] ~~text~~` |
 | Note | `- text` |
 | Agent work | `- [x] **Subject** …` plus body and trailer (see [agent-entries.md](agent-entries.md)) |
+| Agent conversation summary | `- **Subject**` plus sub-bullets, the last one a trailer (see [agent-entries.md](agent-entries.md#conversation-entries)) |
 
 The linter checks every entry, whoever wrote it:
 

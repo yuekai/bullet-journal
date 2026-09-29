@@ -1,4 +1,4 @@
-"""Lint the bullet journal: monthly logs, agent entries, and notes.
+"""Lint the bullet journal: monthly logs, their entries (user-written and agent), and notes.
 
 Every error names the fix and the doc that specifies the rule, so an agent can
 repair the journal from the error output alone.
@@ -37,6 +37,7 @@ AGENT_FIRST_RE = re.compile(
     r"^- \[x\] \*\*(?P<subject>[^*]+)\*\*"
     r"(?: \(`(?P<repo>[^`]+)`(?: @ `(?P<commit>[0-9a-f]{7,40})`)?\))?$"
 )
+CONVO_FIRST_RE = re.compile(r"^- \*\*(?P<subject>[^*]+)\*\*(?: \(`(?P<repo>[^`]+)`\))?$")
 TRAILER_RE = re.compile(r"^[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: \S+$")
 TRAILER_LIKE_RE = re.compile(r"^\s*(?:- )?[A-Za-z-]+-session:")  # plain or bulleted
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
@@ -190,8 +191,9 @@ class Linter:
             self.lint_item(path, item, in_daily)
 
     def stray_trailer(self, path, i: int) -> None:
-        self.error(path, i + 1, "session trailer outside an agent entry; it must be the last indented line "
-                   "under a '- [x] **Subject**' bullet, with no blank line before it", AGENT_DOC)
+        self.error(path, i + 1, "session trailer outside an agent entry; it must be the last line one level "
+                   "under a '- [x] **Subject**' (task) or '- **Subject**' (conversation) bullet, with no blank "
+                   "line before it", AGENT_DOC)
 
     @staticmethod
     def not_a_bullet(text: str) -> str:
@@ -232,10 +234,12 @@ class Linter:
             self.error(path, first.i + 1, "agent entries go in a daily section, not under '**Tasks:**'", AGENT_DOC)
         if first.text.startswith("- [x] **"):
             self.lint_agent_entry(path, item)
+        elif first.text.startswith("- **"):
+            self.lint_convo_entry(path, item)
         else:
             self.error(path, first.i + 1, "this item has a session trailer, which marks an agent entry, but its "
-                       "first line isn't '- [x] **Subject**'; fix the first line, or remove the trailer if "
-                       "this isn't an agent entry", AGENT_DOC)
+                       "first line isn't '- [x] **Subject**' (task) or '- **Subject**' (conversation); fix the "
+                       "first line, or remove the trailer if this isn't an agent entry", AGENT_DOC)
 
     def lint_bullet(self, path, line: Line) -> None:
         t = TASK_RE.match(line.text)
@@ -304,6 +308,34 @@ class Linter:
             if TRAILER_LIKE_RE.match(line.text):
                 self.error(path, line.i + 1, "only one session trailer per entry, and it must be the last line",
                            AGENT_DOC)
+
+    def lint_convo_entry(self, path, item: list[Line]) -> None:
+        first = item[0]
+        m = CONVO_FIRST_RE.match(first.text)
+        if not m:
+            self.error(path, first.i + 1, "malformed conversation entry first line; use '- **Subject**' "
+                       "optionally followed by \" (`~/repo`)\", with nothing else after it", AGENT_DOC)
+        else:
+            self.lint_subject(path, first, m["subject"])
+
+        children = item[1:]
+        for line in children:
+            if not line.is_bullet:
+                self.error(path, line.i + 1, "conversation entries hold only '- ' sub-bullets; turn this line "
+                           "into a sub-bullet, or move long prose into a note in notes/", AGENT_DOC)
+            elif line.level > 1 and not TRAILER_LIKE_RE.match(line.text):
+                self.error(path, line.i + 1, "conversation entries have one level of sub-bullets; don't nest "
+                           "deeper", AGENT_DOC)
+
+        last = children[-1] if children else None
+        if not last or not (last.is_bullet and TRAILER_RE.match(last.text[2:])):
+            self.error(path, first.i + 1, "conversation entry must end with a session trailer sub-bullet, e.g. "
+                       "'\\t- Claude-session: <session-uuid>', using the trailer your harness's user-global "
+                       "AGENTS.md/CLAUDE.md prescribes for git commits", AGENT_DOC)
+        for line in children[:-1]:
+            if TRAILER_LIKE_RE.match(line.text):
+                self.error(path, line.i + 1, "only one session trailer per entry, and it must be the last "
+                           "sub-bullet", AGENT_DOC)
 
     def lint_subject(self, path, first: Line, subject: str) -> None:
         if len(subject) > 50:

@@ -10,6 +10,7 @@ A Markdown bullet journal the user reads, and agents mostly maintain. It also se
 | `YYYY-MM/assets/` | Optional files the month's log links to | [docs/journal-format.md](docs/journal-format.md) |
 | `notes/<slug>.md` | Long-form notes with `title`/`description` frontmatter | [docs/journal-format.md](docs/journal-format.md#notes-notesslugmd) |
 | `skills/log-task/` | Skill that tells agents in other dirs how to log their completed work | [docs/agent-entries.md](docs/agent-entries.md) |
+| `skills/log-conversation/` | Skill for logging a conversation's conclusions, used only when the user asks | [docs/agent-entries.md](docs/agent-entries.md#conversation-entries) |
 | `scripts/init_monthly_log.py` | Creates a blank `YYYY-MM/LOG.md` | — |
 | `scripts/lint.py` | Enforces the formats above; its errors say how to fix them | — |
 | `scripts/check_commit_msg.py` | commit-msg hook: journal-entry commits need a `Log: ` subject and a session trailer | [docs/agent-entries.md](docs/agent-entries.md#committing) |
