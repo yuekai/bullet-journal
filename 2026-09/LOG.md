@@ -52,3 +52,6 @@
 - [x] **Rename bullet-journaling skill to log-task** (`~/bullet-journal` @ `4d5af27`)
 	With a second, conversation-logging skill coming, the generic name no longer said which kind of logging the skill does. install.sh now links every skill in skills/ and removes links left under a retired name. The Bullet Journal reminder in each harness's global instructions (Claude Code, Codex, DSH, Kimi Code) now names log-task.
 	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
+- [x] **Add log-conversation skill and entry format** (`~/bullet-journal` @ `acc8c2c`)
+	Agents logged only finished work, so the conclusions of brainstorming conversations were lost with the transcript. When the user asks, and only then, an agent now logs a note bullet whose one level of sub-bullets holds the conclusions, decisions and open questions, ending in a session-trailer sub-bullet. It's a separate skill from log-task because the two fire under opposite conditions (automatically vs. on request), and the global reminders now say so.
+	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
