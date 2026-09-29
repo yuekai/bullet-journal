@@ -21,10 +21,10 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 
 - **Subject:** bold, at most 50 characters, capitalized, no trailing period.
   - Use a noun phrase naming the topic or its conclusion, not an imperative.
-- **Session:** in in parentheses after the subject (eg, `` (`<trailer>`) ``), where `<trailer>` is the same session trailer your harness's user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
+- **Session:** in parentheses after the subject (eg, `` (`<trailer>`) ``), where `<trailer>` is the same session trailer your harness's user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
 - **Body:** indent every line with 2 spaces (never tabs). No blank lines.
   - Optional prose first, one line per paragraph, then sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
-  - Record the conclusions, decisions made  (with its reason when it isn't obvious), and any unresolved questions; omit the back-and-forth that led there.
+  - Record the conclusions, decisions made (with their reason when it isn't obvious), and any unresolved questions; omit the back-and-forth that led there.
   - Write each line so it makes sense without the transcript.
 - **Long conversations:**
   - If the entry would run past about 7 lines, write the details as a note in `~/bullet-journal/notes/<slug>.md`, with `title` and `description` frontmatter; see `~/bullet-journal/docs/journal-format.md`.
