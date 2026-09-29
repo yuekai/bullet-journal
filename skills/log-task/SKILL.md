@@ -1,16 +1,16 @@
 ---
 name: log-task
-description: Use after completing a task that changed something (code, config, data, or computer-use work), in any directory, to log the work to the user's bullet journal at ~/bullet-journal as a task entry. Also use when the user asks to log, record, or journal work.
+description: Use after completing a task that changed something (code, config, data, or computer-use work), in any directory, to log the work to the user's bullet journal at ~/bullet-journal as a task entry. Also use when the user asks to log, record tasks/work.
 ---
 
 # Bullet journaling: log your completed work
 
 The user's bullet journal at `~/bullet-journal` is long-term memory, readable by people, shared by all of their agents. When you finish a task, add one entry to today's daily log so that future agents, and the user, can see what was done, where, and why.
 
-## When to log
+## When to log tasks/work
 
 - **Log:** once per completed task that changed state, such as code, config, data, files, or actions taken on a computer. Log after the task's git commit, if there is one, so you can cite its hash.
-- **Don't log:** pure Q and A sessions, exploration sessions that made no changes, work that was abandoned or reverted, or small changes like typo fixes.
+- **Don't log:** pure Q and A sessions, exploration sessions that made no changes, work that was abandoned or reverted, minor changes (eg, cosmetic changes, typo fixes, etc).
 - **Several distinct tasks in one session:** one entry each.
 
 ## 1. Write the entry
