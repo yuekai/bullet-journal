@@ -46,3 +46,6 @@
 - [x] **Lint user-written entries, not only agent entries** (`~/bullet-journal` @ `5522209`)
 	The linter checked only the task marker on the user's own bullets, so stray prose, * or numbered bullets, orphaned indented lines, notes under **Tasks:**, and misused strikethrough all passed. It now checks every entry against the format, whoever wrote it. Indentation may be tabs or spaces, since the user edits in editors that disagree on which to insert, and levels are compared by relative width rather than a fixed unit.
 	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
+- [x] **Recognize agent entries by session trailer** (`~/bullet-journal` @ `214209c`)
+	The linter treated every "- [x] **" line as an agent entry, so a user's own bold task drew a "missing trailer" error. An item is now an agent entry only if it carries a session trailer, the one thing only agents write. The trade-off is that an agent entry that forgets its trailer reads as a user task, though the general entry rules still check it.
+	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
