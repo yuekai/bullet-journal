@@ -57,3 +57,7 @@
   - A filesystem connector would let Chat edit LOG.md, but not lint or commit, so it isn't worth it
   - Open: whether Cowork has targeted file edits and can run git/pixi (unverified in docs; test by asking Cowork to log a test entry)
   - Source: code.claude.com/docs/en/desktop.md, skills.md, claude.com/docs/cowork/overview.md
+- [x] **Drop task trailer; put convo session in subject** (`~/bullet-journal` @ `b93f831`)
+  Task entries repeated the session trailer that their cited commit and Log: commit already carry, and bodies were tab-indented with no sub-bullets. Entries now use 2-space indents and share one body shape, prose then sub-bullets. The linter spots task entries by location.
+  - Conversation entries put the session in parentheses after the subject, since they have no commit to point to
+  - The Bullet Journal reminder in each harness's global instructions (Claude Code, Codex, DSH, Kimi Code) no longer asks for a trailer
