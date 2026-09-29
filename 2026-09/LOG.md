@@ -73,3 +73,7 @@
 - [x] **Add O*NET tool-use data pipeline to K2 V3 report** (`~/K2_V3_Tech_Report`)
   The Tool use subsection had only a placeholder for the O*NET pipeline. It now adapts the scenario generator of arXiv:2606.26118 (Smithery MCP servers, embedding-based task–server matching, LLM-generated requests and answer keys, withheld-info variants, virtual tools, role-inverted user) as an SFT data source, with a TikZ schematic.
   - Scope is the scenario pipeline only, with no K2 V3 scale numbers (user's choice); the WildChat economic index is omitted
+- [x] **Draft Research lab passage of K2 V3 report** (`~/K2_V3_Tech_Report`)
+  The AI for Science subsection had only a placeholder for the research lab. It now describes the MultiphysicsBench pipeline (COMSOL models solved offline at nominal and hidden-perturbed settings, pattern-based task design, independent verifier surrogates, two-population band calibration, Harbor oracle/no-op certification), with a TikZ schematic. It also says the tasks feed both RL and SFT.
+  - Counts from the MultiphysicsBench working tree: 34 source models, 52 packages, 33 certified; RL/SFT volumes left as a \my{} note
+  - Verified by compiling the section standalone under tectonic
