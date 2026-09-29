@@ -77,3 +77,7 @@
   The AI for Science subsection had only a placeholder for the research lab. It now describes the MultiphysicsBench pipeline (COMSOL models solved offline at nominal and hidden-perturbed settings, pattern-based task design, independent verifier surrogates, two-population band calibration, Harbor oracle/no-op certification), with a TikZ schematic. It also says the tasks feed both RL and SFT.
   - Counts from the MultiphysicsBench working tree: 34 source models, 52 packages, 33 certified; RL/SFT volumes left as a \my{} note
   - Verified by compiling the section standalone under tectonic
+- [x] **Draft Socratic math dialogues in K2 V3 report** (`~/K2_V3_Tech_Report`)
+  The Math reasoning subsection had only a placeholder for the Socratic teacher–student data. It now describes the m2 math-dialogues v2 pipeline: hard (>8k-token), prime-free problems, GPT-OSS-120B student and teacher, Socratic or Nemotron-persona teacher prompts, an effort grid, and student-as-assistant rendering. Adds a per-config table, a TikZ schematic and a takeaway box.
+  - 8.11M dialogues, 27.45B student tokens (exact) and ~38.4B in total (teacher side estimated), from a full pass over the m2 outputs
+  - Nemotron-Personas citation and release status left as \my{} notes; verified by compiling the section standalone under tectonic
