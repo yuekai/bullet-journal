@@ -114,3 +114,4 @@ description: How the llama serving stack is deployed
 
 - **Filename:** a lowercase kebab-case slug of the title.
 - **Frontmatter:** must include a non-empty `title` and `description`.
+- **Content:** There's no length limit, but a note must be mostly self-contained. It may link to or refer to other bullet-journal artifacts (relative links) and external links retrieved in the session, but it must not refer to the session transcript.

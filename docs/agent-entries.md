@@ -64,11 +64,11 @@ Examples:
 - **When:** only when the user asks, for example "log this conversation". Never on the agent's own initiative.
 - **Marker:** a note bullet (`- `), not a task, because a conversation reached conclusions rather than finishing work. Like a task entry, it is a new top-level bullet in today's section.
 - **Subject:** bold, at most 50 characters, capitalized, no trailing period. It is a noun phrase naming the topic or its conclusion, such as "Pricing options for the Q4 plan", not an imperative.
-- **Session (required):** `` (`<Harness>-session: <id>`) `` after the subject. It's the same trailer, with the same session ID, that the agent's harness writes in git commits, as prescribed by that harness's user-global `AGENTS.md` or `CLAUDE.md`. For example, Claude Code writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``. It takes the place a task entry's location has. There's no repo location, and there's no commit to point to, so the ID goes in the entry itself.
+- **Session:** in parentheses after the subject (eg, `` (`<trailer>`) ``), where `<trailer>` is the same session trailer your user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``. It takes the place a task entry's location occupies. There's no repo location, and there's no commit to point to, so the ID goes in the entry itself.
 - **Body (required, at most 500 characters):** see [Body](#body). The count is the body's text, without indentation.
   - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
   - Put chat exports in `YYYY-MM/assets/` and link them from a sub-bullet.
-- **Long conversations:** if the body exceeds 500 characters, write it as a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
+- **Long conversations:** if the body exceeds 500 characters, write it as a self-contained note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
 - **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing). A note is committed first, in its own commit without the `Log: ` prefix.
 

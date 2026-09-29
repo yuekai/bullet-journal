@@ -21,12 +21,12 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 
 - **Subject:** bold, at most 50 characters, capitalized, no trailing period.
   - Use a noun phrase naming the topic or its conclusion, not an imperative.
-- **Session:** in parentheses after the subject (eg, `` (`<trailer>`) ``), where `<trailer>` is the same session trailer your harness's user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
+- **Session:** in parentheses after the subject (eg, `` (`<trailer>`) ``), where `<trailer>` is the same session trailer your user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
 - **Body:** indent every line with 2 spaces (never tabs). No blank lines.
   - Optional prose first, one line per paragraph, then sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
   - Record the conclusions, decisions made (with their reason when it isn't obvious), and any unresolved questions; omit the back-and-forth that led there.
   - Write each line so it makes sense without the transcript.
-- **Long conversations:** if the body exceeds 500 chars (not counting indentation), write it as a note in `~/bullet-journal/notes/<slug>.md` with `title` and `description` frontmatter (see `~/bullet-journal/docs/journal-format.md`). The entry is then just the subject, linked to the note, plus the session, with no body: `` - [**<Subject>**](../notes/<slug>.md) (`<trailer>`) ``.
+- **Long conversations:** if the body exceeds 500 chars (not counting indentation), write it as a note in `~/bullet-journal/notes/<slug>.md` with `title` and `description` frontmatter (see `~/bullet-journal/docs/journal-format.md`). The note must be mostly self-contained: link to journal artifacts and to external sources you retrieved, but never refer to the session transcript. The entry is then just the subject, linked to the note, plus the session, with no body: `` - [**<Subject>**](../notes/<slug>.md) (`<trailer>`) ``. 
 - **Never include** secrets, credentials, tokens, private personal data, or sensitive operational details. If the conversation touched on any, leave them out.
 
 ## 2. Add it to today's log and commit
