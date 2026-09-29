@@ -25,17 +25,17 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 - **Location:** `` (`~/repo` @ `<short hash>`) `` for committed work, or `` (`~/repo`) `` for uncommitted work. Abbreviate the path with `~`. Leave the location out for work that isn't in a repo.
   - The location is what marks the entry as an agent's for the linter, so include it whenever the work is in a repo.
 - **Body:** indent every line with 2 spaces (never tabs). No blank lines.
-  - Write prose first, one line per paragraph, then optional sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
+  - Prose first, one line per paragraph, then optional sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
   - Explain how things worked before and what was wrong with that, how they work now, and why the change was implemented in the way it was.
   - Leave out implementation details (code is generally self-explanatory in this regard).
-  - If you made a commit, reuse its body.
   - Leave the body empty for self-explanatory work (eg, fixing typos).
+- If you made a commit, reuse its subject and body (but omit trailers).
 - **No session trailer in the entry:** the commit the location cites, and the `Log:` commit that adds the entry, both carry it.
 - **Never include** secrets, credentials, tokens, private personal data, or sensitive operational details.
 
 ## 2. Add it to today's log
 
-Let `YYYY-MM` be the current month and `## Ddd, Mon D, YYYY` today's header, for example `## Mon, Sep 28, 2026`. Use no zero-padding and make sure the weekday matches the date.
+Let `YYYY-MM` be the current month and `## Ddd, Mon D, YYYY` be today's header (eg, `## Mon, Sep 28, 2026`); don't zero-pad the header.
 
 1. If `~/bullet-journal/YYYY-MM/LOG.md` doesn't exist, create it:
    ```bash
@@ -44,9 +44,7 @@ Let `YYYY-MM` be the current month and `## Ddd, Mon D, YYYY` today's header, for
 2. Read the file. If today's header is missing, insert it in date order: after the last earlier day's section, or after the `**Tasks:**` list if there are no daily sections yet. Surround it with blank lines.
 3. Append your entry as a new top-level bullet at the end of today's section.
 
-**You must use the Edit tool** (Claude Code and Kimi Code: `Edit`; DeepSeek Harness: `edit`; Codex: `apply_patch` with `*** Update File`). Anchor each edit on a few lines near the insertion point.
-
-**Never rewrite a `LOG.md` as a whole, with no exceptions.** That means no `Write`/`write` tool, no Codex `*** Add File`/`*** Delete File`, no `>`, `tee` or `sed -i`, and no scripts. Other sessions may have appended entries since you read the file, and a whole-file write would erase them.
+**Never rewrite a `LOG.md` as a whole;** ie, no `Write`/`write` tool, no Codex `*** Add File`/`*** Delete File`, no `>`, `tee` or `sed -i`, and no scripts. Other sessions may have appended entries since you read the file, and a whole-file write would erase them. Instead, **always use the Edit tool** (eg, Claude Code and Kimi Code's `Edit`). Anchor each edit on a few lines near the insertion point.
 
 ## 3. Lint and commit
 

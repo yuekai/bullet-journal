@@ -21,19 +21,15 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 
 - **Subject:** bold, at most 50 characters, capitalized, no trailing period.
   - Use a noun phrase naming the topic or its conclusion, not an imperative.
-- **Session (in parentheses after the subject):** `` (`<trailer>`) ``, where `<trailer>` is the same session trailer your harness's user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
+- **Session:** in in parentheses after the subject (eg, `` (`<trailer>`) ``), where `<trailer>` is the same session trailer your harness's user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
 - **Body:** indent every line with 2 spaces (never tabs). No blank lines.
   - Optional prose first, one line per paragraph, then sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
-  - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
-  - Record what was concluded, not the back-and-forth that led there.
+  - Record the conclusions, decisions made  (with its reason when it isn't obvious), and any unresolved questions; omit the back-and-forth that led there.
   - Write each line so it makes sense without the transcript.
 - **Long conversations:**
   - If the entry would run past about 7 lines, write the details as a note in `~/bullet-journal/notes/<slug>.md`, with `title` and `description` frontmatter; see `~/bullet-journal/docs/journal-format.md`.
   - Link it with a sub-bullet such as `- Details: [<slug>](../notes/<slug>.md)`.
 - **Never include** secrets, credentials, tokens, private personal data, or sensitive operational details. If the conversation touched on any, leave them out.
-- **Summarizing a pasted chat:** if the user pastes a summary or transcript from another app, such as a Claude Desktop chat, write the entry from it with your own session ID. Add a `- Source: <link or app name>` sub-bullet as the last sub-bullet.
-
-Avoid entries that narrate the conversation instead of stating its conclusions, or that nest sub-bullets a second level deep.
 
 ## 2. Add it to today's log and commit
 
