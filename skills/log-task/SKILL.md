@@ -1,5 +1,5 @@
 ---
-name: bullet-journaling
+name: log-task
 description: Use after completing a task that changed something (code, config, data, or computer-use work), in any directory, to log the work to the user's bullet journal at ~/bullet-journal as a commit-message-style entry with your session ID. Also use when the user asks to log, record, or journal work.
 ---
 

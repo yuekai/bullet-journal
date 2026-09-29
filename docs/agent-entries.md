@@ -2,7 +2,7 @@
 
 When a coding or computer-use agent finishes a task, in any directory, it logs the work as one entry in today's daily log section. The entry is written like a git commit message, so the journal reads as a single timeline of what was done across all repos and machines, and why.
 
-The procedure agents follow lives in the skill, [`skills/bullet-journaling/SKILL.md`](../skills/bullet-journaling/SKILL.md). This page is the spec that `scripts/lint.py` enforces.
+The procedure agents follow lives in the skill, [`skills/log-task/SKILL.md`](../skills/log-task/SKILL.md). This page is the spec that `scripts/lint.py` enforces.
 
 ## Grammar
 

@@ -10,7 +10,7 @@ init-monthly-log = { cmd = "python scripts/init_monthly_log.py", description = "
 lint = { cmd = "python scripts/lint.py", description = "Lint monthly logs, agent entries, and notes" }
 test = { cmd = "pytest tests/", description = "Run the test suite" }
 check = { depends-on = ["lint", "test"], description = "Lint and test" }
-install = { cmd = "bash scripts/install.sh", description = "Enable git hooks and link the bullet-journaling skill into each harness" }
+install = { cmd = "bash scripts/install.sh", description = "Enable git hooks and link the skills into each harness" }
 
 [dependencies]
 python = ">=3.14.7,<3.15"
