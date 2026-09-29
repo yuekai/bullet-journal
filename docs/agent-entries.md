@@ -68,7 +68,7 @@ Examples:
 - **Body (required, at most 500 characters):** see [Body](#body). The count is the body's text, without indentation.
   - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
   - Put chat exports in `YYYY-MM/assets/` and link them from a sub-bullet.
-- **Long conversations:** if the body would run past 500 characters, write it as a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
+- **Long conversations:** if the body exceeds 500 characters, write it as a note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
 - **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing). A note is committed first, in its own commit without the `Log: ` prefix.
 
