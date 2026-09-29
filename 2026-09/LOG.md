@@ -66,3 +66,7 @@
   The note was a verbatim copy of a capped log entry and assumed the conversation's context. It now states what logging needs, what each Desktop tab lacks with verified/unverified marks, the recommended paste-back route, and its sources.
 - [x] **Suggest log-conversation for non-task sessions** (`~/bullet-journal` @ `f1f65c1`)
   log-task told agents to skip Q&A, exploration and abandoned work, so any conclusions those sessions reached were lost. log-task now has agents offer log-conversation for them. It still logs only if the user agrees, so no chat is logged unasked.
+- [x] **Draft Data mix subsection of K2 V3 report** (`~/K2_V3_Tech_Report`)
+  The subsection was a placeholder. It now explains the two-stage scaling-law prediction (loss laws, then per-benchmark regressions) and how it reversed the 1.5B ranking: SFT-heavy was best measured but predicted worst at 32B, so we chose the web-heavy mix. Adds tables, a TikZ schematic and pies.
+  - Numbers from the m2 bbq-data-scaling-laws report and mix JSONs; user will prune sensitive ones before public release
+  - Full paper doesn't compile under tectonic (pre-existing xcolor clash), so the section was verified standalone
