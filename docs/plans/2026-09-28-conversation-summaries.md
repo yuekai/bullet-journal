@@ -1,6 +1,6 @@
 # Plan: log conversation summaries in the bullet journal
 
-Status: done (2026-09-28). Landed as four commits: user-entry linting, trailer-based recognition, the log-task rename, and log-conversation.
+Status: done (2026-09-28). Landed as four commits: user-entry linting, trailer-based recognition, the log-task rename, and log-conversation. The long-summary rule is superseded by [linked-conversation-entries](2026-09-28-linked-conversation-entries.md).
 
 ## Context
 
