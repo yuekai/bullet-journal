@@ -62,3 +62,5 @@
 
 - [x] **Require notes to be self-contained** (`~/bullet-journal` @ `b8bca9c`)
   Notes had no content rule, so a note could lean on a transcript that may later vanish. Notes are now mostly self-contained: they link journal artifacts and retrieved sources but never the transcript. Session rules now name the trailer from the user-global instructions.
+- [x] **Expand note on Claude Desktop logging** (`~/bullet-journal` @ `2b26af7`)
+  The note was a verbatim copy of a capped log entry and assumed the conversation's context. It now states what logging needs, what each Desktop tab lacks with verified/unverified marks, the recommended paste-back route, and its sources.
