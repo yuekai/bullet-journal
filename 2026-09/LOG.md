@@ -64,3 +64,5 @@
   Notes had no content rule, so a note could lean on a transcript that may later vanish. Notes are now mostly self-contained: they link journal artifacts and retrieved sources but never the transcript. Session rules now name the trailer from the user-global instructions.
 - [x] **Expand note on Claude Desktop logging** (`~/bullet-journal` @ `2b26af7`)
   The note was a verbatim copy of a capped log entry and assumed the conversation's context. It now states what logging needs, what each Desktop tab lacks with verified/unverified marks, the recommended paste-back route, and its sources.
+- [x] **Suggest log-conversation for non-task sessions** (`~/bullet-journal` @ `f1f65c1`)
+  log-task told agents to skip Q&A, exploration and abandoned work, so any conclusions those sessions reached were lost. log-task now has agents offer log-conversation for them. It still logs only if the user agrees, so no chat is logged unasked.
