@@ -54,3 +54,6 @@
   Task entries repeated the session trailer that their cited commit and Log: commit already carry, and bodies were tab-indented with no sub-bullets. Entries now use 2-space indents and share one body shape, prose then sub-bullets. The linter spots task entries by location.
   - Conversation entries put the session in parentheses after the subject, since they have no commit to point to
   - The Bullet Journal reminder in each harness's global instructions (Claude Code, Codex, DSH, Kimi Code) no longer asks for a trailer
+- [x] **Link long conversation entries to notes** (`~/bullet-journal` @ `37a5f76`)
+  Conversation entries were capped at a vague "about 7 lines", with overflow linked as a Details: sub-bullet, and nothing enforced it. A body over 500 chars now fails lint and goes in a note that the subject links to, so the log reads one line per long conversation.
+  - Migrated "Logging Claude Desktop conversations" to notes/logging-claude-desktop-conversations.md
