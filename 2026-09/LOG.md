@@ -43,3 +43,6 @@
 - [x] **Prefix log commits and add global log reminder** (`~/bullet-journal` @ `0816918`)
 	Journal-entry commits reused the entry's subject, so an agent's change to this repo and the commit logging it looked identical in git log. They now start with "Log: ", enforced by a commit-msg hook, and the one earlier log commit was renamed to match. Agents also only logged when a skill happened to trigger, so each harness's global instructions (Claude Code, Codex, DSH, Kimi Code) now carry the same Bullet Journal reminder, along with the renamed Repository Long-term Memory section.
 	Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483
+- [x] **Lint user-written entries, not only agent entries** (`~/bullet-journal` @ `5522209`)
+	The linter checked only the task marker on the user's own bullets, so stray prose, * or numbered bullets, orphaned indented lines, notes under **Tasks:**, and misused strikethrough all passed. It now checks every entry against the format, whoever wrote it. Indentation may be tabs or spaces, since the user edits in editors that disagree on which to insert, and levels are compared by relative width rather than a fixed unit.
+	Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef
