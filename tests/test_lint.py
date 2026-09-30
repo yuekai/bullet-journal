@@ -21,17 +21,19 @@ CONVO = (
     "  Conversations reach conclusions that are lost with the transcript.\n"
     "  - Conversations are logged only on request\n"
 )
-LINKED_CONVO = f"- [**Logging Claude Desktop conversations**](../notes/desktop.md) (`{SESSION}`)\n"
+LINKED_CONVO = f"- [**Logging Claude Desktop conversations**](desktop.md) (`{SESSION}`)\n"
 
 
-def make_note(root: Path, name: str = "desktop.md") -> None:
-    (root / "notes").mkdir(exist_ok=True)
-    (root / "notes" / name).write_text("---\ntitle: T\ndescription: D\n---\n")
+def make_note(root: Path, name: str = "desktop.md", month: str = "2026-09", date: str = "2026-09-28") -> Path:
+    path = root / month / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(f"---\ntitle: T\ndescription: D\ndate: {date}\n---\n")
+    return path
 
 
 def make_log(root: Path, body: str = "", month: str = "2026-09") -> Path:
     year, mon = int(month[:4]), int(month[5:])
-    path = root / month / "LOG.md"
+    path = root / month / "log.md"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(generate(year, mon) + body)
     return path
@@ -80,10 +82,18 @@ def test_full_valid_log(tmp_path):
 
 
 def test_valid_note(tmp_path):
-    (tmp_path / "notes").mkdir()
-    (tmp_path / "notes" / "llama-serving-stack.md").write_text(
-        "---\ntitle: Llama serving stack\ndescription: How we serve llama\n---\n\n- text\n"
+    make_log(tmp_path)
+    (tmp_path / "2026-09" / "llama-serving-stack.md").write_text(
+        "---\ntitle: Llama serving stack\ndescription: How we serve llama\ndate: 2026-09-28\n---\n\n- text\n"
     )
+    assert lint(tmp_path) == []
+
+
+def test_other_markdown_is_not_a_note(tmp_path):
+    make_log(tmp_path)
+    for folder in ("docs", "skills", "2026-09/assets"):
+        (tmp_path / folder).mkdir()
+        (tmp_path / folder / "README.md").write_text("# Not a note\n")
     assert lint(tmp_path) == []
 
 
@@ -91,7 +101,7 @@ def test_valid_note(tmp_path):
 
 
 def test_bad_folder_name(tmp_path):
-    path = tmp_path / "sept" / "LOG.md"
+    path = tmp_path / "sept" / "log.md"
     path.parent.mkdir()
     path.write_text(generate(2026, 9))
     assert_one_error(tmp_path, "YYYY-MM")
@@ -140,7 +150,7 @@ def test_header_wrong_weekday(tmp_path):
 
 def test_header_wrong_month(tmp_path):
     make_log(tmp_path, "\n## Thu, Oct 1, 2026\n")
-    assert_one_error(tmp_path, "belongs in 2026-10/LOG.md")
+    assert_one_error(tmp_path, "belongs in 2026-10/log.md")
 
 
 def test_headers_out_of_order(tmp_path):
@@ -350,10 +360,10 @@ def test_linked_convo_entry(tmp_path):
     "body, fragment",
     [
         (LINKED_CONVO + "  - a conclusion\n", "has no body"),
-        ("- [**Topic**](../notes/desktop.md)\n", None),  # no session: a plain link note, not an entry
-        (f"- [**Topic**](../notes/desktop.md) ({SESSION})\n", "malformed conversation entry"),
-        (f"- [**{'A' * 51}**](../notes/desktop.md) (`{SESSION}`)\n", "shorten it to 50"),
-        (f"- [**Topic**](../notes/missing.md) (`{SESSION}`)\n", "notes/missing.md doesn't exist"),
+        ("- [**Topic**](desktop.md)\n", None),  # no session: a plain link note, not an entry
+        (f"- [**Topic**](desktop.md) ({SESSION})\n", "malformed conversation entry"),
+        (f"- [**{'A' * 51}**](desktop.md) (`{SESSION}`)\n", "shorten it to 50"),
+        (f"- [**Topic**](missing.md) (`{SESSION}`)\n", "2026-09/missing.md doesn't exist"),
     ],
 )
 def test_malformed_linked_convo_entry(tmp_path, body, fragment):
@@ -379,21 +389,52 @@ def test_convo_body_limit(tmp_path, size, errors):
 
 
 def test_note_bad_filename(tmp_path):
-    (tmp_path / "notes").mkdir()
-    (tmp_path / "notes" / "Llama Stack.md").write_text("---\ntitle: T\ndescription: D\n---\n")
+    make_note(tmp_path, "Llama Stack.md")
     assert_one_error(tmp_path, "kebab-case")
 
 
 def test_note_missing_description(tmp_path):
-    (tmp_path / "notes").mkdir()
-    (tmp_path / "notes" / "llama.md").write_text("---\ntitle: T\n---\n")
+    make_note(tmp_path, "llama.md").write_text("---\ntitle: T\ndate: 2026-09-28\n---\n")
     assert_one_error(tmp_path, "'description:'")
 
 
+def test_note_missing_date(tmp_path):
+    make_note(tmp_path, "llama.md").write_text("---\ntitle: T\ndescription: D\n---\n")
+    assert_one_error(tmp_path, "'date:'")
+
+
+@pytest.mark.parametrize("value", ["2026-9-28", "2026-09-31", "Sep 28, 2026", "2026-09-28T10:00"])
+def test_note_invalid_date(tmp_path, value):
+    make_note(tmp_path, "llama.md", date=value)
+    assert_one_error(tmp_path, "not a real YYYY-MM-DD date")
+
+
+def test_note_date_in_other_month(tmp_path):
+    make_note(tmp_path, "llama.md", date="2026-10-01")
+    assert_one_error(tmp_path, "belongs in 2026-10/")
+
+
 def test_note_missing_frontmatter(tmp_path):
-    (tmp_path / "notes").mkdir()
-    (tmp_path / "notes" / "llama.md").write_text("- just text\n")
+    make_note(tmp_path, "llama.md").write_text("- just text\n")
     assert_one_error(tmp_path, "frontmatter")
+
+
+def test_leftover_uppercase_log(tmp_path):
+    path = make_log(tmp_path)
+    path.rename(path.with_name("LOG.md"))
+    assert_one_error(tmp_path, "2026-09/LOG.md", "named log.md")
+
+
+def test_leftover_notes_folder(tmp_path):
+    make_log(tmp_path)
+    (tmp_path / "notes").mkdir()
+    (tmp_path / "notes" / "llama.md").write_text("---\ntitle: T\ndescription: D\ndate: 2026-09-28\n---\n")
+    assert_one_error(tmp_path, "notes no longer live in notes/")
+
+
+def test_linked_note_cannot_be_the_log(tmp_path):
+    make_log(tmp_path, day(f"- [**Topic**](log.md) (`{SESSION}`)\n"))
+    assert_one_error(tmp_path, "2026-09/log.md doesn't exist")
 
 
 # ---- CLI --------------------------------------------------------------
@@ -408,6 +449,6 @@ def test_cli_exit_codes(tmp_path):
     make_log(tmp_path, "\n- [-] bad\n", month="2026-10")
     bad = subprocess.run([sys.executable, script, "--root", tmp_path], capture_output=True, text=True)
     assert bad.returncode == 1
-    assert "2026-10/LOG.md:" in bad.stderr
+    assert "2026-10/log.md:" in bad.stderr
     assert "docs/journal-format.md" in bad.stderr
     assert "Edit tool" in bad.stderr

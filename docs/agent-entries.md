@@ -48,7 +48,7 @@ Example:
 Conversation entries whose body exceeds 500 characters, are written as notes; the entries are merely linked subjects:
 
 ```markdown
-- [**<Subject>**](../notes/<slug>.md) (`<Harness>-session: <session-id>`)
+- [**<Subject>**](<slug>.md) (`<Harness>-session: <session-id>`)
 ```
 
 Examples:
@@ -58,7 +58,7 @@ Examples:
   Conversation conclusions were lost with the transcript, so they are now logged on request.
   - Entries are note bullets, not [x] tasks, so "discussed" reads differently from "done"
   - Open: Claude Desktop chats need a paste-back step
-- [**Logging Claude Desktop conversations**](../notes/logging-claude-desktop-conversations.md) (`Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef`)
+- [**Logging Claude Desktop conversations**](logging-claude-desktop-conversations.md) (`Claude-session: 6ccbfae8-746b-4612-af0c-95d1ed3b6fef`)
 ```
 
 - **When:** only when the user asks, for example "log this conversation". Never on the agent's own initiative.
@@ -68,7 +68,7 @@ Examples:
 - **Body (required, at most 500 characters):** see [Body](#body). The count is the body's text, without indentation.
   - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
   - Put chat exports in `YYYY-MM/assets/` and link them from a sub-bullet.
-- **Long conversations:** if the body exceeds 500 characters, write it as a self-contained note in `notes/<slug>.md` (see the [notes format](journal-format.md#notes-notesslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
+- **Long conversations:** if the body exceeds 500 characters, write it as a self-contained note in `YYYY-MM/<slug>.md`, in the same folder as the log (see the [notes format](journal-format.md#notes-yyyy-mmslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
 - **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing). A note is committed first, in its own commit without the `Log: ` prefix.
 
@@ -97,7 +97,7 @@ This is a heuristic: an agent's computer-use task entry has no location, so it i
 
 ## Editing rules
 
-Several agent sessions may log to the same `LOG.md` at the same time. There is no lock, so these rules keep one session from silently erasing another session's entry:
+Several agent sessions may log to the same `log.md` at the same time. There is no lock, so these rules keep one session from silently erasing another session's entry:
 
 - **Required:** use the Edit tool. Each harness has one:
   - Claude Code and Kimi Code: `Edit`
@@ -105,7 +105,7 @@ Several agent sessions may log to the same `LOG.md` at the same time. There is n
   - Codex: `apply_patch` with `*** Update File`
 
   These tools replace a small span of the file *as it is on disk now*, so an entry another session appended a moment ago survives.
-- **Prohibited, with no exceptions:** rewriting a `LOG.md` as a whole. That includes:
+- **Prohibited, with no exceptions:** rewriting a `log.md` as a whole. That includes:
   - the `Write` or `write` tool,
   - Codex `*** Add File` or `*** Delete File`,
   - shell redirection (`>`, `tee`, `sed -i`),
@@ -114,14 +114,21 @@ Several agent sessions may log to the same `LOG.md` at the same time. There is n
   A whole-file write puts back whatever the agent read earlier and erases anything added since.
 - **New months:** a monthly log that doesn't exist yet is created only by `init-monthly-log`.
 - **Timing:** edit right before committing, and anchor the edit on text near the end of today's section, not on the whole section.
+- **Pull first:** the journal is shared by several machines through GitHub. Before reading the log, pull:
+  ```bash
+  git -C ~/bullet-journal pull --rebase --autostash origin main
+  ```
+  - If the remote is unreachable (eg, offline), log locally anyway and tell the user; the next pull and push will sync it.
+  - If the rebase stops on a conflict, run `git -C ~/bullet-journal rebase --abort` and tell the user. Don't resolve conflicts in another session's or machine's entries.
 
 ## Committing
 
-Every entry is committed right away, and only the file that was touched:
+Every entry is committed right away, and only the file that was touched, then pushed:
 
 ```bash
-git -C ~/bullet-journal add YYYY-MM/LOG.md
-git -C ~/bullet-journal commit -m "Log: <Subject>" -m "<Harness>-session: <id>" -- YYYY-MM/LOG.md
+git -C ~/bullet-journal add YYYY-MM/log.md
+git -C ~/bullet-journal commit -m "Log: <Subject>" -m "<Harness>-session: <id>" -- YYYY-MM/log.md
+git -C ~/bullet-journal push origin main
 ```
 
 - **Commit message:** the subject is `Log: ` followed by the entry's subject, and the trailer is the agent's session trailer. The entry itself serves as the body.
@@ -131,5 +138,6 @@ git -C ~/bullet-journal commit -m "Log: <Subject>" -m "<Harness>-session: <id>" 
 - **`-- <path>`:** commits only that file, even if another session has something else staged.
 - **Pre-commit hook:** runs `pixi run lint`. If it fails, fix the reported lines with the Edit tool and commit again.
 - **Commit-msg hook:** runs `scripts/check_commit_msg.py`.
-  - A commit that touches only `YYYY-MM/LOG.md` files must have a `Log: ` subject and a session trailer.
-  - A `Log: ` subject on a commit that touches anything else is rejected.
+  - A commit that touches only `YYYY-MM/log.md` files must have a `Log: ` subject and a session trailer.
+  - A `Log: ` subject on a commit that touches anything else, including a note, is rejected.
+- **Push:** if the push is rejected because the remote moved on, pull (as above) and push once more. If that fails too, leave the commit local and tell the user.

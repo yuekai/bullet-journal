@@ -1,4 +1,4 @@
-"""Create a blank monthly log (`YYYY-MM/LOG.md`) for a given YYYY-MM."""
+"""Create a blank monthly log (`YYYY-MM/log.md`) for a given YYYY-MM."""
 
 import argparse
 import calendar
@@ -55,7 +55,7 @@ def main():
     output_root = Path(args.output_root) if args.output_root else Path(__file__).resolve().parent.parent
     month_dir = output_root / f"{year:04d}-{month:02d}"
     month_dir.mkdir(parents=True, exist_ok=True)
-    out_path = month_dir / "LOG.md"
+    out_path = month_dir / "log.md"
     if out_path.exists():
         # Never regenerate: the existing log may hold entries from other sessions.
         parser.error(f"{out_path} already exists; edit it with the Edit tool instead")

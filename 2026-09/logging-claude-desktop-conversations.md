@@ -1,13 +1,14 @@
 ---
 title: Logging Claude Desktop conversations
 description: Which Claude Desktop tabs (Code, Cowork, Chat) can log a conversation to the journal, what each lacks, and the recommended workaround
+date: 2026-09-28
 ---
 
 Only the Desktop app's Code tab can log a conversation to this journal from start to finish. From the Chat tab, the recommended route is paste-back into Claude Code. Cowork is untested.
 
 **What logging a conversation needs**, per [agent-entries](../docs/agent-entries.md#conversation-entries):
 - The `log-conversation` skill ([SKILL.md](../skills/log-conversation/SKILL.md)), so the agent knows the entry format.
-- Targeted edits to `LOG.md`. Whole-file writes are forbidden because other sessions may be appending at the same time ([editing rules](../docs/agent-entries.md#editing-rules)).
+- Targeted edits to `log.md`. Whole-file writes are forbidden because other sessions may be appending at the same time ([editing rules](../docs/agent-entries.md#editing-rules)).
 - A shell, to run `pixi run lint` and `git commit`.
 - A session ID for the entry's `` (`<Harness>-session: <id>`) `` and for the commit trailer, which [check_commit_msg.py](../scripts/check_commit_msg.py) requires.
 
@@ -25,7 +26,7 @@ Only the Desktop app's Code tab can log a conversation to this journal from star
 
 **Chat tab:**
 - It has no skills from disk, no shell, no disk access and no session ID.
-- MCP servers configured in `claude_desktop_config.json` are available to Chat as well as to the Code tab. With a Filesystem MCP server scoped to `~/bullet-journal`, Chat could edit `LOG.md` directly, but whether it can make targeted edits is unverified. Chat also couldn't lint or commit, so its entry would stay uncommitted until another session's `Log:` commit swept it in under the wrong subject. This isn't worth it unless a shell connector is added too.
+- MCP servers configured in `claude_desktop_config.json` are available to Chat as well as to the Code tab. With a Filesystem MCP server scoped to `~/bullet-journal`, Chat could edit `log.md` directly, but whether it can make targeted edits is unverified. Chat also couldn't lint or commit, so its entry would stay uncommitted until another session's `Log:` commit swept it in under the wrong subject. This isn't worth it unless a shell connector is added too.
 
 **Recommendation:** log from the Code tab. For a Chat conversation, at the end ask Chat for a bullet-journal conversation entry in the [format](../docs/agent-entries.md#conversation-entries). Then paste it into a Claude Code session with "log this conversation". That session lints and commits it under its own session trailer.
 

@@ -7,7 +7,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 from check_commit_msg import check  # noqa: E402
 
 TRAILER = "Claude-session: 368d5791-4132-443f-8f46-b634c2d0d483"
-LOG = ["2026-09/LOG.md"]
+LOG = ["2026-09/log.md"]
 
 
 def test_valid_log_commit():
@@ -15,7 +15,7 @@ def test_valid_log_commit():
 
 
 def test_log_commit_across_months():
-    assert check(f"Log: Add retry logic\n\n{TRAILER}\n", ["2026-09/LOG.md", "2026-10/LOG.md"]) == []
+    assert check(f"Log: Add retry logic\n\n{TRAILER}\n", ["2026-09/log.md", "2026-10/log.md"]) == []
 
 
 def test_log_commit_missing_prefix():
@@ -36,9 +36,20 @@ def test_kimi_trailer_accepted():
 
 
 def test_prefix_on_non_log_commit():
-    errors = check(f"Log: Add retry logic\n\n{TRAILER}\n", ["2026-09/LOG.md", "scripts/lint.py"])
+    errors = check(f"Log: Add retry logic\n\n{TRAILER}\n", ["2026-09/log.md", "scripts/lint.py"])
     assert len(errors) == 1
     assert "scripts/lint.py" in errors[0]
+
+
+def test_prefix_on_note_commit():
+    errors = check(f"Log: Add note on pricing\n\n{TRAILER}\n", ["2026-09/pricing.md"])
+    assert len(errors) == 1
+    assert "2026-09/pricing.md" in errors[0]
+
+
+def test_uppercase_log_is_not_a_log_path():
+    errors = check(f"Log: Add retry logic\n\n{TRAILER}\n", ["2026-09/LOG.md"])
+    assert len(errors) == 1
 
 
 def test_normal_commit_unaffected():
@@ -46,7 +57,7 @@ def test_normal_commit_unaffected():
 
 
 def test_mixed_commit_without_prefix_allowed():
-    assert check("Rename header format\n", ["2026-09/LOG.md", "docs/journal-format.md"]) == []
+    assert check("Rename header format\n", ["2026-09/log.md", "docs/journal-format.md"]) == []
 
 
 def test_comment_lines_ignored():

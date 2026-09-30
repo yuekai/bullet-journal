@@ -8,10 +8,9 @@ Entries written by agents (task and conversation entries) have their own spec: [
 
 ```
 YYYY-MM/
-├── LOG.md     # monthly log: calendar + monthly tasks + daily log sections
-└── assets/    # optional: files the log links to (chat exports, images, PDFs, …)
-notes/
-└── <slug>.md  # long-form notes
+├── log.md     # monthly log: calendar + monthly tasks + daily log sections
+├── <slug>.md  # optional: long-form notes dated in this month
+└── assets/    # optional: files the log and notes link to (chat exports, images, PDFs, …)
 ```
 
 This journal differs from a standard bullet journal in these ways:
@@ -21,7 +20,7 @@ This journal differs from a standard bullet journal in these ways:
 - **No future log:** a future task goes straight into the monthly log of its target month. Create that log with `init-monthly-log` if it doesn't exist yet.
 - **No index:** the file tree serves as the index.
 
-## Monthly log (`YYYY-MM/LOG.md`)
+## Monthly log (`YYYY-MM/log.md`)
 
 Create a monthly log only with `pixi run init-monthly-log YYYY-MM`. From another directory, run `pixi run --manifest-path ~/bullet-journal/pixi.toml init-monthly-log YYYY-MM`. The command refuses to overwrite an existing log. After that, change the file only with the Edit tool (see [agent-entries.md](agent-entries.md#editing-rules)).
 
@@ -84,7 +83,7 @@ Larger efforts that span days or weeks are listed under `**Tasks:**`.
 | Dropped task | `- [ ] ~~text~~` |
 | Note | `- text` |
 | Agent work | ``- [x] **Subject** (`~/repo` …)`` plus an optional body (see [agent-entries.md](agent-entries.md)) |
-| Agent conversation summary | ``- **Subject** (`Claude-session: <id>`)`` plus prose and sub-bullets, or ``- [**Subject**](../notes/<slug>.md) (`Claude-session: <id>`)`` alone for a long one (see [agent-entries.md](agent-entries.md#conversation-entries)) |
+| Agent conversation summary | ``- **Subject** (`Claude-session: <id>`)`` plus prose and sub-bullets, or ``- [**Subject**](<slug>.md) (`Claude-session: <id>`)`` alone for a long one (see [agent-entries.md](agent-entries.md#conversation-entries)) |
 
 The linter checks every entry, whoever wrote it:
 
@@ -101,17 +100,19 @@ The linter checks every entry, whoever wrote it:
 - **Monthly tasks:** top-level items under `**Tasks:**` must be tasks. Notes can nest under them.
 - **Links:** `- [label](url)` is a note, not a task. Only `[ ]`, `[x]` and `[>]` count as task markers.
 
-## Notes (`notes/<slug>.md`)
+## Notes (`YYYY-MM/<slug>.md`)
 
 ```markdown
 ---
 title: Llama serving stack
 description: How the llama serving stack is deployed
+date: 2026-09-28
 ---
 
 - …
 ```
 
+- **Location:** every Markdown file in a month folder other than `log.md` is a note. It goes in the folder of the month it's dated in, next to the log that links to it, so a link from the log is just `<slug>.md`.
 - **Filename:** a lowercase kebab-case slug of the title.
-- **Frontmatter:** must include a non-empty `title` and `description`.
+- **Frontmatter:** must include a non-empty `title`, `description` and `date`. The `date` is the day the note was written, as `YYYY-MM-DD`, and must fall in the folder's month.
 - **Content:** There's no length limit, but a note must be mostly self-contained. It may link to or refer to other bullet-journal artifacts (relative links) and external links retrieved in the session, but it must not refer to the session transcript.

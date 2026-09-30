@@ -90,17 +90,17 @@ def test_output_ends_with_tasks_section():
 
 
 def test_writes_correct_filename():
-    """Script should write to YYYY-MM/LOG.md."""
+    """Script should write to YYYY-MM/log.md, lowercase."""
     with tempfile.TemporaryDirectory() as td:
         result, output = run_script(["2026-04"], Path(td))
         assert result.returncode == 0
-        assert (Path(td) / "2026-04" / "LOG.md").exists()
+        assert [p.name for p in (Path(td) / "2026-04").iterdir()] == ["log.md"]
 
 
 def test_refuses_to_overwrite_existing():
     """Script should exit non-zero if the log file already exists."""
     with tempfile.TemporaryDirectory() as td:
-        existing = Path(td) / "2026-04" / "LOG.md"
+        existing = Path(td) / "2026-04" / "log.md"
         existing.parent.mkdir(parents=True)
         existing.write_text("existing content")
         result, _ = run_script(["2026-04"], Path(td))

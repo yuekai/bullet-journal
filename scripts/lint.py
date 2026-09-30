@@ -1,4 +1,4 @@
-"""Lint the bullet journal: monthly logs, their entries (user-written and agent), and notes.
+"""Lint the bullet journal: monthly logs, their entries (user-written and agent), and the notes beside them.
 
 Every error names the fix and the doc that specifies the rule, so an agent can
 repair the journal from the error output alone.
@@ -42,11 +42,13 @@ TASK_FIRST_RE = re.compile(
 SESSION_TRAILER = r"\(`(?P<trailer>[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: [^`\s]+)`\)"
 CONVO_FIRST_RE = re.compile(r"^- \*\*(?P<subject>[^*]+)\*\* " + SESSION_TRAILER + "$")
 LINKED_CONVO_FIRST_RE = re.compile(
-    r"^- \[\*\*(?P<subject>[^*]+)\*\*\]\(\.\./notes/(?P<note>[^)/]+\.md)\) " + SESSION_TRAILER + "$"
+    r"^- \[\*\*(?P<subject>[^*]+)\*\*\]\((?P<note>[^)/]+\.md)\) " + SESSION_TRAILER + "$"
 )
 CONVO_BODY_MAX = 500  # chars of body text; longer conversations go in a linked note
 TRAILER_LIKE_RE = re.compile(r"^\s*(?:- )?[A-Za-z-]+-session:")  # plain or bulleted
 NOTE_NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
+NOTE_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+LOG_NAME = "log.md"
 
 
 @dataclass
@@ -287,7 +289,7 @@ class Linter:
             self.error(path, i + 1, f"'{line}' is not a real date", FORMAT_DOC)
             return
         if (d.year, d.month) != (year, month):
-            self.error(path, i + 1, f"'{line}' belongs in {d:%Y-%m}/LOG.md, not this month's log", FORMAT_DOC)
+            self.error(path, i + 1, f"'{line}' belongs in {d:%Y-%m}/log.md, not this month's log", FORMAT_DOC)
         dow = HEADER_DAY_ABBREVS[d.weekday()]
         if m["dow"] != dow:
             self.error(path, i + 1, f"{d:%b} {d.day}, {d.year} is a {dow}, not a {m['dow']}", FORMAT_DOC)
@@ -311,17 +313,17 @@ class Linter:
         m = linked or CONVO_FIRST_RE.match(first.text)
         if not m:
             self.error(path, first.i + 1, "malformed conversation entry first line; use '- **Subject** "
-                       "(`Claude-session: <session-uuid>`)', or '- [**Subject**](../notes/<slug>.md) "
-                       "(`Claude-session: <session-uuid>`)' for a long one, with the trailer your harness's "
+                       "(`Claude-session: <session-uuid>`)', or '- [**Subject**](<slug>.md) "
+                       "(`Claude-session: <session-uuid>`)' for a long one, linking a note in the log's folder, with the trailer your harness's "
                        "user-global AGENTS.md/CLAUDE.md prescribes for git commits, and nothing else after it",
                        AGENT_DOC)
         else:
             self.lint_subject(path, first, m["subject"])
         body = item[1:]
         if first.text.startswith("- [**"):  # the linked form, even if malformed
-            if linked and not (self.root / "notes" / linked["note"]).is_file():
-                self.error(path, first.i + 1, f"linked note notes/{linked['note']} doesn't exist; write it or "
-                           "fix the link", AGENT_DOC)
+            if linked and (linked["note"] == LOG_NAME or not (path.parent / linked["note"]).is_file()):
+                self.error(path, first.i + 1, f"linked note {path.parent.name}/{linked['note']} doesn't exist; "
+                           "write it in the log's folder or fix the link", AGENT_DOC)
             if body:
                 self.error(path, body[0].i + 1, "a linked conversation entry has no body; move these lines "
                            "into the linked note", AGENT_DOC)
@@ -332,8 +334,8 @@ class Linter:
         size = sum(len(line.text) for line in body)
         if size > CONVO_BODY_MAX:
             self.error(path, first.i + 1, f"conversation entry body is {size} chars; over {CONVO_BODY_MAX}, "
-                       "write it as a note in notes/<slug>.md and link the subject to it, "
-                       "'- [**Subject**](../notes/<slug>.md) (`…-session: …`)', with no body", AGENT_DOC)
+                       "write it as a note in YYYY-MM/<slug>.md and link the subject to it, "
+                       "'- [**Subject**](<slug>.md) (`…-session: …`)', with no body", AGENT_DOC)
         self.lint_entry_body(path, body)
 
     def lint_entry_body(self, path, body: list[Line]) -> None:
@@ -376,8 +378,8 @@ class Linter:
                        "(e.g., 'llama-serving-stack.md')", FORMAT_DOC)
         lines = path.read_text().split("\n")
         if not lines or lines[0] != "---":
-            self.error(path, 1, "note must start with '---' YAML frontmatter containing title and description",
-                       FORMAT_DOC)
+            self.error(path, 1, "note must start with '---' YAML frontmatter containing title, description "
+                       "and date", FORMAT_DOC)
             return
         try:
             end = lines.index("---", 1)
@@ -385,19 +387,41 @@ class Linter:
             self.error(path, 1, "note frontmatter is not closed with '---'", FORMAT_DOC)
             return
         fields = dict(l.split(":", 1) for l in lines[1:end] if ":" in l)
-        for key in ("title", "description"):
+        for key in ("title", "description", "date"):
             if not fields.get(key, "").strip():
                 self.error(path, 1, f"note frontmatter needs a non-empty '{key}:'", FORMAT_DOC)
+        value = fields.get("date", "").strip()
+        if value:
+            self.lint_note_date(path, value, int(path.parent.name[:4]), int(path.parent.name[5:]))
+
+    def lint_note_date(self, path: Path, value: str, year: int, month: int) -> None:
+        try:
+            d = date.fromisoformat(value) if NOTE_DATE_RE.match(value) else None
+        except ValueError:
+            d = None
+        if d is None:
+            self.error(path, 1, f"note date '{value}' is not a real YYYY-MM-DD date", FORMAT_DOC)
+        elif (d.year, d.month) != (year, month):
+            self.error(path, 1, f"note dated {value} belongs in {d:%Y-%m}/, not {path.parent.name}/", FORMAT_DOC)
 
     # ---- driver -------------------------------------------------------
 
     def run(self) -> list[str]:
-        for log in sorted(self.root.glob("*/LOG.md")):
-            self.lint_log(log)
-        notes = self.root / "notes"
-        if notes.is_dir():
-            for note in sorted(notes.glob("*.md")):
-                self.lint_note(note)
+        # Match filenames exactly: on a case-insensitive filesystem, LOG.md would also "exist" as log.md.
+        for folder in sorted(p for p in self.root.iterdir() if p.is_dir() and not p.name.startswith(".")):
+            names = {f.name for f in folder.iterdir()}
+            if folder.name == "notes" and any(name.endswith(".md") for name in names):
+                self.error(folder, None, "notes no longer live in notes/; move each note into the YYYY-MM/ "
+                           "folder of its date and fix the links to it", FORMAT_DOC)
+            if "LOG.md" in names:
+                self.error(folder / "LOG.md", None, "the monthly log is named log.md now; rename it with "
+                           "`git mv`", FORMAT_DOC)
+            if LOG_NAME in names:
+                self.lint_log(folder / LOG_NAME)
+            if MONTH_DIR_RE.match(folder.name) and 1 <= int(folder.name[5:]) <= 12:
+                for name in sorted(names):
+                    if name.endswith(".md") and name not in (LOG_NAME, "LOG.md"):
+                        self.lint_note(folder / name)
         return self.errors
 
 
@@ -409,7 +433,7 @@ def main() -> int:
     for e in errors:
         print(e, file=sys.stderr)
     if errors:
-        print(f"\n{len(errors)} lint error(s). Fix them with the Edit tool (never rewrite a LOG.md "
+        print(f"\n{len(errors)} lint error(s). Fix them with the Edit tool (never rewrite a log.md "
               "with Write), then rerun `pixi run lint`.", file=sys.stderr)
         return 1
     return 0

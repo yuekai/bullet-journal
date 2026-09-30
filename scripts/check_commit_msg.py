@@ -9,7 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-LOG_PATH_RE = re.compile(r"^\d{4}-\d{2}/LOG\.md$")
+LOG_PATH_RE = re.compile(r"^\d{4}-\d{2}/log\.md$")
 TRAILER_RE = re.compile(r"^[A-Z][A-Za-z]*(?:-[A-Z][A-Za-z]*)*-session: \S+$", re.MULTILINE)
 PREFIX = "Log: "
 DOC = "docs/agent-entries.md#committing"
@@ -32,7 +32,7 @@ def check(message: str, files: list[str]) -> list[str]:
             errors.append("journal-entry commits need your session trailer, e.g. -m 'Claude-session: <uuid>'")
     elif subject.startswith(PREFIX):
         others = [f for f in files if not LOG_PATH_RE.match(f)]
-        errors.append(f"'{PREFIX}' is only for commits that touch nothing but YYYY-MM/LOG.md files; "
+        errors.append(f"'{PREFIX}' is only for commits that touch nothing but YYYY-MM/log.md files; "
                       f"commit {', '.join(others)} separately without the prefix")
     return [f"{e} (see {DOC})" for e in errors]
 

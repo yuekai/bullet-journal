@@ -9,9 +9,9 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 
 ## When to log tasks/work
 
-- **Log:** once per completed task that changed state, such as code, config, data, files, or actions taken on a computer. Log after the task's git commit, if there is one, so you can cite its hash. If a session completed multiple distinct tasks, log the tasks in separate entries.
-- **Don't log:** minor changes (eg, cosmetic changes, typo fixes, etc).
-- **Log as conversation/discussion:** pure Q and A sessions, exploration sessions that made no changes, and work that was abandoned or reverted aren't task entries. If the session reached conclusions worth keeping (eg, an answer, findings, or why an approach failed), end your reply by offering, in one line, to log them with the `log-conversation` skill. Use it only if the user says yes.
+- **Log as task/work:** once per completed task that changed state, such as code, config, data, files, or actions taken on a computer. Log after the task's git commit, if there is one, so you can cite its hash. If a session completed multiple distinct tasks, log the tasks in separate entries.
+- **Suggest logging as conversation/discussion:** pure Q and A sessions, exploration sessions that made no changes, and work that was abandoned or reverted aren't task entries. If the session reached conclusions worth keeping (eg, an answer, findings, or why an approach failed), end your reply by offering, in one line, to log them with the `log-conversation` skill. Use it only if the user says yes.
+- Don't log minor changes (eg, cosmetic changes, typo fixes, etc).
 
 ## 1. Write the entry
 
@@ -37,27 +37,35 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 
 Let `YYYY-MM` be the current month and `## Ddd, Mon D, YYYY` be today's header (eg, `## Mon, Sep 28, 2026`); don't zero-pad the header.
 
-1. If `~/bullet-journal/YYYY-MM/LOG.md` doesn't exist, create it:
+1. Pull first, since the journal is synced across machines through GitHub:
+   ```bash
+   git -C ~/bullet-journal pull --rebase --autostash origin main
+   ```
+   - If the remote is unreachable (eg, offline), continue and log locally, and tell the user.
+   - If the rebase stops on a conflict, run `git -C ~/bullet-journal rebase --abort`, stop, and tell the user. Never resolve conflicts in others' entries.
+2. If `~/bullet-journal/YYYY-MM/log.md` doesn't exist, create it:
    ```bash
    pixi run --manifest-path ~/bullet-journal/pixi.toml init-monthly-log YYYY-MM
    ```
-2. Read the file. If today's header is missing, insert it in date order: after the last earlier day's section, or after the `**Tasks:**` list if there are no daily sections yet. Surround it with blank lines.
-3. Append your entry as a new top-level bullet at the end of today's section.
+3. Read the file. If today's header is missing, insert it in date order: after the last earlier day's section, or after the `**Tasks:**` list if there are no daily sections yet. Surround it with blank lines.
+4. Append your entry as a new top-level bullet at the end of today's section.
 
-**Never rewrite a `LOG.md` as a whole;** ie, no `Write`/`write` tool, no Codex `*** Add File`/`*** Delete File`, no `>`, `tee` or `sed -i`, and no scripts. Other sessions may have appended entries since you read the file, and a whole-file write would erase them. Instead, **always use the Edit tool** (eg, Claude Code and Kimi Code's `Edit`). Anchor each edit on a few lines near the insertion point.
+**Never rewrite a `log.md` as a whole;** ie, no `Write`/`write` tool, no Codex `*** Add File`/`*** Delete File`, no `>`, `tee` or `sed -i`, and no scripts. Other sessions may have appended entries since you read the file, and a whole-file write would erase them. Instead, **always use the Edit tool** (eg, Claude Code and Kimi Code's `Edit`). Anchor each edit on a few lines near the insertion point.
 
-## 3. Lint and commit
+## 3. Lint, commit and push
 
 ```bash
 pixi run --manifest-path ~/bullet-journal/pixi.toml lint
-git -C ~/bullet-journal add YYYY-MM/LOG.md
-git -C ~/bullet-journal commit -m "Log: <Subject>" -m "<your session trailer>" -- YYYY-MM/LOG.md
+git -C ~/bullet-journal add YYYY-MM/log.md
+git -C ~/bullet-journal commit -m "Log: <Subject>" -m "<your session trailer>" -- YYYY-MM/log.md
+git -C ~/bullet-journal push origin main
 ```
 
 - **Lint and hook failures:** if lint or the pre-commit hook reports errors, fix *your* entry with the Edit tool as the message says, then retry.
 - **Errors in someone else's entry:** don't rewrite another session's entry. That session is probably fixing it, so wait a few seconds and retry the commit. If it still fails, tell the user.
 - **`.git/index.lock` exists:** another session is committing. Wait a few seconds and retry.
-- **Commit scope:** commit only the log file you edited (`-- YYYY-MM/LOG.md`).
+- **Commit scope:** commit only the log file you edited (`-- YYYY-MM/log.md`).
 - **Commit subject:** `Log: ` plus the entry's subject. A commit-msg hook enforces it.
+- **Push rejected:** another machine pushed first. Pull (step 2.1) and push once more. If it fails again, or the remote is unreachable, leave the commit local and tell the user.
 
 Full spec: `~/bullet-journal/docs/agent-entries.md`. Journal format: `~/bullet-journal/docs/journal-format.md`.
