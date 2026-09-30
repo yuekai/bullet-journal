@@ -9,7 +9,7 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 
 ## When to log tasks/work
 
-- **Log as task/work:** once per completed task that changed state, such as code, config, data, files, or actions taken on a computer. Log after the task's git commit, if there is one, so you can cite its hash. If a session completed multiple distinct tasks, log the tasks in separate entries.
+- **Log tasks/work:** once per completed task that changed state, such as code, config, data, files, or actions taken on a computer. Log after the task's git commit, if there is one, so you can cite its hash. If a session completed multiple distinct tasks, log the tasks in separate entries.
 - **Suggest logging as conversation/discussion:** pure Q and A sessions, exploration sessions that made no changes, and work that was abandoned or reverted aren't task entries. If the session reached conclusions worth keeping (eg, an answer, findings, or why an approach failed), end your reply by offering, in one line, to log them with the `log-conversation` skill. Use it only if the user says yes.
 - Don't log minor changes (eg, cosmetic changes, typo fixes, etc).
 
@@ -18,7 +18,6 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 ```markdown
 - [x] **Add retry logic to dataset uploader** (`~/HDP-lib` @ `a1b2c3d`)
   Uploads to the Hub failed outright on transient 5xx errors, so long runs lost hours of work. The uploader now retries with exponential backoff.
-  - Chose backoff over a persistent queue because failures are rare and short-lived
 ```
 
 - **Subject:** bold, 50 chars max, capitalized, imperative mood ("If applied, this will ___"), no trailing period. It names the change.

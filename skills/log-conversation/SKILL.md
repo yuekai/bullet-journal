@@ -7,7 +7,7 @@ description: Use only when the user asks you to log, record, journal or summariz
 
 The user's bullet journal at `~/bullet-journal` is long-term memory, readable by people, shared by all of their agents. When the user asks, add one entry to today's daily log that records what this conversation concluded, so that future agents, and the user, can pick up where it left off.
 
-**Log a conversation only when the user asks.** If they don't, don't. Completed tasks/work (code, config, data, computer use) is logged separately with the `log-task` skill.
+**Log a conversation only when the user asks.** If they don't, don't. If the session completed tasks/work (eg, created/modified code, config, data, etc), log the tasks/work with the `log-task` skill.
 
 ## 1. Write the entry
 
