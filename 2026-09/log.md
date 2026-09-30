@@ -84,3 +84,4 @@
 - [x] **Move notes into month folders; lowercase log.md** (`~/bullet-journal` @ `9b3b618`)
   Notes sat in a separate notes/ folder away from the log that links them, and had no date. Now each note lives in its month folder with a required date, the log is log.md, and the logging skills pull before and push after, since the journal syncs across machines via GitHub.
   - The linter flags a leftover LOG.md or notes/ folder, comparing names exactly because macOS is case-insensitive
+- [**Strategic p-value publication game**](strategic-p-value-publication-game.md) (`Claude-session: de1b2c20-8451-4307-a3d5-b50525cbdd03`)
