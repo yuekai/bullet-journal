@@ -81,3 +81,6 @@
   The Math reasoning subsection had only a placeholder for the Socratic teacher–student data. It now describes the m2 math-dialogues v2 pipeline: hard (>8k-token), prime-free problems, GPT-OSS-120B student and teacher, Socratic or Nemotron-persona teacher prompts, an effort grid, and student-as-assistant rendering. Adds a per-config table, a TikZ schematic and a takeaway box.
   - 8.11M dialogues, 27.45B student tokens (exact) and ~38.4B in total (teacher side estimated), from a full pass over the m2 outputs
   - Nemotron-Personas citation and release status left as \my{} notes; verified by compiling the section standalone under tectonic
+- [x] **Move notes into month folders; lowercase log.md** (`~/bullet-journal` @ `9b3b618`)
+  Notes sat in a separate notes/ folder away from the log that links them, and had no date. Now each note lives in its month folder with a required date, the log is log.md, and the logging skills pull before and push after, since the journal syncs across machines via GitHub.
+  - The linter flags a leftover LOG.md or notes/ folder, comparing names exactly because macOS is case-insensitive
