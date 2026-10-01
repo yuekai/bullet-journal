@@ -48,3 +48,7 @@
   The Sep 1 SFT export merged separate start..done segments (e.g. reviewer revisions) and pre/post-compaction dialogs into conversations the model never saw, and it validated against the shrd/ gate instead of `~/data-engineering/SFT/process_entry.py`. The untracked exporter on m2 now emits one entry per rollout, keeps only status `done`, and gates with that file's defaults. Result: 14,332 rollouts, 492.7M tokens (avg 34.4k), 1,421 rejected to `rollouts.rejects.jsonl`.
   - Spark's pilot runs and m2's `20260825-085031` contribute nothing: they predate reasoning capture, and the default gate requires think.
   - Re-gating a 500-record sample passed with no errors, and no rollout ids are duplicated.
+- [x] **Refresh Danus SFT export on m2** (`~/Danus`)
+  The Sep 2 trajectory export missed the last week of linalg runs and all of solveall, and it had been gated against the shrd/ copy of the validator. The existing exporter and validator scripts were re-run unchanged over all runtime/kimi-home sessions and gated with `~/data-engineering/SFT/process_entry.py`. Result: 33,174 of 33,776 trajectories kept (98.2%), 3.91B tokens, averaging 117.8k (median 92.4k). The earlier run kept 20,006 trajectories and 2.40B tokens.
+  - Outputs and `export_report.md` are in `~/shrd/Danus/runtime/exports/`. The Sep 2 files are archived in `2026-09-02/` there.
+  - Drops are model-side violations such as string-encoded array args, invented args and repetition loops, so they stay dropped. The orchestrator's own operator sessions in `~/.kimi-code` stay out of scope.
