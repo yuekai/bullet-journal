@@ -40,3 +40,5 @@
 
 - [**Online p-value publication game**](online-p-value-publication-game.md) (`Claude-session: de1b2c20-8451-4307-a3d5-b50525cbdd03`)
 - [**Strategic z-value publication game**](strategic-z-value-publication-game.md) (`Claude-session: de1b2c20-8451-4307-a3d5-b50525cbdd03`)
+- [x] **Install journal skills on m2 and spark** (`~/bullet-journal` @ `89e6e23`)
+  Agents on the Linux machines m2 and spark couldn't log their work: the journal wasn't cloned there and pixi.toml only supported osx-arm64, so the pixi-backed git hooks failed. Both machines now have the journal cloned over SSH, with `log-task` and `log-conversation` linked for Claude Code, Codex, DSH and Kimi Code. The workspace now also supports linux-64 and linux-aarch64.
