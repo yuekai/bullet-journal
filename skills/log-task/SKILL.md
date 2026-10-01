@@ -1,6 +1,6 @@
 ---
 name: log-task
-description: Use after completing a task that changed something (code, config, data, or computer-use work), in any directory, to log the work to the user's bullet journal at ~/bullet-journal as a task entry. Also use when the user asks to log, record tasks/work.
+description: Use after completing a task that changed something (code, config, data, or computer-use work), in any directory, to log the work to the user's bullet journal at ~/bullet-journal as a task entry. Also use when the user asks to log or record tasks/work.
 ---
 
 # Bullet journaling: log your completed work

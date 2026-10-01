@@ -1,13 +1,13 @@
 ---
 name: log-conversation
-description: Use only when the user asks you to log, record, journal or summarize a conversation/discussion in their bullet journal (e.g. "log this conversation", "journal what we decided"). Writes the conversation's conclusions to ~/bullet-journal as a note entry with your session ID. Never use it on your own initiative.
+description: Use when the user asks you to log or record a conversation/discussion in their bullet journal (e.g. "log this conversation", "journal what we decided"). Writes the conversation's conclusions to ~/bullet-journal as a note entry with your session ID. 
 ---
 
 # Log conversations/discussions
 
 The user's bullet journal at `~/bullet-journal` is long-term memory, readable by people, shared by all of their agents. When the user asks, add one entry to today's daily log that records what this conversation concluded, so that future agents, and the user, can pick up where it left off.
 
-**Log a conversation only when the user asks.** If they don't, don't. If the session completed tasks/work (eg, created/modified code, config, data, etc), log the tasks/work with the `log-task` skill.
+**Log a conversation only when the user asks.** Never log a conversation  on your own initiative. If the session completed tasks/work (eg, created/modified code, config, data, etc), log the tasks/work with the `log-task` skill.
 
 ## 1. Write the entry
 
@@ -24,8 +24,8 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 - **Session:** in parentheses after the subject (eg, `` (`<trailer>`) ``), where `<trailer>` is the same session trailer your user-global `AGENTS.md` or `CLAUDE.md` tells you to put in git commits, with the same session ID. Claude Code, for example, writes `` (`Claude-session: $CLAUDE_CODE_SESSION_ID`) ``.
 - **Body:** indent every line with 2 spaces (never tabs). No blank lines.
   - Optional prose first, one line per paragraph, then sub-bullets, one level only. A prose line after a sub-bullet would render as part of it.
-  - Record the conclusions, decisions made (with their reason when it isn't obvious), and any unresolved questions; omit the back-and-forth that led there.
-  - Write each line so it makes sense without the transcript.
+  - Record the conclusions, decisions made, unresolved questions; omit the back-and-forth that led up to them. 
+  - Write the entry so it makes sense without the session transcript; ie, it should be self-contained.
 - **Long conversations:** if the body exceeds 500 chars (not counting indentation), write it as a note in `~/bullet-journal/YYYY-MM/<slug>.md`, next to this month's `log.md`, with `title`, `description` and `date` (today, `YYYY-MM-DD`) frontmatter (see `~/bullet-journal/docs/journal-format.md`). The note must be mostly self-contained: link to journal artifacts and to external sources you retrieved, but never refer to the session transcript. The entry is then just the subject, linked to the note, plus the session, with no body: `` - [**<Subject>**](<slug>.md) (`<trailer>`) ``. 
 - **Never include** secrets, credentials, tokens, private personal data, or sensitive operational details. If the conversation touched on any, leave them out.
 
@@ -33,8 +33,8 @@ The user's bullet journal at `~/bullet-journal` is long-term memory, readable by
 
 Follow steps 2 and 3 of `~/bullet-journal/skills/log-task/SKILL.md` exactly:
 - pull from GitHub first (before writing a note, too);
-- use the Edit tool, never a whole-file write;
 - create a missing month with `init-monthly-log`;
+- use the Edit tool, never a whole-file write;
 - lint;
 - commit only the files you touched, with subject `Log: <Subject>` and your session trailer;
 - push.
