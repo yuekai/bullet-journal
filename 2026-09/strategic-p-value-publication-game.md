@@ -436,32 +436,7 @@ Statements marked *(computed)* come from our own numerical calculations and *(sk
      - Can a non-publication-maximising author make the editor's *power* objective worse than under the publication-maximising benchmark, and by how much?
      - Do we ever need guarantees for every submission beyond Result 3? For example, FDR rules that aren't self-consistent in the Blanchard–Roquain sense.
 
-5. **Signal scaling beyond the two-group model.**
-   - *Motivation:* the Donoho–Jin model ([Donoho & Jin](https://arxiv.org/abs/math/0410072)) has exact nulls plus N^(1−β) signals of size √(2r log N). Under it, Holm publishes about N^(1−β−(1−√r)²) (sketch), with a phase transition at r = (1 − √(1−β))², their detection boundary for the maximum.
-   - *Proposed model:* no exact nulls. θᵢ ~ N(0, τ²) and zᵢ | θᵢ ~ N(θᵢ, 1). Every point null is false, so FWER and FDR against point nulls are vacuous, and the error must change. Two options:
-     - **sign errors:** publishing "θᵢ > 0" when θᵢ < 0 ([Gelman & Tuerlinckx 2000](https://link.springer.com/article/10.1007/s001800000040), Type S errors; the local false sign rate of [Stephens 2017](https://academic.oup.com/biostatistics/article/18/2/275/2557030));
-     - **interval nulls** |θᵢ| ≤ δ.
-   - *Preliminary results (computed and sketch).* Let s = τ²/(1 + τ²), the share of z's variance that is signal. Marginally z ~ N(0, 1 + τ²), and θ | z ~ N(s·z, s).
-     - **Frequentist sign-error control.** Publish sign(zᵢ) when |zᵢ| > Φ̄⁻¹(α/2N). This controls the probability of any sign error at α for *every* θ vector, by a union bound. It needs no prior, and all the strategic results of §2 carry over.
-       - Publications are about N^s/√(log N). Any τ > 0 gives polynomial growth with no phase transition.
-       - Numbers: τ = 1 and N = 10⁶ give 116 publications against N^s = 1000; τ = 2 and N = 10⁶ give 1.5×10⁴.
-     - **Why √(2 log N) is still the threshold.** The density of "z and wrong sign", Φ(−√s·|z|)·φ(z/σ)/σ with σ² = 1 + τ², has exponent −z²(s + 1/σ²)/2 = −z²/2, because s + 1/σ² = 1. So at large |z|, wrong-sign hypotheses have exactly standard-normal tails, like nulls.
-     - **Link to Donoho–Jin.** The Gaussian prior is a superposition of Donoho–Jin sparse signals, with sparsity β = r/τ². Maximising the Holm exponent over r gives √r = s and exponent exactly s.
-     - **Bonferroni is very conservative under the prior.** Its expected number of sign errors is 0.001–0.008 against a budget of 0.05 (computed).
-     - **Bayesian editor.** Publish i if lfsrᵢ = Φ(−√s·|zᵢ|) ≤ q. The fraction published is 2Φ̄(z_q/τ), where z_q = Φ̄⁻¹(q), independent of N: Θ(N) publications (0.10 at τ = 1, q = 0.05; 0.41 at τ = 2).
-       - By Dawid's selection paradox ([Dawid 1994](https://projecteuclid.org/ebooks/institute-of-mathematical-statistics-lecture-notes-monograph-series/Multivariate-analysis-and-its-applications/Chapter/Selection-paradoxes-of-Bayesian-inference/10.1214/lnms/1215463797)), when the prior is known and selection depends only on the data, the posterior is unaffected by the author's cherry-picking. The editor then needs neither N nor a full report.
-       - The per-hypothesis lfsr rule is also padding-proof, since each publication is judged on its own. A rule bounding the *average* lfsr would reward padding.
-       - Caveats:
-         - The guarantee is Bayes, not frequentist.
-         - Selection *before* the data (which hypotheses to test) is not covered by Dawid's argument. Authors who mass-test near-zero effects make lfsr too optimistic; a conservative (small) τ is a safeguard.
-         - Estimating the prior from the author's own z-values (empirical Bayes) breaks selection ignorability ([Senn 2008](https://errorstatistics.com/wp-content/uploads/2013/12/senn-2008-dawid-paradox.pdf)). The prior must come from the field, or the author must disclose all N z-values.
-     - **Exaggeration of published effects (Type M error).** At the Bonferroni threshold, published estimates overstate effects by about a factor of 1/s, since the posterior mean is s·z.
-     - **Realistic priors are scale mixtures.** [van Zwet, Schwab & Senn 2021](https://www.researchgate.net/publication/354078204_The_statistical_properties_of_RCTs_and_a_proposal_for_shrinkage) fit a mixture of four zero-mean normals to z-values from 23,551 Cochrane trials. Under a scale mixture the publication count is about Σₖ wₖ·N^(sₖ), dominated by the widest component. Heavier-tailed priors (Laplace, t) would change the exponent and need a separate calculation.
-   - *Questions:*
-     - Redo Results 2–5 with sign errors under Gaussian and scale-mixture priors.
-     - Is directional Holm valid under arbitrary dependence? Bonferroni's directional validity is a one-line union bound.
-     - Analyse the Bayesian-editor game, where the fight is over priors: whose prior is it, and can an author profit by testing hypotheses weaker than the prior assumes?
-     - A hybrid rule: frequentist sign-error guarantees for "confirmatory" publications, plus lfsr-based "exploratory" publications labelled as such.
+5. **Signal scaling beyond the two-group model.** Replace the Donoho–Jin null/alternative mixture with a Gaussian prior on effect sizes and sign-error criteria. This is developed in a [companion note](../2026-10/strategic-z-value-publication-game.md): publication rates of order N^s, with s the share of z's variance that is signal, and a Bayesian editor who needs neither N nor a full report.
 
 ### 4.3 Unresolved questions
 
