@@ -2,7 +2,7 @@
 authors = ["Yuekai Sun <yuekai@gmail.com>"]
 channels = ["conda-forge"]
 name = "bullet-journal"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-64", "linux-aarch64"]
 version = "0.1.0"
 
 [tasks]
