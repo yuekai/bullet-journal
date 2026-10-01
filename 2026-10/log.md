@@ -35,3 +35,7 @@
 31 Sa
 
 **Tasks:**
+
+## Thu, Oct 1, 2026
+
+- [**Online p-value publication game**](online-p-value-publication-game.md) (`Claude-session: de1b2c20-8451-4307-a3d5-b50525cbdd03`)
