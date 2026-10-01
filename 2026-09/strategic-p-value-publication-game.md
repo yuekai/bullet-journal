@@ -31,7 +31,7 @@ Every result below fails if any of these fails.
 
 ## 2. Results
 
-Throughout, the p-values may be arbitrarily dependent unless stated otherwise. §2.1 shows the editor must know N. §2.2 shows that, once N is known, the game reduces to offline multiple testing. §2.3 gives two refinements of the reduction, and §2.4–2.5 apply it to FWER (Holm) and FDR (BY). §2.6 studies an online version in which hypotheses are registered one at a time and the author chooses how many to test.
+Throughout, the p-values may be arbitrarily dependent unless stated otherwise. §2.1 shows the editor must know N. §2.2 shows that, once N is known, the game reduces to offline multiple testing. §2.3 gives two refinements of the reduction, and §2.4–2.5 apply it to FWER (Holm) and FDR (BY). An online version, in which hypotheses are registered one at a time and the author chooses how many to test, is developed in a [companion note](../2026-10/online-p-value-publication-game.md).
 
 ### 2.1 N must be known
 
@@ -164,119 +164,6 @@ In this version of the game, the editor's constraint is FDR ≤ α on the publis
   - Padding is a best response, because padded hypotheses are publications in their own right.
   - Counters: a cost per hypothesis tested, not counting trivial hypotheses as publications, or controlling a V-monotone metric (k-FWER, the expected number of false publications) instead. Holm (§2.4) is immune.
 
-### 2.6 Online version
-
-In the online version, hypotheses are registered and tested one at a time, so the author decides how many to test. The editor's constraint is FWER ≤ α (§2.6.2–2.6.3) or mFDR ≤ α (§2.6.4).
-
-#### 2.6.1 Setup
-
-- **Why registration is needed.** Suppose the author has already seen all p-values and feeds them in one at a time. Then any online rule can be gamed: the author puts the smallest p-value where the threshold is most generous, which is cherry-picking again (Result 1). So in the online game the author registers each hypothesis, and its level, before its data exist.
-- **Timing.** In period t = 1, 2, …:
-  1. The author either stops, or registers a new hypothesis H_{i_t} together with a level a_t ∈ [0, 1]. The registration is public.
-  2. Fresh data are collected at cost c to the author, producing p_t.
-  3. If p_t ≤ a_t the author may submit it, and the editor publishes H_{i_t}. Otherwise nothing is published.
-- **Information.** Let F_{t−1} be everything observed before p_t: past registrations, levels and p-values, and the current registration. The author's choices (i_t, a_t) and whether to stop may depend on F_{t−1} in any way, and may be randomised.
-- **Validity (the online analogue of §1.2).** If H_{i_t} is a true null, then P(p_t ≤ u | F_{t−1}) ≤ u for every F_{t−1}-measurable u. Each test uses fresh data, so the past can't make a null p-value look small. Beyond this, dependence is arbitrary.
-- **Preferences.**
-  - **Author:** a reward R per publication and a cost c per test: U = R·(publications) − c·(tests). The number of tests N is now the author's choice.
-  - **Editor:** maximise publications subject to the error constraint, for every author strategy.
-- **Editor's rules.** The editor commits to a *budget rule*, i.e. which level sequences the author may register.
-  - **Spending:** Σ_t a_t ≤ α.
-  - **Recycling:** each rejection refunds its level. The outstanding commitment O_t = Σ_{s ≤ t} a_s − Σ_{s < t, H_{i_s} published} a_s must satisfy O_t ≤ α at every t.
-  - **Investing (Foster & Stine):** alpha-wealth W₀ = α. A rejection earns ω = α; a non-rejection costs a_t/(1 − a_t). The author may register a_t only if it can pay the cost.
-
-  In each case the author, not the editor, chooses which hypotheses to test, in what order, and at what levels. The editor only enforces the budget.
-- **Solution concept.** The editor commits to its rule before the game starts, so each round is a decision node for the author alone. The author's problem is a single-agent dynamic program, and by a *best response* we mean a subgame-perfect one: a strategy that is optimal after every history, including histories it would never reach itself.
-- **Submissions.** The last move of every round is whether to submit p_t. Submitting a rejection is strictly optimal in that subgame under all three rules: it pays R > 0, and under recycling and investing it also earns a refund or a payout; under spending it costs nothing. So the author submits exactly the published results. This is the online counterpart of Result 3.4: the editor needs only the registrations and the rejections.
-
-#### 2.6.2 Validity for every author strategy
-
-**Result 4.** Under spending or recycling, FWER ≤ α for every author strategy: adaptive choice of hypotheses, levels and stopping, including randomised strategies.
-
-*Proof.* Spending is recycling without refunds, so it suffices to prove the result for recycling.
-- Let τ be the period of the first false rejection, with τ = ∞ if there is none. Write nullₜ = 1{H_{i_t} is a true null}.
-- **Pathwise budget bound.** Fix t ≤ τ. Every null hypothesis tested before t was not rejected (otherwise τ < t), so its level was never refunded. Refunds before t come only from rejected, hence non-null, hypotheses. So
-
-  Σ_{s ≤ t} null_s·a_s ≤ Σ_{s ≤ t} a_s − Σ_{s < t, rejected} a_s = O_t ≤ α.
-
-  Letting t ↑ τ, we get Σ_{s ≤ τ} null_s·a_s ≤ α on every path, including τ = ∞.
-- **Union bound over periods.** The event {t ≤ τ} means there is no false rejection before t. It lies in F_{t−1}, as do nullₜ and aₜ. So
-
-  FWER = P(τ < ∞) = Σ_t P(τ = t) ≤ Σ_t E[nullₜ·1{t ≤ τ}·P(pₜ ≤ aₜ | F_{t−1})] ≤ E[Σ_{t ≤ τ} nullₜ·aₜ] ≤ α.
-
-  The middle step uses the validity assumption; the last uses the pathwise bound. Monotone convergence handles the infinite horizon. ∎
-
-**Remarks.**
-- Recycling is the online analogue of Holm. Holm is the graphical procedure with equal initial weights and equal transition coefficients: every rejection passes its level on to the remaining hypotheses ([Bretz et al. 2009](https://onlinelibrary.wiley.com/doi/10.1002/sim.3495)). Recycling with a pre-specified order is online fallback, proved valid under arbitrary dependence by [Tian & Ramdas 2021](https://arxiv.org/abs/1910.04900). Result 4 extends that validity to hypotheses and levels chosen adaptively by the author, under the conditional validity assumption.
-- **Investing:** Foster & Stine's Theorem 1 gives E[V(T_r)] ≤ α(r + 1), where T_r is the time of the r-th rejection. That is uniform control of mFDR₁ = E[V]/(E[R] + 1). It requires only that each null test have conditional level at most aₜ given the past outcomes, and the next hypothesis may be chosen using past rejections ([Foster & Stine 2008](http://www-stat.wharton.upenn.edu/~stine/research/mfdr.pdf)). So the guarantee also holds for every author strategy.
-- Online FDR (rather than mFDR) is harder. LORD controls FDR when the null p-values are independent ([Javanmard & Montanari 2018](https://projecteuclid.org/journals/annals-of-statistics/volume-46/issue-2/Online-rules-for-control-of-false-discovery-rate-and-false/10.1214/17-AOS1559.pdf)); a reshaped LOND controls it under arbitrary dependence.
-
-#### 2.6.3 Best responses under FWER budgets
-
-**Result 5 (spending).** Suppose the author's beliefs treat hypotheses independently: testing Hᵢ at level a yields a publication with probability Gᵢ(a), whatever happened before. Then under spending:
-1. **No adaptivity gain:** the optimal payoff is attained by a static plan, a set T of hypotheses with levels (aᵢ)_{i ∈ T}, Σaᵢ ≤ α. It maximises Σ_{i ∈ T} (R·Gᵢ(aᵢ) − c). The order of testing is irrelevant.
-2. **Finite N:** every tested hypothesis has R·Gᵢ(aᵢ) ≥ c, so N = |T| ≤ α/a_c, where a_c = min_i Gᵢ⁻¹(c/R) is the smallest level at which any hypothesis has publication probability c/R.
-3. **Equal marginal power:** if each Gᵢ is concave and differentiable, the levels satisfy R·Gᵢ′(aᵢ) = λ for every tested hypothesis, for a common λ ≥ 0, whenever the budget binds.
-4. **Equivalence to pre-registered weights:** the outcome is offline weighted Bonferroni with weights wᵢ = aᵢ/α chosen by the author.
-5. **Subgame perfection:** a static plan says nothing about histories off its own path. The strategy that depends only on the current state is subgame perfect and agrees with the static plan on the plan's path: *at any history, solve the static problem on the remaining hypotheses with the remaining budget α − Σ(spent), and test the next hypothesis of that solution, breaking ties in a fixed order.*
-
-*Proof.*
-1. Under spending, the budget used depends only on the levels registered, not on outcomes. Given F_{t−1}, the expected reward of period t is R·G_{i_t}(a_t) − c, by the independence assumption. So the expected payoff of any strategy is E[Σ_t (R·G_{i_t}(a_t) − c)].
-
-   Every realised sequence of registrations is a feasible static plan (Σa ≤ α, distinct hypotheses), so its sum is at most the best static plan's value. Taking expectations, no adaptive strategy beats the best static plan, and that plan can be carried out in any order.
-2. If a tested i had R·Gᵢ(aᵢ) < c, dropping it would raise the payoff and free budget. So R·Gᵢ(aᵢ) ≥ c, i.e. aᵢ ≥ Gᵢ⁻¹(c/R) ≥ a_c, and Σaᵢ ≤ α gives |T| ≤ α/a_c.
-3. This is the KKT condition for maximising a separable concave objective under Σaᵢ ≤ α.
-4. The static plan rejects Hᵢ iff pᵢ ≤ αwᵢ with Σwᵢ ≤ 1, which is weighted Bonferroni.
-5. Under spending and independent beliefs, the continuation problem after any history depends only on which hypotheses remain and how much budget remains: past outcomes don't matter, because nothing is refunded. By part 1 applied to that continuation problem, re-solving the static problem is optimal after every history. On the path of an ex-ante optimal plan, the rest of the plan is optimal for the remaining hypotheses and budget: a better continuation, combined with the part already carried out, would beat the ex-ante optimum, since the payoff is a sum of separate terms R·Gᵢ(aᵢ) − c. So, with the same tie-breaking, the state-based strategy reproduces the plan on its path. ∎
-
-**Notes on Result 5.**
-- **Endogenous N without knowing N.** The editor never needs N. The budget plus the cost c bound the number of tests. When G′(0) = ∞, as for Gaussian alternatives, levels can be tiny; a_c is still positive, so N is finite.
-- **Optimal levels are not monotone in strength.** A near-certain hypothesis clears a tiny level, so it gets little budget, and the generous levels go to borderline hypotheses. This is the Roeder–Wasserman optimal weighting, carried out by the author, who holds the beliefs.
-- **An editor-fixed schedule is weakly worse.** If the editor fixes γ_t and the author only chooses the order, the author solves an assignment problem over a smaller set of plans, so their best payoff can only be lower.
-- **When adaptivity helps.** If outcomes are informative about other hypotheses (correlated beliefs), adaptivity can help even under spending, because learning changes the Gᵢ. The state must then include the author's posterior beliefs. Backward induction still gives a subgame-perfect strategy, but it is no longer static.
-
-**Recycling.** Under recycling, a hypothesis tested at level a costs budget a·(1 − Gᵢ(a)) in expectation, since rejections are refunded. Two consequences:
-- **Order matters.** The state is the remaining pool plus the outstanding commitment, and transitions are random, because rejections refund.
-  - With a finite pool and c > 0 the problem has a finite horizon; levels lie in a compact set and payoffs are continuous; so backward induction yields a subgame-perfect strategy.
-  - Intuitively that strategy front-loads high-power hypotheses, since testing likely rejections first frees budget for later tests. But this is only a heuristic: the problem resembles a stochastic knapsack, where simple index rules are generally not optimal. Characterising the subgame-perfect strategy is left open (§4).
-  - With an unlimited supply of near-certain hypotheses and R > c, the author could keep testing them for R − c each. Payoffs would be unbounded and no best response would exist. So a finite pool, or R ≤ c for trivial hypotheses, is needed.
-- **Padding is neutral.** A near-certain hypothesis is refunded almost surely, so it uses no budget. It earns a trivial publication worth R − c but doesn't loosen any other threshold, and by Result 4 FWER ≤ α still bounds the probability of any false publication.
-
-#### 2.6.4 Investing rewards padding
-
-**Result 6.** Under alpha-investing (W₀ = ω = α), suppose the author can test near-certain hypotheses (rejected with probability 1 at any level a > 0).
-1. **Padding inflates false publications:** for every K there is an author strategy that keeps mFDR₁ ≤ α while the expected number of false publications exceeds K.
-2. **Padding is sequentially rational:** at every history, a subgame-perfect strategy tests every profitable near-certain hypothesis before anything speculative. A near-certain hypothesis is profitable if R − c plus the value of the extra wealth ω is positive, which can hold even when R < c.
-
-*Proof sketch of 1.*
-- Test k near-certain hypotheses at tiny levels. Each is rejected and earns ω = α, so the wealth becomes W = α + kα.
-- Then test true nulls at a fixed level a until the wealth can't cover a/(1 − a). For a uniform null p-value, a test changes the wealth by +ω with probability a and −a/(1 − a) otherwise, so the expected change is −a(1 − α).
-- Let M be the number of null tests. Wald's identity gives E[M]·a(1 − α) = W − E[W_end], and W_end < a/(1 − a). So
-
-  E[V] = a·E[M] ≥ (α(1 + k) − a/(1 − a))/(1 − α),
-
-  which grows linearly in k.
-- Foster–Stine's theorem still gives mFDR₁ ≤ α, because the padded rejections also inflate E[R]. ∎
-
-*Proof of 2.*
-- The state is wealth w plus the remaining pool. The continuation value V(w, pool) is nondecreasing in w, because more wealth only enlarges the set of affordable levels.
-- Tested at a tiny level, a near-certain hypothesis is rejected with probability 1. It earns R − c plus the payout ω, and costs no wealth.
-- **Exchange argument:** moving it earlier leaves its own payoff unchanged and gives the author ω sooner, which by monotonicity of V can only help. So after every history, testing the remaining profitable near-certain hypotheses first is optimal. ∎
-
-Part 1 shows a strategy with large false publications exists; part 2 shows that a sequentially rational author actually plays its padding phase.
-
-This is the online version of Finner–Roters padding, and Foster & Stine flag it themselves with the example of first testing "gravity does not exist". Under spending, padding uses budget; under recycling it is neutral; only investing pays for it. Counters are a per-test cost c with R·α ≤ c, so that farming wealth doesn't pay; payouts withheld for hypotheses that aren't novel, which the editor can't verify; or an FWER budget instead.
-
-#### 2.6.5 Summary
-
-| Budget rule | Guarantee for every author strategy | Subgame-perfect best response | Padding |
-|---|---|---|---|
-| Spending | FWER ≤ α (Result 4) | Re-solve the static plan at each history; on path, author-weighted Bonferroni with N ≤ α/a_c (Result 5) | Uses budget |
-| Recycling | FWER ≤ α (Result 4) | Dynamic-programming solution (exists for a finite pool and c > 0); front-loading likely rejections is a heuristic (open) | Neutral |
-| Investing | mFDR₁ ≤ α (Foster–Stine) | Pad first with every profitable near-certain hypothesis, then speculate (Result 6.2) | Rewarded: E[V] unbounded (Result 6.1) |
-
-For an editor facing strategic authors, recycling is the online counterpart of Holm, and the best of the three. Investing needs a per-test cost to stop padding.
-
 ## 3. Related work
 
 ### 3.1 Kasy & Spiess, ["Optimal Pre-Analysis Plans: Statistical Decisions Subject to Implementability"](https://arxiv.org/abs/2208.09638)
@@ -332,11 +219,11 @@ For an editor facing strategic authors, recycling is the online counterpart of H
 - Holm with unreported p-values set to 1 is their worst-case imputation: Holm can only reject more when a p-value gets smaller, so p = 1 is the worst completion.
 - Monotonicity in the reported set is why the author submits Holm's rejection set, and why the editor loses nothing by not demanding a full report.
 - Our game extends their mechanism to a set-valued decision, a reward equal to the size of the published set, and an FWER or FDR constraint instead of size. Their results don't apply directly, but the same intuition drives Result 2.
-- In the online game (§2.6), the author's registered levels play the role of their pre-analysis message: the author chooses how to spend the error budget before the data exist, using private beliefs.
+- In the online version of the game ([companion note](../2026-10/online-p-value-publication-game.md)), the author's registered levels play the role of their pre-analysis message.
 - Beyond their intuition, our setting adds:
   - monotonicity and self-sufficiency for set-valued decisions, which determine when the author submits only what gets published (Result 3);
   - FDR guarantees for every submission, which have no single-decision analogue (Result 3.2);
-  - padding under FDR (§2.5, Result 6).
+  - padding under FDR (§2.5).
 
 ### 3.2 McCloskey & Michaillat, ["Critical Values Robust to P-hacking"](https://pascalmichaillat.org/12.pdf) (REStat 2024)
 
@@ -375,7 +262,7 @@ For an editor facing strategic authors, recycling is the online counterpart of H
 - It is our game with N unobserved and one hypothesis. Their N counts analyses of one hypothesis rather than distinct hypotheses, but the selection is the same: the minimum of N p-values.
 - Their Corollary 6 is our Result 1. When resources are unlimited (γ → 1), no finite critical value works. They escape it because resources bound N: they give up the worst case over N and divide α by the equilibrium expected N.
 - The costs: the guarantee holds on average across researchers, not for each author; it relies on a calibrated γ; and researchers with unusually deep resources (high γ) break it. Their own Corollary 5 says critical values should rise with a team's resources.
-- The online game (§2.6) is another way out of Result 1: registering each test makes the count observable, and the budget and per-test cost bound how many tests the author runs (Result 5), with a guarantee for each author rather than an average one.
+- The online version of the game ([companion note](../2026-10/online-p-value-publication-game.md)) is another way out of Result 1: registering each test makes the count observable, and a budget plus a per-test cost bound how many tests the author runs, with a guarantee for each author rather than an average one.
 
 ### 3.3 Bates, Jordan, Sklar & Soloff, ["Principal-Agent Hypothesis Testing"](https://arxiv.org/abs/2205.06812)
 
@@ -415,11 +302,9 @@ For an editor facing strategic authors, recycling is the online counterpart of H
   Comparing these probabilities with the profit-to-cost ratios of drug categories, some pathways are exploitable for high-profit drugs.
 
 **Connection to this work.**
-- It is the participation decision for each hypothesis in the online game (§2.6). Their agent pays C for a trial given private beliefs; our author pays c to test each hypothesis given private beliefs about it.
-- Incentive alignment becomes R·P_null(published) ≤ c for each hypothesis. A hypothesis registered at level a is published with null probability at most a, so testing a hypothesis the author believes null is unprofitable once a ≤ c/R. By their Proposition 4, c/R is the level a profit-capped agent's own likelihood-ratio test would use. Under spending, Result 5.2 is this condition at the margin: every tested hypothesis has R·Gᵢ(aᵢ) ≥ c.
-- So the online game gets a per-author FWER guarantee plus their screening effect: only hypotheses the author thinks promising get tested, which raises the share of true effects among those tested.
-- Their Theorem 2 (offer the largest incentive-aligned menu) corresponds to letting the author choose levels within the budget (§2.6) rather than imposing a fixed schedule; Result 5 notes that a fixed schedule is weakly worse.
-- Their multi-round contracts, where a null agent's net profit is a supermartingale, parallel alpha-investing, where a null test lowers expected wealth. Result 6 shows the difference: our author can also test hypotheses that are certain to be rejected, and farm wealth.
+- It is the participation decision for each hypothesis when testing is costly. Their agent pays C for a trial given private beliefs; an author who pays c to test each hypothesis faces the same choice for every hypothesis (§4.2, direction 2).
+- Incentive alignment becomes R·P_null(published) ≤ c for each hypothesis. Under Holm with N observed, P_null(published) ≤ α/N, so testing a believed-null hypothesis is unprofitable once α/N ≤ c/R. By their Proposition 4, c/R is the level a profit-capped agent's own likelihood-ratio test would use.
+- The online version of the game develops this connection further, including the parallel between their multi-round contracts and alpha-investing ([companion note](../2026-10/online-p-value-publication-game.md)).
 - Differences: they have one test per agent and a maximin guarantee over the population of agents; we have many hypotheses per author and a frequentist guarantee for each author.
 
 ### 3.4 Hossain, Chen & Chen, ["Strategic Hypothesis Testing"](https://arxiv.org/abs/2508.03289)
@@ -453,10 +338,9 @@ For an editor facing strategic authors, recycling is the online counterpart of H
   - Standards stricter than α̂ deter effective but low-margin products, such as orphan drugs.
 
 **Connection to this work.**
-- Their sample-size choice is the analogue of the author's choice of how many hypotheses to test in the online game (§2.6): how much evidence to generate at a cost.
-- Their α̂ is the analogue of choosing the budget α so that testing a believed-null hypothesis is unprofitable (levels a ≤ c/R) exactly at the margin the editor wants. Below it, only hypotheses the author believes in get tested, and false publications come only from mistaken beliefs, which parallels their Theorem 4.1. Stricter thresholds then only lose true discoveries, which parallels their abstention false negatives.
-- Their non-monotonicity below α̂ warns that an editor tuning α for welfare should expect non-monotone effects on discoveries.
-- A natural editor objective in their style is expected true discoveries minus c·N, subject to FWER, with N the number of tests the author chooses in Result 5.
+- Their sample-size choice is the analogue of the author's choice of how many hypotheses to test when testing is costly (§4.2, direction 2): how much evidence to generate at a cost.
+- Their critical threshold α̂ is the analogue of choosing α so that testing a believed-null hypothesis is unprofitable exactly at the margin the editor wants. Their non-monotonicity below α̂ warns that an editor tuning α for welfare should expect non-monotone effects on discoveries.
+- A natural editor objective in their style is expected true discoveries minus c·N, subject to FWER. The online version of the game ([companion note](../2026-10/online-p-value-publication-game.md)) makes N the author's choice and develops these analogies.
 - Differences: they control a Bayes-weighted Type I/II loss over a population of single-product agents with a known prior q; we have many hypotheses per author and a frequentist guarantee for each author.
 
 ### 3.5 Other related work
@@ -475,30 +359,17 @@ For an editor facing strategic authors, recycling is the online counterpart of H
 - **[Finner & Roters (2001), "On the false discovery rate and expected type I errors"](https://www.researchgate.net/publication/229892584_On_the_False_Discovery_Rate_and_Expected_Type_I_Errors)** (Biometrical Journal 43:985–1005).
   Their discussion of undesirable properties of FDR, notably "cheating", is the padding problem of our FDR game (§2.5). Adding a hypothesis known to be rejected with probability near 1 lets the hypothesis of interest be tested at about level 2α. More generally, the expected number of type I errors can grow while FDR stays controlled. The game sharpens their point: padding becomes a best response, because padded hypotheses are publications in their own right.
 
-**Online multiple testing results used in §2.6.**
-- **[Foster & Stine (2008), "α-investing"](http://www-stat.wharton.upenn.edu/~stine/research/mfdr.pdf)** (JRSSB 70:429–444).
-  Alpha-investing, the investing rule of §2.6, starts with alpha-wealth W(0) and tests hypotheses in sequence at levels set by an investing rule. A rejection earns a payout ω; a non-rejection costs αⱼ/(1 − αⱼ). With W(0) = ω = α, their Theorem 1 gives E[V(T_r)] ≤ α(r + 1) at the time of the r-th rejection, i.e. uniform control of mFDR₁ = E[V]/(E[R] + 1). The only requirement is that each null test have conditional level at most αⱼ given past outcomes, which is our online validity assumption. Tests may be dependent, and the next hypothesis may be chosen using past rejections, so the guarantee holds for every author strategy. They also note that trivially false hypotheses ("gravity does not exist") inflate the wealth, and that step-down tests share the problem. Result 6 makes the remark quantitative: expected false publications can be unbounded while mFDR stays controlled.
-- **[Javanmard & Montanari (2018), "Online rules for control of false discovery rate and false discovery exceedance"](https://projecteuclid.org/journals/annals-of-statistics/volume-46/issue-2/Online-rules-for-control-of-false-discovery-rate-and-false/10.1214/17-AOS1559.pdf)** (Ann. Statist. 46:526–554).
-  LORD ("levels based on recent discovery") is a generalized alpha-investing rule. It controls FDR, not just mFDR, at every fixed time when the null p-values are independent. A reshaped version of LOND controls FDR under arbitrary dependence, and they also study the false-discovery exceedance. Later work (GAI++, LORD++) improves power while keeping FDR control when the null p-values are independent of the rest. These are the natural rules for an FDR, rather than mFDR, online game. But they inherit the padding problem, since rejections raise future levels, and LORD needs independent null p-values, which is stronger than our online validity assumption.
-- **[Tian & Ramdas (2021), "Online control of the familywise error rate"](https://arxiv.org/abs/1910.04900)** (Stat. Methods Med. Res.).
-  They show that alpha-spending (online Bonferroni) and online fallback, which recycles each rejected hypothesis's level to later tests, control FWER under arbitrary dependence. Online fallback is at least as powerful as alpha-spending (Proposition 2), with large gains only when non-nulls come early. These are our spending and recycling rules with levels and order fixed in advance. Result 4 extends their validity to hypotheses and levels chosen adaptively by a strategic author, under conditional validity, and their early-non-null observation is why our author front-loads likely rejections. Their ADDIS-spending adds adaptivity and discarding of conservative nulls, with FWER control under independence or local dependence.
-- **[Bretz, Maurer, Brannath & Posch (2009), "A graphical approach to sequentially rejective multiple test procedures"](https://onlinelibrary.wiley.com/doi/10.1002/sim.3495)** (Stat. Med. 28:586–604).
-  Their weighted-Bonferroni procedures pass the level of each rejected hypothesis to others along a directed weighted graph. They control FWER strongly and include gatekeeping, fixed-sequence and fallback procedures. With equal initial weights and equal transition coefficients, the graph reproduces Holm. Recycling in our online game is a sequential version of such a graph, designed by the author as they go, which is why we call it the online analogue of Holm (§2.6).
-
 **Other.**
 - **[Bogomolov & Heller (2013), "Discovering findings that replicate from a primary study of high dimension to a follow-up study"](https://www.tandfonline.com/doi/abs/10.1080/01621459.2013.829002)** (JASA 108:1480–1492).
   A primary study screens many hypotheses and selects some for a follow-up study. They give procedures controlling the FWER, and more powerful ones controlling the FDR, of replicability claims (findings significant in both studies). These are valid under arbitrary dependence within each study, and they show standard meta-analysis is inappropriate. Their design is another way to remove selection after the data without knowing N. Selection happens in the primary study, and the follow-up family is just the selected set, tested on fresh data, with the procedure accounting for the selection. It suggests a version of our game in which the editor publishes only replicated findings.
 - **[Viviano, Wüthrich & Niehaus, "A model of multiple hypothesis testing"](https://arxiv.org/abs/2104.13367).**
-  Their economic model of a researcher and a planner, aimed at settings such as regulatory approval of clinical trials, derives the *amount* of multiple-testing correction from incentives and costs. We instead take the error guarantee as given and derive the editor's rule and the author's best response. Corrections are warranted to the extent that research costs don't scale with the number of hypotheses: controlling average size, as with Bonferroni, emerges when all costs are fixed, and no correction is needed when costs are proportional to the number of hypotheses. Calibrating to drug-approval and program-evaluation costs, they find some adjustment is warranted, but less than standard practice. In our online game (§2.6) the per-test cost c plays a role like their costs: it, not the editor, determines how many hypotheses get tested.
+  Their economic model of a researcher and a planner, aimed at settings such as regulatory approval of clinical trials, derives the *amount* of multiple-testing correction from incentives and costs. We instead take the error guarantee as given and derive the editor's rule and the author's best response. Corrections are warranted to the extent that research costs don't scale with the number of hypotheses: controlling average size, as with Bonferroni, emerges when all costs are fixed, and no correction is needed when costs are proportional to the number of hypotheses. Calibrating to drug-approval and program-evaluation costs, they find some adjustment is warranted, but less than standard practice. When testing costs c per hypothesis (§4.2, direction 2, and the [companion note](../2026-10/online-p-value-publication-game.md)), c plays a role like their costs: it, not the editor, determines how many hypotheses get tested.
 
 ## 4. Open directions and unresolved questions
 
 ### 4.1 Unproven claims (sketches to turn into proofs)
 
 1. Result 3.2 for other procedures valid for every self-consistent subset: Blanchard–Roquain step-up procedures with other shape functions, and e-BH. The proof should go through as for BY.
-2. The author's optimal policy under recycling (§2.6.3), a stochastic knapsack-type dynamic program, and whether front-loading likely rejections is optimal.
-3. Result 5 when the author's beliefs are correlated across hypotheses, so that outcomes are informative and adaptivity helps even under spending.
-4. Result 6 with near-certain rather than certain hypotheses, and with the per-test cost c included.
 
 ### 4.2 Other directions
 
@@ -520,11 +391,7 @@ Statements marked *(computed)* come from our own numerical calculations and *(sk
    - *Calibration facts:* applying e-BH to p-values transformed by calibrators recovers BH and BY (Wang–Ramdas; BY is e-BH with a step calibrator). So p-value self-consistency rules are special cases rather than competitors, and the only gain comes from native e-values.
 
 2. **Endogenous N: the author chooses how many hypotheses to test.**
-   - *Online (§2.6).* The author pays c per test and earns R per publication, so U = R·(publications) − c·N. Result 5 bounds N under spending: N ≤ α/a_c with a_c = min_i Gᵢ⁻¹(c/R).
-     - *Questions:*
-       - Comparative statics of N* and of publications as c/R → 0, for concrete families such as Gaussian shifts, where G′(0) = ∞.
-       - The welfare-optimal budget α for an editor who values expected true discoveries minus the author's cost c·N, in the style of [Hossain, Chen & Chen](https://arxiv.org/abs/2508.03289) (§3.4). Is there an analogue of their critical threshold α̂, the level at which exactly the hypotheses the editor wants tested are worth testing? They show the principal's optimal α is at least α̂ and that false positives are zero below α̂.
-       - The same questions under recycling, where the author's subgame-perfect strategy is an open dynamic program.
+   - *Online.* The online version, where N is the author's choice under a budget rule, is developed in the [companion note](../2026-10/online-p-value-publication-game.md), with its own open questions.
    - *Offline, with N observed (sketch).* Under Bonferroni with homogeneous hypotheses, expected publications are about N·π₁·G(α/N). The marginal value of one more hypothesis is G(t) − t·G′(t) with t = α/N, which is ≥ 0 when G is concave.
      - A hypothesis the author believes null is doubly bad: it pays only R·α/(N + 1) and tightens every other threshold. So under FWER, testing extra hypotheses limits itself.
      - In the language of [Bates, Jordan, Sklar & Soloff](https://arxiv.org/abs/2205.06812) (§3.3), testing believed-null hypotheses is unprofitable once α/N ≤ c/R. By their Proposition 4, c/R is exactly the type I level that a profit-capped agent's own likelihood-ratio test would use.
@@ -547,15 +414,14 @@ Statements marked *(computed)* come from our own numerical calculations and *(sk
 3. **Padding-proof FDR.**
    - *Problem:* under FDR rules the author can add near-certain hypotheses ("gravity does not exist"). These raise |R| and N and loosen every threshold α|R|/(N·H_N). FDR ≤ α still holds, but the number of false publications can grow without bound ([Finner & Roters 2001](https://www.researchgate.net/publication/229892584_On_the_False_Discovery_Rate_and_Expected_Type_I_Errors); §2.5).
      - In the game padding is a best response, because padded hypotheses are publications in their own right.
-     - Online, alpha-investing rewards padding even more: Result 6 shows unbounded expected false publications under mFDR control, and padding first is subgame perfect.
-     - Holm and the FWER budgets are immune: padding is neutral under Holm and recycling, and costly under spending.
+     - Online, alpha-investing rewards padding even more: expected false publications are unbounded under mFDR control, and padding first is subgame perfect ([companion note](../2026-10/online-p-value-publication-game.md), Result 3).
+     - Holm is immune: padding is neutral under it (§2.4).
    - *Candidate fixes to analyse:*
      - **Error metrics that count false publications** (V-monotone metrics, §2.3): E[V], or k-FWER with k growing in N. Result 3 already covers these, with Lehmann–Romano step-down (critical values kα/N for i < k, then kα/(N + k − i)) as the k-FWER equilibrium.
      - **FDR-type criteria that discount near-certain rejections,** e.g. weighting rejections by how surprising they were, or counting only hypotheses with registered prior probability below a cap.
      - **Reward schemes:** a per-hypothesis cost c with R ≤ c for trivial hypotheses, payouts withheld for findings that aren't novel (hard: the editor can't verify novelty), or rewards only for replicated findings.
    - *Questions:*
      - Is there a criterion that is as powerful as FDR when there is no padding, but under which padding is not a best response?
-     - How large must c be, relative to R and α, to make padding unprofitable under alpha-investing? A first guess is R·α ≤ c (sketch).
      - For E[V] control, which procedure is the offline optimum under arbitrary dependence, so that Result 2.3 transfers it to the game?
 
 4. **Authors with goals other than publication count.**
