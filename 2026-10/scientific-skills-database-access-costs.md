@@ -13,9 +13,9 @@ The "100+" count is made up of 80 databases in the `database-lookup` skill, 18 l
 ## Paid, or the cost isn't clear
 
 - **DrugBank:** the skill calls the API (`api.drugbank.com`), which needs a paid license. Academic downloads from the website are free once your application is approved (CC BY-NC license), and grant-funded academic use counts as non-commercial ([FAQ](https://dev.drugbank.com/guides/faqs)). The skill doesn't use that download route.
-- **DISGENET:** the free Academic plan, open to anyone with an institutional email, covers only the expert-curated subset, but it does include the REST API. The full dataset (text-mined data, drugs, clinical-trial annotations) is in the Standard and Advanced plans, "contact us for pricing" ([plans](https://disgenet.com/plans)).
+- **DISGENET:** the free Academic plan, open to anyone with an institutional email, covers only the expert-curated subset, but it does include the REST API (50 queries a minute, 25,000 a day, 500,000 a month). The full dataset (text-mined data, drugs, clinical-trial annotations) is in the Standard and Advanced plans, "contact us for pricing" ([plans](https://disgenet.com/plans)).
 - **Alpha Vantage:** the free key allows 25 requests a day. Paid plans cost $49.99–$249.99 a month.
-- **OpenWeatherMap:** has a free tier, but One Call 3.0 needs a credit card on file.
+- **OpenWeatherMap:** has a free tier. One Call 3.0 gives 1,000 free calls a day but needs a credit card on file, charged only above that; a daily cap in the account settings keeps it free ([One Call 3.0](https://openweathermap.org/api/one-call-3)).
 - **Genomic Intelligence:** the hosted demo server is free and needs no key. A full API key comes by emailing contact@genomicintelligence.ai, and no prices are published ([docs](https://docs.genomicintelligence.ai/mcp)).
 - **Addgene API:** needs approval plus a separate license for each data type requested. Options for non-profits exist, but it couldn't be confirmed that they're free ([access options](https://developers.addgene.org/access-options/)).
 - **Imaging Data Commons:** free through `idc-index`, the REST API and anonymous downloads. Only the BigQuery route needs Google Cloud billing.
@@ -42,6 +42,8 @@ The "100+" count is made up of 80 databases in the `database-lookup` skill, 18 l
 - **Dedicated data skills:** DepMap, PrimeKG, NCATS ARAX, US Treasury Fiscal Data, OneKGPd and CELLxGENE Census. Hugging Face only needs a free token for gated datasets.
 
 **ZINC caveat:** it's free, but the skill notes that automated requests were redirected to a human-verification page on 2026-09-30, so it may not work when an agent calls it.
+
+**Sources:** besides the links above, [DISGENET query limits](https://support.disgenet.com/support/solutions/articles/202000088444-what-are-the-query-limits-in-disgenet-), [DISGENET academic license](https://blog.disgenet.com/disgenet-academic-plan-free-access/), [DrugBank terms of use](https://trust.drugbank.com/drugbank-trust-center/drugbank-terms-of-service), [Alpha Vantage premium](https://www.alphavantage.co/premium/) and [COSMIC licensing](https://www.cosmickb.org/licensing/).
 
 ## Open questions
 
