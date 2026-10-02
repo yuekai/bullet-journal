@@ -22,7 +22,11 @@ Two caveats:
 - **arxivmath has no agent trajectories.** Its stages are one-shot model calls, and its output is question/answer pairs with a rule-based reward label. It is shaped for RL or answer-supervised training, not for imitating trajectories.
 - **Danus's main agent is not in its export.** The 13 "main" records are health-check pings. The real orchestrator sessions sit unexported in `~/.kimi-code/sessions/wd_danus_a9bc6a6918dd/`.
 
-**Shared gate.** The four trajectory exports were all gated by the same strict validator, `~/data-engineering/SFT/process_entry.py`. It enforces four rules:
+**Shared gate.** The four trajectory exports were all gated by a strict SFT validator, `process_entry.py`, but not by the same copy:
+- **repoprover, Rethlas and Danus** were re-exported on Oct 1 against `~/data-engineering/SFT/process_entry.py`.
+- **arxivlean** (Aug 25) used `~/shrd/data-engineering/SFT/process_entry.py`.
+
+The two copies differ, and how much wasn't checked. Both enforce four rules:
 - every rollout must contain reasoning;
 - tool calls must match the declared schemas exactly;
 - no degenerate repetition;
@@ -39,7 +43,7 @@ Each trajectory record is `{conversation, …, token_count, token_count_answer, 
 **Stages.** Prompts are in `matharena/arxivmath/prompts/arxiv/`.
 1. **Ingest** (`ingest_arxiv_crawl.py`): writes `metadata.json` and `full_text.md` for each paper.
 2. **Generator** (`create_queries.py`, gpt-5.6-sol at xhigh effort, prompt `fulltext_query.md`): "determine whether a central result of the paper can be converted into a single, precise, objectively verifiable mathematical question with a unique, deterministic answer". If so it writes the question and answer; if not it rejects the paper.
-3. **Verifier** (`verify_queries.py`, gpt-5.6-sol, `verify.md`): checks the question is self-contained, with no undefined terms or conventions. It also drops questions whose answers are trivial.
+3. **Verifier** (`verify_queries.py`, gpt-5.6-sol, `verify.md`): checks the question is self-contained, with no undefined terms or conventions. It also drops questions whose answer is too guessable: 0, 1, or just the question's own variable (such as "find X in terms of n" with answer n).
 4. **Full-text reviewer** (`fulltext_review.py`, Claude Opus 4.8, `fulltext_review.md`): reads the whole paper and returns **keep**, **edit** or **discard**. It edits by adding assumptions that appear only in the full text, and discards questions that are wrong or not central.
 
 **Coordination.** No agent sees another's reasoning. Each stage reads the previous stage's decision from the paper's `llm_annotation.json` and writes its own beside it. A paper moves on only on an explicit keep. Rerunning the launcher resumes from those checkpoints.
@@ -94,7 +98,30 @@ About 977 statements were lost between verification and the semantic judge, at t
 - `loogle`: Mathlib lemma search by pattern.
 - `leanfinder`: semantic search over the LeanExplore index.
 
-A run counts as correct only if the final proof compiles with the exact accepted statement.
+A run counts as correct only if the final proof compiles with the exact accepted statement. The exported system turn also declares `verify_submission` and `add_to_file`, the other tools the runtime used.
+
+**Construction example.** Paper 0704.2824, "Sums of squares over totally real fields are rational sums of squares", passed every gate. From `data/arxivlean-training/train_math_ac/0704.2824/metadata_lean_fulltext.json`:
+
+```text
+[extracted statement] Let f ∈ ℚ[x₁,…,xₙ], and let v = (v₁,…,v_N)ᵀ be a finite column vector of
+   monomials. Suppose there is an invertible real symmetric positive-semidefinite matrix B …
+   such that … f = ∑ B_ij v_i v_j. Then there exists a rational symmetric positive-semidefinite
+   matrix C ∈ Mat_N(ℚ) such that f = ∑ C_ij v_i v_j. …
+[formalizer, gpt-5.6-sol]
+   theorem exists_rational_gram_matrix_of_real (n N : ℕ) (f : MvPolynomial (Fin n) ℚ)
+       (v : Fin N → (Fin n →₀ ℕ)) (B : Matrix (Fin N) (Fin N) ℝ) (hBsymm : B.IsSymm)
+       (hBpsd : B.PosSemidef) (hBinv : IsUnit B) (hgram : MvPolynomial.map (algebraMap ℚ ℝ) f = …) :
+       ∃ C : Matrix (Fin N) (Fin N) ℚ, C.IsSymm ∧ C.PosSemidef ∧ f = … := by sorry
+[compile] okay: True, warnings: ["declaration uses `sorry`"]
+[semantic judge, claude-opus-4-8] keep: "The Lean statement faithfully captures the hypotheses
+   (rational polynomial f, monomial basis v, invertible real symmetric PSD B …) and the
+   conclusion (existence of a rational symmetric PSD Gram matrix C …)."
+[hidden condition] keep: "This accurately formalizes Theorem 1.2. … assumes that B is invertible …"
+[prior work] keep: "The extracted statement is exactly Theorem 1.2, which the paper presents
+   as its own generic positive result toward Sturmfels' open question. …"
+[AI assistance] keep: "… Its acknowledgements mention only named human colleagues and an
+   anonymous referee. The author is institutionally affiliated …"
+```
 
 **SFT export.** `export_agent_trajectories_sft.py` writes `data/arxivlean-training/sft/k3-fsmzb-correct.jsonl`, dated Aug 25.
 - **Kept:** 1,838 judge-correct trajectories, 161.8M tokens (mean 88k, median 69.5k).
