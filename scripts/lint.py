@@ -324,18 +324,18 @@ class Linter:
             if linked and (linked["note"] == LOG_NAME or not (path.parent / linked["note"]).is_file()):
                 self.error(path, first.i + 1, f"linked note {path.parent.name}/{linked['note']} doesn't exist; "
                            "write it in the log's folder or fix the link", AGENT_DOC)
-            if body:
-                self.error(path, body[0].i + 1, "a linked conversation entry has no body; move these lines "
-                           "into the linked note", AGENT_DOC)
-            return
-        if not body:
+            if not body:  # a linked entry's body is optional
+                return
+        elif not body:
             self.error(path, first.i + 1, "conversation entry has no body; add its conclusions under it",
                        AGENT_DOC)
         size = sum(len(line.text) for line in body)
         if size > CONVO_BODY_MAX:
+            fix = ("move the rest into the linked note" if first.text.startswith("- [**") else
+                   "write it as a note in YYYY-MM/<slug>.md and link the subject to it, "
+                   "'- [**Subject**](<slug>.md) (`…-session: …`)'")
             self.error(path, first.i + 1, f"conversation entry body is {size} chars; over {CONVO_BODY_MAX}, "
-                       "write it as a note in YYYY-MM/<slug>.md and link the subject to it, "
-                       "'- [**Subject**](<slug>.md) (`…-session: …`)', with no body", AGENT_DOC)
+                       + fix, AGENT_DOC)
         self.lint_entry_body(path, body)
 
     def lint_entry_body(self, path, body: list[Line]) -> None:

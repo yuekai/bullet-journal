@@ -45,10 +45,11 @@ Example:
   - <…>
 ```
 
-Conversation entries whose body exceeds 500 characters, are written as notes; the entries are merely linked subjects:
+Conversation entries whose body exceeds 500 characters are written as notes; the entries are linked subjects, with an optional short body for anything about the note itself, such as where copies of it live:
 
 ```markdown
 - [**<Subject>**](<slug>.md) (`<Harness>-session: <session-id>`)
+  <optional prose paragraph or sub-bullets, at most 500 characters>
 ```
 
 Examples:
@@ -68,7 +69,7 @@ Examples:
 - **Body (required, at most 500 characters):** see [Body](#body). The count is the body's text, without indentation.
   - One point per sub-bullet: a conclusion, a decision (with its reason when it isn't obvious), or an open question (prefix `Open: `).
   - Put chat exports in `YYYY-MM/assets/` and link them from a sub-bullet.
-- **Long conversations:** if the body exceeds 500 characters, write it as a self-contained note in `YYYY-MM/<slug>.md`, in the same folder as the log (see the [notes format](journal-format.md#notes-yyyy-mmslugmd)). Make the subject a link to the note, and leave the entry without a body, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
+- **Long conversations:** if the body exceeds 500 characters, write it as a self-contained note in `YYYY-MM/<slug>.md`, in the same folder as the log (see the [notes format](journal-format.md#notes-yyyy-mmslugmd)). Make the subject a link to the note. The entry may keep a short body (same shape and 500-character limit) for related work, such as a copy of the note made elsewhere, so one entry covers it instead of a separate task entry; the conclusions themselves stay in the note, so the log stays scannable. The session stays on the entry. Chat exports are linked from the note.
 - **Content:** no secrets, credentials, tokens, private personal data, or sensitive operational details.
 - **Committing:** same as a task entry: `Log: <Subject>` plus the trailer. See [Committing](#committing). A note is committed first, in its own commit without the `Log: ` prefix.
 
@@ -86,7 +87,7 @@ Task and conversation entries share one body shape:
 The first line marks an entry as an agent's:
 
 - **Task entry:** a top-level line starting ``- [x] **Subject** (` ``, that is, a bold completed task followed by a backticked location. The linter then checks the whole location, the subject and the body.
-- **Conversation entry:** a top-level `- **…` or `- [**…` line containing `-session:`. The linter checks the subject, the session, and the body's shape and length. For a linked entry, it checks that the note exists and that there's no body.
+- **Conversation entry:** a top-level `- **…` or `- [**…` line containing `-session:`. The linter checks the subject, the session, and the body's shape and length. For a linked entry, it checks that the note exists; a body is optional.
 - **Anything else is the user's own:** a `- [x] **Bold**` task with no location, or with a plain parenthetical such as `(Oahu)`, is an ordinary user task. The rules on this page don't apply to it, but the general [entry rules](journal-format.md#entries) still do.
 - **Errors:**
   - an agent entry nested under another item;

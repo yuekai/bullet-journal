@@ -359,7 +359,9 @@ def test_linked_convo_entry(tmp_path):
 @pytest.mark.parametrize(
     "body, fragment",
     [
-        (LINKED_CONVO + "  - a conclusion\n", "has no body"),
+        (LINKED_CONVO + "  - a conclusion\n", None),  # a linked entry may have a short body
+        (LINKED_CONVO + "  - " + "a" * 499 + "\n", "move the rest into the linked note"),
+        (LINKED_CONVO + "    - a conclusion\n", "indent"),
         ("- [**Topic**](desktop.md)\n", None),  # no session: a plain link note, not an entry
         (f"- [**Topic**](desktop.md) ({SESSION})\n", "malformed conversation entry"),
         (f"- [**{'A' * 51}**](desktop.md) (`{SESSION}`)\n", "shorten it to 50"),
