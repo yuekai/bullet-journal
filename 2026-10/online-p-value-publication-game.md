@@ -8,7 +8,7 @@ This note is a companion to the [basic-game note](../2026-09/strategic-p-value-p
 
 ## 1. Setup
 
-- **Why registration is needed.** Suppose the author has already seen all p-values and feeds them in one at a time. Then any online rule can be gamed: the author puts the smallest p-value where the threshold is most generous, which is cherry-picking again (Result 1 of the [basic-game note](../2026-09/strategic-p-value-publication-game.md)). So in the online game the author registers each hypothesis, and its level, before its data exist.
+- **Why registration is needed.** Suppose the author has already seen all p-values and feeds them in one at a time. Then any online rule can be gamed: the author puts the smallest p-value where the threshold is most generous, which is cherry-picking again (Result 1 of the [p-value publication game note](../2026-09/strategic-p-value-publication-game.md)). So in the online game the author registers each hypothesis, and its level, before its data exist.
 - **Timing.** In period t = 1, 2, …:
   1. The author either stops, or registers a new hypothesis H_{i_t} together with a level a_t ∈ [0, 1]. The registration is public.
   2. Fresh data are collected at cost c to the author, producing p_t.

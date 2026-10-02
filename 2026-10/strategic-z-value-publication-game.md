@@ -4,7 +4,7 @@ description: Editor–author publication game without exact nulls; Gaussian prio
 date: 2026-10-01
 ---
 
-This note is a companion to the [basic-game note](../2026-09/strategic-p-value-publication-game.md). There, an editor commits to a publication rule, an author holding N p-values chooses which to submit, and once N is known the game reduces to offline multiple testing (its Results 2–3), with Holm as the FWER equilibrium and BY as the FDR equilibrium.
+This note is a companion to the [p-value publication game note](../2026-09/strategic-p-value-publication-game.md). There, an editor commits to a publication rule, an author holding N p-values chooses which to submit, and once N is known the game reduces to offline multiple testing (its Results 2–3), with Holm as the FWER equilibrium and BY as the FDR equilibrium.
 
 The basic-game note's large-N analysis used the two-group model of Donoho & Jin: exact nulls plus N^(1−β) signals of size √(2r log N). Under it, Holm publishes about N^(1−β−(1−√r)²) results (sketch), with a phase transition at r = (1 − √(1−β))². Here we drop exact nulls and put a prior on effect sizes, so most effects are small but none is exactly zero.
 
