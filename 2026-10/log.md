@@ -62,3 +62,4 @@
   - Logs: `.orchestrator-runs/` (audit/result JSON, 76 job logs)
   - Trajectories: `.codex-session-home/<job>/sessions/**/rollout-*.jsonl` (76 Codex rollouts, 44 MB)
   - Unfinished: stage 2 stopped in round 9 when its Refiner's PR #75 didn't merge; 34 nodes merged, 14 `sorry`s left in `Main.lean`
+- [**Scientific skills database access costs**](scientific-skills-database-access-costs.md) (`Claude-session: 38c27805-0f74-49ad-b513-674f7466a5dc`)
