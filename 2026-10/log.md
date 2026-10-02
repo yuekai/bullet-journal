@@ -57,3 +57,8 @@
   The Aug 20 Rethlas export covered solveall only, was gated against the shrd/ validator copy, and discarded the validator's token counts. The untracked exporter now keeps the validated entries with their counts, and it was re-run over every linalg and solveall Kimi archive, gated with `~/data-engineering/SFT/process_entry.py`. Result: 314 of 331 trajectories kept, 38.6M tokens, averaging 122.9k (median 98.7k). The Aug 20 run kept 313.
   - Codex runs (2,318 gpt-5.6 sessions) are excluded: their reasoning is encrypted, so none can pass the gate's think requirement. The 3 linalg Kimi archives hold no completed assistant turn, so linalg contributes nothing.
   - Outputs, rejects and `export_report.md` are in `~/shrd/Rethlas/exports/` on m2. The Aug 20 files are archived in `2026-08-20/` there.
+- **LeanMarathon ErdosGraham run artifacts on m2** (`Claude-session: 707489e6-0609-4211-903c-7958b3ba46fd`)
+  The only LeanMarathon run (Jul 1–2) is on m2, with nothing on spark. The checkout is `~/shrd/LeanProofs/LeanMarathon`; per-target state is in its `.orchestrator-repos/UMich-FATML/ErdosGraham/`.
+  - Logs: `.orchestrator-runs/` (audit/result JSON, 76 job logs)
+  - Trajectories: `.codex-session-home/<job>/sessions/**/rollout-*.jsonl` (76 Codex rollouts, 44 MB)
+  - Unfinished: stage 2 stopped in round 9 when its Refiner's PR #75 didn't merge; 34 nodes merged, 14 `sorry`s left in `Main.lean`
