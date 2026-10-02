@@ -46,6 +46,7 @@
   The remotes' global CLAUDE.md/AGENTS.md files had drifted from this Mac's: an older commit-memory scheme (spark's Codex still used `Memory:` trailers), different pixi rules, and no memory section in m2's CLAUDE.md. All four harnesses' files on both machines now match the local copies. The Mac-only Kimi desktop app section was dropped, since its paths don't exist on Linux.
 - [x] **Export repoprover rollouts for SFT on m2** (`~/statlib/repoprover`)
   The Sep 1 SFT export merged separate start..done segments (e.g. reviewer revisions) and pre/post-compaction dialogs into conversations the model never saw, and it validated against the shrd/ gate instead of `~/data-engineering/SFT/process_entry.py`. The untracked exporter on m2 now emits one entry per rollout, keeps only status `done`, and gates with that file's defaults. Result: 14,332 rollouts, 492.7M tokens (avg 34.4k), 1,421 rejected to `rollouts.rejects.jsonl`.
+  - The trajectories are in `~/shrd/statlib/rollouts.jsonl`. Rejects, per-run parts and the export summary stay in `~/statlib/`.
   - Spark's pilot runs and m2's `20260825-085031` contribute nothing: they predate reasoning capture, and the default gate requires think.
   - Re-gating a 500-record sample passed with no errors, and no rollout ids are duplicated.
 - [x] **Refresh Danus SFT export on m2** (`~/Danus`)
