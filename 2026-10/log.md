@@ -67,3 +67,4 @@
 ## Fri, Oct 2, 2026
 
 - [**How Danus makes incremental progress**](how-danus-makes-incremental-progress.md) (`Claude-session: 423756ed-138e-4655-953b-e446f411af8c`)
+- [**Multi-agent SFT data pipelines**](multi-agent-sft-data-pipelines.md) (`Claude-session: 01066a2f-4222-44b3-a973-8c5ee55989f8`)
