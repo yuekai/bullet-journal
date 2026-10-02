@@ -1,5 +1,5 @@
 ---
-title: Multi-agent SFT data pipelines
+title: Math SFT data pipelines
 description: How the arxivmath, arxivlean, repoprover, Rethlas and Danus systems on m2 generate training data — their agents, how the agents coordinate, what gets exported, and excerpts of real agent trajectories
 date: 2026-10-02
 ---
