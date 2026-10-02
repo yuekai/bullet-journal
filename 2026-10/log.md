@@ -69,3 +69,5 @@
 - [**How Danus makes incremental progress**](how-danus-makes-incremental-progress.md) (`Claude-session: 423756ed-138e-4655-953b-e446f411af8c`)
 - [**Math SFT data pipelines**](math-sft-data-pipelines.md) (`Claude-session: 01066a2f-4222-44b3-a973-8c5ee55989f8`)
   A copy of the note describing the arxivmath, arxivlean, repoprover, Rethlas and Danus data pipelines sits at `~/shrd/math-sft-data-pipelines.md` on m2. It is a one-off snapshot of the journal note at `3e10d7f` and won't track later edits.
+- [x] **Allow short bodies on linked conversation entries** (`~/bullet-journal` @ `94a1bcd`)
+  A linked entry had to be a bare subject, so related work like copying the note elsewhere needed a second task entry. Linked entries may now keep an optional body under the usual shape and 500-character limit, so one entry covers the note and that work.
