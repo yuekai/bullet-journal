@@ -51,5 +51,5 @@
   - Re-gating a 500-record sample passed with no errors, and no rollout ids are duplicated.
 - [x] **Refresh Danus SFT export on m2** (`~/Danus`)
   The Sep 2 trajectory export missed the last week of linalg runs and all of solveall, and it had been gated against the shrd/ copy of the validator. The existing exporter and validator scripts were re-run unchanged over all runtime/kimi-home sessions and gated with `~/data-engineering/SFT/process_entry.py`. Result: 33,174 of 33,776 trajectories kept (98.2%), 3.91B tokens, averaging 117.8k (median 92.4k). The earlier run kept 20,006 trajectories and 2.40B tokens.
-  - Outputs and `export_report.md` are in `~/shrd/Danus/runtime/exports/`. The Sep 2 files are archived in `2026-09-02/` there.
+  - The trajectories are in `~/shrd/Danus/runtime/exports/sft_trajectories.jsonl` on m2. Candidates, failures and `export_report.md` sit beside it, and the Sep 2 files are archived in `2026-09-02/` there.
   - Drops are model-side violations such as string-encoded array args, invented args and repetition loops, so they stay dropped. The orchestrator's own operator sessions in `~/.kimi-code` stay out of scope.
