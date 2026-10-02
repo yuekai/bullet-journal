@@ -68,5 +68,4 @@
 
 - [**How Danus makes incremental progress**](how-danus-makes-incremental-progress.md) (`Claude-session: 423756ed-138e-4655-953b-e446f411af8c`)
 - [**Math SFT data pipelines**](math-sft-data-pipelines.md) (`Claude-session: 01066a2f-4222-44b3-a973-8c5ee55989f8`)
-- [x] **Mirror math SFT pipelines note to m2**
-  The note describing the arxivmath, arxivlean, repoprover, Rethlas and Danus data pipelines lived only in the journal, so people working on m2 couldn't find it beside the data. A copy now sits at `~/shrd/math-sft-data-pipelines.md` on m2. It is a one-off snapshot of the journal note at `3e10d7f` and won't track later edits.
+  A copy of the note describing the arxivmath, arxivlean, repoprover, Rethlas and Danus data pipelines sits at `~/shrd/math-sft-data-pipelines.md` on m2. It is a one-off snapshot of the journal note at `3e10d7f` and won't track later edits.
