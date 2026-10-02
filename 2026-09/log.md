@@ -89,3 +89,4 @@
 ## Wed, Sep 30, 2026
 
 - The main takeaway in [**strategic p-value publication game**](strategic-p-value-publication-game.md) is that once the editor knows N, the game reduces to offline multiple testing: the editor runs any valid offline procedure with unreported p-values set to 1, and the author submits exactly its rejection set. So Holm is the equilibrium under FWER and BY under FDR, and guarding against a strategic author costs nothing beyond the offline procedure.
+- [NSF AI Datasets program](https://www.nsf.gov/funding/opportunities/ai-datasets-unlocking-dataset-value-ai-enabled-scientific-discovery)
