@@ -73,3 +73,4 @@
   A linked entry had to be a bare subject, so related work like copying the note elsewhere needed a second task entry. Linked entries may now keep an optional body under the usual shape and 500-character limit, so one entry covers the note and that work.
 - [**Answer-conditioned reasoning**](answer-conditioned-reasoning.md) (`Claude-session: 480592c9-9154-47c0-8a6c-e5339fc733aa`)
   Revised the same day: a new proposal-distributions section covers hinted sampling and MCMC projection sampling (Karan, Chen and Du, 2026); iterative training moved to open questions; the warm-start and summary sections were dropped.
+- [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
