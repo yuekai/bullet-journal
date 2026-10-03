@@ -27,18 +27,19 @@ The task-weighted usage of model j is the vector Uⱼ = ∫_{Dⱼ} x dμ(x); com
 
 ### 1.4 Learning
 
-Let h be a learning function applied componentwise.
-- **Private learning (closed models).** Closed j improves in the directions its own users push it: daⱼ/dt includes h(Uⱼ).
-- **Public learning (open model).** Open usage improves everyone: da₀/dt = h(U₀), and each closed j also receives s·h(U₀), with s ∈ [0, 1] the spillover rate.
+Let h(U, a) be a learning function applied componentwise: U is the usage that drives learning and a is the ability profile of the model that learns.
+- **Private learning (closed models).** Closed j improves in the directions its own users push it: daⱼ/dt includes h(Uⱼ, aⱼ).
+- **Public learning (open model).** Open usage improves everyone: da₀/dt = h(U₀, a₀), and each closed j also receives s·h(U₀, aⱼ), with s ∈ [0, 1] the spillover rate.
 
 ```
-da₀/dt = h(U₀)
-daⱼ/dt = h(Uⱼ) + s · h(U₀)     for j = 1..n
+da₀/dt = h(U₀, a₀)
+daⱼ/dt = h(Uⱼ, aⱼ) + s · h(U₀, aⱼ)     for j = 1..n
 ```
 
 - *Assumption:* closed usage does not spill to the open model.
 - *Assumption on s:* s = 1 says closed models absorb open improvements fully, through released fine-tunes, datasets, distillation and recipes; s < 1 says absorption is costly or partial. Keep s free: it is the parameter the LLM-era literature argues about (see §3).
 - *Boundedness:* utility is linear in a, so unbounded growth has no scale. Take abilities in [0, 1]ᵈ with logistic learning, hₖ(U, a) = γ·Uₖ·(1 − aₖ). Depreciation or a concave h are alternatives.
+- *Where saturation is evaluated:* the spillover term uses the receiving model's ability, s·h(U₀, aⱼ), so a closed model near its frontier absorbs little from open usage. The alternative, s·h(U₀, a₀), transfers the open model's own gain regardless of the receiver's level. The two differ exactly when closed models lead, which is the case of interest, so the choice should be made deliberately.
 
 ### 1.5 Timing and objectives
 
@@ -48,7 +49,7 @@ Users are a continuum with no congestion, so they are nonstrategic: given curren
 
 ### 1.6 Smallest instance
 
-Two tasks, one closed model, one open model at price zero. The closed firm's demand region is the set of users above the threshold curve r ≥ p₁ / (θ·(a₁ − a₀)) in the intensity–direction plane, the pricing problem is one-dimensional, and the dynamics are a 2×2 system whose phase portrait can be drawn.
+Two tasks, one closed model, one open model at price zero. The closed firm's demand region is the set of users above the threshold curve r ≥ p₁ / (θ·(a₁ − a₀)) in the intensity–direction plane, and the pricing problem is one-dimensional. The state is four abilities, two models times two tasks. Demand depends only on the gap a₁ − a₀, but the logistic rule does not close on the gap, so a reduction to two dimensions is not automatic; with linear h it is.
 
 ## 2. Questions the solved model should answer
 
