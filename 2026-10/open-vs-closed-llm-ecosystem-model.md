@@ -1,68 +1,136 @@
 ---
 title: Open vs closed LLM ecosystem model
-description: Setup for a model of competition between closed LLMs and one open LLM, with users and models as vectors in task space, fixed prices, private learning for closed models and public learning from open-model usage; the questions a solved model should answer, and how the setup relates to LLM-era and open-source economic models
+description: Model of competition between closed LLMs and one free open LLM; users are task-mix profiles on the simplex, models are ability vectors, per-unit prices, log per-unit value, closed models learn from their own usage and open-model usage spills over to everyone; settled setup, open questions, two-task results, alternatives explored, and related work
 date: 2026-10-02
 ---
 
-A model of the open-weight LLM ecosystem in which the agents are organizations rather than individual programmers. Users and models both live in a task space; closed models learn privately from their own users, while usage of the open model improves every model. This note records the setup, the questions a solved model should answer, and how both compare to existing work. Nothing has been solved yet.
+A model of the open-weight LLM ecosystem in which the agents are organizations rather than individual programmers. Users and models both live in a task space; closed models learn from their own usage, while usage of the open model improves every model. This note records the setup as settled on Oct 3, the questions a solved model should answer, what the two-task instance shows so far, the alternative setups that were explored and dropped, and how the model compares to existing work.
 
 ## 1. Setup
 
 ### 1.1 Primitives
 
-- **Tasks.** There are d task types, such as coding, writing and math. Everything lives in the nonnegative orthant of ℝᵈ.
-- **Users.** A continuum of users, each with a usage profile x ∈ ℝᵈ₊. Write x = r·θ with r ≥ 0 the intensity of AI use and θ in the unit simplex the task mix. Users are distributed by a measure μ on ℝᵈ₊ with finite first moment, since the learning rules integrate x.
-- **Models.** One open model, indexed 0, and n closed models, indexed 1..n. Model j has an ability profile aⱼ ∈ ℝᵈ₊, one component per task, and charges a fixed per-user price pⱼ ≥ 0. A fixed price is a subscription: at a given price a heavy user yields the same revenue as a light one but contributes more learning.
-- **Choice.** User x gets utility uⱼ(x) = x·aⱼ − pⱼ from model j and picks the argmax. *Assumption:* there is an outside option with utility 0, so users with x·aⱼ < pⱼ for every j use nothing. If p₀ = 0 the open model is the outside option and every user uses something. p₀ is a parameter with default 0.
+- **Tasks.** There are d task types, such as coding, writing and math.
+- **Users.** A continuum of users, each with a task mix θ in the unit simplex Δ^{d−1} and unit usage. Users are distributed by a density ν on the simplex with unit mass. Heavy users are represented by more density at their task mix, not by a longer vector. This is valid because demand, revenue and learning are all linear in usage, and it commits the model to per-unit pricing: a fixed fee would break the linearity.
+- **Models.** One open model, indexed 0, and n closed models, indexed 1..n. Model j has an ability profile aⱼ ∈ ℝᵈ₊, one component per task, and charges a per-unit price pⱼ ≥ 0. The open model's price p₀ is exogenous, zero in everything computed so far.
+- **Choice.** A user with task mix θ gets per-unit utility uⱼ(θ) = log(θ·aⱼ) − pⱼ from model j and picks the argmax. There is no outside option: every user uses some model. Utility differences are log ratios, so the model is scale-free: scaling every ability by one factor changes nothing. The state is the set of ability ratios. Price is in log units, so eᵖ is the quality ratio at which a user is indifferent between paying p and using the free model.
 
-### 1.2 Demand regions
+### 1.2 Territories and usage
 
-Let Dⱼ be the set of users choosing j. Utility differences are linear in x, so Dⱼ is an intersection of half-spaces, hence a convex polyhedron. Two consequences:
-- **Vertical sorting within a direction.** For fixed θ, users choose among lines in r with slope θ·aⱼ and intercept −pⱼ. The upper envelope sorts users by intensity: higher r goes to higher quality in that direction at a higher price. A model with lower slope and higher price than another gets no users of that direction. This is Mussa–Rosen vertical differentiation, direction by direction.
-- **Horizontal sorting across directions.** Across task mixes the models compete spatially in task space. The free open model captures a convex neighborhood of the origin plus any directions where closed models have little edge.
+Let Tⱼ ⊂ Δ^{d−1} be the set of task mixes choosing model j. Competition is purely horizontal: each model owns a region of the simplex. The usage of model j is the vector Uⱼ = ∫_{Tⱼ} θ dν(θ) ∈ ℝᵈ₊, whose component Uⱼₖ is how much task-k work flows through model j, and its usage share is ν(Tⱼ). Against a free open model, the closed firm's margin in direction θ is m(θ) = log(θ·aⱼ) − log(θ·a₀), and its territory is {θ : m(θ) ≥ pⱼ}.
 
-### 1.3 Usage
+### 1.3 Learning
 
-The task-weighted usage of model j is the vector Uⱼ = ∫_{Dⱼ} x dμ(x); component Uⱼₖ is how much task-k work flows through model j. The user mass is Nⱼ = μ(Dⱼ).
-
-### 1.4 Learning
-
-Let h(U, a) be a learning function applied componentwise: U is the usage that drives learning and a is the ability profile of the model that learns.
-- **Private learning (closed models).** Closed j improves in the directions its own users push it: daⱼ/dt includes h(Uⱼ, aⱼ).
-- **Public learning (open model).** Open usage improves everyone: da₀/dt = h(U₀, a₀), and each closed j also receives s·h(U₀, aⱼ), with s ∈ [0, 1] the spillover rate.
+Abilities are non-decreasing stocks driven by usage, with no bound and no depreciation:
 
 ```
-da₀/dt = h(U₀, a₀)
-daⱼ/dt = h(Uⱼ, aⱼ) + s · h(U₀, aⱼ)     for j = 1..n
+ȧ₀ = γ·U₀
+ȧⱼ = γ·(Uⱼ + s·U₀)          j = 1..n
 ```
 
-- *Assumption:* closed usage does not spill to the open model.
-- *Assumption on s:* s = 1 says closed models absorb open improvements fully, through released fine-tunes, datasets, distillation and recipes; s < 1 says absorption is costly or partial. Keep s free: it is the parameter the LLM-era literature argues about (see §3).
-- *Boundedness:* utility is linear in a, so unbounded growth has no scale. Take abilities in [0, 1]ᵈ with logistic learning, hₖ(U, a) = γ·Uₖ·(1 − aₖ). Depreciation or a concave h are alternatives.
-- *Where saturation is evaluated:* the spillover term uses the receiving model's ability, s·h(U₀, aⱼ), so a closed model near its frontier absorbs little from open usage. The alternative, s·h(U₀, a₀), transfers the open model's own gain regardless of the receiver's level. The two differ exactly when closed models lead, which is the case of interest, so the choice should be made deliberately.
+- Closed j learns from its own users and receives a share s ∈ [0, 1] of the learning generated by open-model usage, through released fine-tunes, datasets, distillation and recipes. s = 1 is full absorption. Keep s free: it is the parameter the LLM-era literature argues about.
+- Closed usage does not spill to the open model.
+- A model with no users is frozen, not erased. For the open model this is the defining property of released weights: they persist at their last capability and anyone can keep running them. In practice a frozen open model with no users is dead, so survival is the statement U₀ > 0, not a₀ > 0.
+- Because utility is log and learning is linear, the bound on abilities that earlier versions needed is gone. Margins are bounded by usage ratios, not by a ceiling on a.
+
+### 1.4 Long-run structure
+
+Abilities grow linearly along their usage directions, so initial conditions wash out and the long run is stationary in ratios. If usage converges to Ū, then componentwise
+
+```
+aⱼ/a₀  →  (Ūⱼ + s·Ū₀) / Ū₀
+m(θ)   →  log[ θ·(Ūⱼ + s·Ū₀) / θ·Ū₀ ]
+```
+
+and a steady state is a fixed point: the territory {m ≥ p*} under the myopic price p* must generate exactly the usage Ū that produced m. In the two-task computation at s = 0.5 the predicted ratio (8.52, 43.26) matches the simulated (8.57, 43.28) at horizon 2000 *(computed)*.
+
+Two corners are also stationary.
+- **Open frozen.** If the closed firm takes every direction, U₀ = 0, a₀ stops, and a₁ grows without bound, so the margin and the price grow like log t forever. That unbounded price is the no-outside-option assumption at work: nobody can refuse to pay.
+- **Open takes all.** If the closed firm trails everywhere it gets no users at any nonnegative price and grows only through spillover, at rate s·γ·U₀. For s < 1 it falls behind in ratio terms forever. At s = 1 it grows at exactly the open model's rate and approaches it from below, a degenerate tie.
+
+At s = 1 there is a structural fact worth knowing: U₁ + U₀ is total usage whatever the territories, so the closed firm's ability direction equals the population's task direction regardless of whom it serves. Its relative position then depends only on how much of the open model's learning it has absorbed versus how much the open model has of its own.
 
 ### 1.5 Timing and objectives
 
-Users are a continuum with no congestion, so they are nonstrategic: given current abilities and prices they sort. The only game is among closed firms over prices.
-- **Closed firm j** earns pⱼ·Nⱼ per unit time, with zero marginal cost. Static version: each firm sets pⱼ to maximize current profit given a and the others' prices. Dynamic version: firms discount at ρ and value usage as investment in aⱼ, so penetration pricing appears. Solve the static, myopic version first.
-- **Open provider.** Exogenous for now: price p₀ and no objective. Who provides the open model and why is the discrete-public-good question of §3.3.
+Users are a continuum with no congestion, so they sort nonstrategically given abilities and prices. The only game is among closed firms over prices.
+- **Closed firm j** earns pⱼ·ν(Tⱼ) per unit time with zero marginal cost. In everything computed so far the firm is myopic: it re-solves max_p p·ν({m ≥ p}) at every instant given current abilities, with no shadow value on learning. The forward-looking version adds the shadow value of every ability the firm moves by ceding a border direction, four effects: own learning lost, open model strengthened, own spillover received, rivals' spillover received.
+- **Open provider.** Exogenous: price zero and no objective. Endogenizing who provides it and why is the discrete-public-good question of §5.3.
 
 ### 1.6 Smallest instance
 
-Two tasks, one closed model, one open model at price zero. The closed firm's demand region is the set of users above the threshold curve r ≥ p₁ / (θ·(a₁ − a₀)) in the intensity–direction plane, and the pricing problem is one-dimensional. The state is four abilities, two models times two tasks. Demand depends only on the gap a₁ − a₀, but the logistic rule does not close on the gap, so a reduction to two dimensions is not automatic; with linear h it is.
+Two tasks, θ = (t, 1 − t) with t ∈ [0, 1], one closed firm. The margin m(t) is a single curve, the firm's static problem is one-dimensional, and the myopic price is found by sorting directions by margin and maximizing margin times the user mass at or above it. Simulation: forward Euler on the ability stocks with γ = 1, step 0.05, horizon 400 to 2000, 801 directions with trapezoid weights, price re-optimized every step. Script: [open-vs-closed-two-task-log-rule.py](assets/open-vs-closed-two-task-log-rule.py).
 
 ## 2. Questions the solved model should answer
 
-- **Do closed firms cede the low end?** Users a closed firm prices out go to the open model, whose learning spills back at rate s. Raising price trades exclusive learning for shared learning. Conjecture: equilibrium closed prices rise with s.
-- **Where do abilities converge and where do they diverge?** Public learning concentrates in the directions of U₀, which are low-intensity users across all task mixes. Private learning specializes closed models toward their heavy users. Conjecture: abilities converge on common tasks and diverge on the tasks heavy users care about.
-- **Does the open model survive?** With s = 1 the closed models match every open improvement and add their own, so the ability gap never closes. Does the open model's demand region shrink to a point or stabilize? This is the Athey–Ellison steady-state-vs-collapse question in this setting.
-- **How does the open model's user base shape the ecosystem?** Because public learning is directed by U₀, the open model's users decide which tasks every model improves at. Which task mixes end up over- or under-served relative to a planner's choice?
-- **Welfare.** Consumer surplus is ∫ maxⱼ uⱼ(x) dμ. How does it move with s, with p₀, and with the number of closed firms? Does the open model raise welfare mainly by serving low-intensity users or mainly by improving closed models?
-- **Dynamic pricing.** Under forward-looking firms, how much penetration pricing does the private-learning motive generate, and does it crowd the open model out of task directions it would otherwise own?
+- **Do closed firms cede the thin tail?** The closed firm prices for the mass of users and cedes directions where too few users sit to be worth lowering the price for. Which directions those are, and how the ceded share depends on s and on the shape of ν.
+- **Does the open model survive?** Survival is U₀ > 0 in the long run. Does the open model keep a territory, or is it frozen out, and what decides between the two.
+- **Where do abilities converge and diverge?** Learning follows users, so each model improves most at the tasks it already owns. Which task directions end up with large ratios and which with ratios near one.
+- **Does price rise with s?** Spillover makes the closed firm stronger everywhere. Whether it then charges more and covers more, or cedes more to free-ride on public learning.
+- **Welfare.** Per-unit consumer surplus is ∫ maxⱼ uⱼ(θ) dν. How it moves with s, with the number of closed firms, and with an open price above zero.
+- **Dynamic pricing.** Whether a forward-looking firm, knowing ceded directions feed the open model, cedes less or more than the myopic firm.
 
-## 3. Related work
+## 3. Two-task results
 
-### 3.1 LLM-era economic models
+All statements in this section are *(computed)* for one closed firm, two tasks, log value, myopic pricing, γ = 1, the Euler scheme of §1.6, and 16 fixed random starts plus structured ones.
+
+### 3.1 Users spread uniformly over task mixes
+
+No stable interior. Every start ends in a corner, and which corner depends on who leads at the start.
+- A closed firm leading by a roughly uniform margin, even five percent, takes every direction. The open model freezes and the closed price grows without bound, about 6.0 log units at horizon 400.
+- A closed firm trailing anywhere that matters, including a firm leading overall but lopsided toward one task, loses every direction. The lopsided firm prices for its strong task, cedes the other, and the open model grows there until it overtakes.
+- Intermediate shares appear at horizon 400 for s between 0.7 and 0.95, but they are slow transients: two of three rechecked at horizon 2000 had collapsed to a closed monopoly and the third was still drifting toward it.
+- Higher s enlarges the closed firm's basin: three of sixteen random starts at s = 0 end in closed monopoly, eleven at s = 1.
+
+The uniform case is degenerate because it has no thin tail. Under the earlier depreciation rule the same case had a saddle interior and the same two corners.
+
+### 3.2 Users concentrated on one task
+
+Density Beta(2,5) in the task-1 weight, so most users are task-2 heavy and the task-1 end of the simplex is a thin tail. From any start where the closed firm leads, the long run is a stable interior, reached by horizon 300 and unchanged at 2000. The closed firm specializes toward the mass and cedes the tail.
+
+| s | closed price | closed usage share | a₁/a₀ by task |
+|---|---|---|---|
+| 0.0 | 2.81 | 0.949 | (7.6, 40) |
+| 0.5 | 2.88 | 0.952 | (8.6, 43) |
+| 1.0 | 2.96 | 0.955 | (9.5, 47) |
+
+Readings.
+- **Where the open model lives.** It holds the task-1-heavy tail, about five percent of usage, where neither model is good. The closed model is eight to ten times better there in ability-ratio terms, but its price, around e^2.9 ≈ 18 in quality-ratio terms, exceeds its margin in those directions, so tail users take the free model. Learning follows users, so the directions the closed firm does not price for are also the directions it is relatively weak in. The two coincide endogenously.
+- **Price rises with s, and so does coverage.** The earlier conjecture was that closed firms cede more as spillover rises, to free-ride on public learning. The computation shows price and closed share both rising with s. Spillover makes the closed firm stronger in every direction, so it charges more and covers more. The open model shrinks slightly but survives at s = 1.
+- **Who starts ahead decides.** A closed firm starting behind by five percent, or behind on task 2 only, loses every direction and never recovers. This corner is an artifact of the model having no non-usage input: a firm that falls behind has no way back without R&D funded by profit.
+
+The earlier depreciation run gave the same qualitative picture for this density, with a slightly lower closed share of 0.87 to 0.90, because under depreciation the open model's level was tied to its current usage flow rather than its accumulated stock. Script for that run: [open-vs-closed-two-task-depreciation-rule.py](assets/open-vs-closed-two-task-depreciation-rule.py).
+
+### 3.3 What this says
+
+Any density with a thin tail in task space gives a stable interior in which the closed firm serves the mass and the open model serves the tail. Whether that is the right stylized fact depends on whether real usage has such a tail, which it plausibly does across languages and niche domains. The two additions that matter most next are a non-usage input funded by profit, which removes the open-takes-all artifact and makes the closed firm's lead endogenous, and forward-looking pricing.
+
+## 4. Alternatives explored
+
+Each line says what the alternative was and why it was dropped or deferred.
+
+**User and demand side**
+- **Usage vectors x = r·θ with intensity r and a fixed per-user price.** Gave vertical sorting by intensity within each task mix, in the Mussa–Rosen sense, and convex polyhedral demand regions. Dropped because, with intensity factored out of choice under per-unit pricing, heavy users are just density, and the state collapses to a measure on the simplex.
+- **Outside option with utility zero.** Needed under subscription pricing so that intensity mattered. Dropped with the move to log utility, which is scale-free only without it. Consequence: in the frozen-open corner the closed price is unbounded.
+- **Concave transform of x·aⱼ.** Proposed to remove the ability bound. Rejected because it breaks intensity sorting: for a bounded transform the willingness to pay for quality is hump-shaped in intensity, and for log it is constant in intensity, so heavy users stop paying for quality.
+- **Concavity per unit of usage, r·g(θ·aⱼ) − pⱼ.** The fix for the previous item. Subsumed by the simplex normalization with per-unit pricing.
+- **Two-part tariff, r·(g(θ·aⱼ) − pⱼ) − Fⱼ.** Nests subscription and per-unit pricing. Deferred as the extension a monopolist facing heterogeneous intensity within a direction would choose.
+- **Marginal inference cost c per unit, with p₀ = c.** Deferred. It would restore an outside option and break scale-freeness.
+
+**Learning rules**
+- **Bounded abilities in [0, 1]ᵈ with logistic learning, ȧₖ = γUₖ(1 − aₖ).** The first fix for scale. Dropped because the bound was an assumption rather than a definition, and the long run saturates. Raised the question of whether spillover saturates at the receiver's level or the source's, which is moot under linear learning.
+- **Success-rate ceiling with failure-driven learning.** Reads aⱼₖ as the probability of completing a task of type k, so the bound is a definition and failures Uⱼₖ(1 − aⱼₖ) are the training signal. Headroom shrinks exponentially at the effective usage rate. Kept as the fallback if saturation is wanted; dropped as baseline because the long run is commoditization and the content is transient.
+- **Depreciation, ȧⱼ = γ(Uⱼ + sU₀) − δaⱼ.** Gave closed-form steady states with ability equal to usage flow. Dropped because it turns ability from a stock into a flow and erased losing models, which misstates the persistence of released weights. It is exactly a moving-frontier model with exogenous exponential escalation of task difficulty and learning proportional to difficulty, so what it assumed is now explicit. The real-world analog, temporal drift of knowledge after the training cutoff, is task-specific staleness and not a uniform decay.
+- **Moving frontier.** Raw capability stocks measured against a difficulty index: the frontier maxⱼ cⱼₖ, a lagged usage-weighted mean, or exogenous growth. Deferred. With a scalar index it coincides with log utility up to the outside option.
+- **Linear learning with linear utility and no bound.** Homogeneous of degree one, analyzable as detrended balanced growth. Superseded by log utility, which gives stationarity in ratios directly.
+- **Brainstormed and not pursued.** Concave or multiplicative returns to usage; user count, coverage of task space, or failures as the usage measure; task-specific spillover matrix; closed-to-open distillation κ(max cₘ − c₀); frontier catch-up for everyone; release generations instead of continuous time; R&D funded by profit. The last is the one most likely to be added.
+
+**Firm side**
+- **Static pricing with intensity vectors** reduced to monopoly pricing over the scalar willingness to pay x·(a₁ − a₀), with the envelope result that the firm values ability where marginal users are while learning follows inframarginal heavy users. Under per-unit pricing the same tension is territorial: value at contested borders, learning from interior usage.
+- **Forward-looking pricing** as a differential game with value functions over the ability state. Deferred; the myopic firm is the special case with zero shadow values.
+
+## 5. Related work
+
+### 5.1 LLM-era economic models
 
 - **Jamison and Yu (2026), [Competing for the Future of AI](https://bear.warrington.ufl.edu/centers/purc/docs/papers/2605-Economic-Incentives-of-Open-Source-Foundation-Models.pdf).** A two-stage structural model estimated on Hugging Face data: model owners choose a degree of openness, downstream developers choose which model to adopt. Short-run returns cover under half of openness costs; knowledge spillovers from downstream developers, which raise next-generation quality, rationalize the rest. *Comparison:* their spillover runs from downstream developers back to the model owner; ours runs from open-model users to every model. Their openness is a scalar index with data disclosure as one of six dimensions, estimated on five commercial owners; ours is a binary type with a learning asymmetry instead of an openness choice.
 - **Xu, Wang, Chen and Xie (2025), [The Economics of AI Foundation Models](https://arxiv.org/abs/2510.15200).** Two-period game: an incumbent chooses an openness scalar that lowers a deployer's fine-tuning cost, an entrant learns from it, and a data flywheel lowers the incumbent's future cost. Openness is non-monotone in flywheel strength; transparency mandates can backfire. *Comparison:* their learning is a cost reduction keyed to adoption; ours is a vector of abilities keyed to task-weighted usage, so learning has a direction. They have one incumbent and one entrant; we have several closed firms and an open model of fixed type.
@@ -73,20 +141,20 @@ Two tasks, one closed model, one open model at price zero. The closed firm's dem
 
 None of the formal models above has a user population in a task space, directional learning, or a single open model whose usage improves rivals. None treats models that release training data as a distinct type: every one collapses openness to a scalar, and no sample contains a fully open producer.
 
-### 3.2 Models of open source ecosystems
+### 5.2 Models of open source ecosystems
 
 - **Lerner and Tirole (2002), [Some Simple Economics of Open Source](https://onlinelibrary.wiley.com/doi/10.1111/1467-6451.00174).** Contributions as signals of skill paid off later through jobs and reputation. *Comparison:* our agents are firms, so the analog is talent attraction and standard-setting, neither of which is in the setup yet.
 - **Johnson (2002), [Open Source Software: Private Provision of a Public Good](https://onlinelibrary.wiley.com/doi/10.1111/j.1430-9134.2002.00637.x).** User-programmers decide whether to build an enhancement that becomes a public good. *Comparison:* in our setting users do not build; they generate learning by using. The public good is the open model's ability vector, provided by usage rather than effort.
 - **Bessen (2005), [Open Source Software: Free Provision of Complex Public Goods](https://www.researchoninnovation.org/opensrc.pdf).** Complex goods cannot be served by standard products, so users customize and share. *Comparison:* our task space is the analog of product complexity; heterogeneity in θ is why no single model serves everyone.
 - **von Hippel and von Krogh (2003), [Private-Collective Innovation](https://pubsonline.informs.org/doi/10.1287/orsc.14.2.209.14992)** and **Henkel (2006), [Selective revealing](https://ideas.repec.org/a/eee/respol/v35y2006i7p953-969.html).** Firms reveal when private benefits of revealing exceed the loss. *Comparison:* the open provider's objective, once endogenized. Releasing weights but not data is selective revealing with the know-how retained.
-- **Athey and Ellison (2014), [Dynamics of Open Source Movements](https://onlinelibrary.wiley.com/doi/abs/10.1111/jems.12053).** Reciprocal altruism drives a project to a steady-state size, but a need for user support makes zero quality absorbing. *Comparison:* our open-model survival question is the same question with usage-driven learning replacing contribution.
+- **Athey and Ellison (2014), [Dynamics of Open Source Movements](https://onlinelibrary.wiley.com/doi/abs/10.1111/jems.12053).** Reciprocal altruism drives a project to a steady-state size, but a need for user support makes zero quality absorbing. *Comparison:* our open-model survival question is the same question with usage-driven learning replacing contribution, and zero usage rather than zero quality as the absorbing state, since open weights persist.
 - **Benkler (2002), [Coase's Penguin](https://arxiv.org/pdf/cs/0109077).** Peer production wins when tasks are modular and granular. *Comparison:* does not apply to the base-model layer, which is lumpy; it applies to the derivative layer of fine-tunes and distillations that our spillover rate s abstracts.
 - **Casadesus-Masanell and Ghemawat (2006), [Dynamic Mixed Duopoly](https://www.hbs.edu/faculty/Pages/item.aspx?num=21129).** A profit maximizer against a zero-price rival with demand-side learning. *Comparison:* the closest ancestor. Our additions: a vector of abilities with directional learning, horizontal differentiation in task space, and learning that spills from the free rival to the priced one.
 - **Economides and Katsamakas (2006), [Two-Sided Competition of Proprietary vs. Open Source Platforms](https://pubsonline.informs.org/doi/10.1287/mnsc.1060.0549).** Platform pricing toward users and complementors. *Comparison:* we have no complementor side; downstream developers would be a natural extension.
 - **Mustonen (2003), [Copyleft](https://research.aalto.fi/en/publications/copyleft-the-economics-of-linux-and-other-open-source-software)** and **Lerner and Tirole (2005), [The Scope of Open Source Licensing](https://www.nber.org/papers/w9363).** License restrictiveness as a strategic variable. *Comparison:* license terms would enter through s, since restrictive terms limit what rivals can absorb.
 - **Bliss and Nalebuff (1984), Dragon-slaying and ballroom dancing, J. Public Econ. 25.** Private supply of a discrete public good as a war of attrition. *Comparison:* the natural frame for who provides the open model, which the setup leaves exogenous.
 
-### 3.3 What the setup leaves out
+### 5.3 What the setup leaves out
 
 - The open provider's identity and objective: a complement-seller commoditizing the model layer, a nonprofit, or a state. This is the discrete-public-good game among heterogeneous firms that none of the LLM-era models studies.
 - Models that release training data, whose spillover is larger because the recipe becomes non-excludable. A third type with a higher s to rivals, funded externally, would capture them.
