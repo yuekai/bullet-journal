@@ -1,10 +1,10 @@
 ---
 title: Open vs closed LLM ecosystem model
-description: Model of competition between closed LLMs and one free open LLM; users are task-mix profiles on the simplex, models are ability vectors, per-unit prices, log per-unit value, closed models learn from their own usage and open-model usage spills over to everyone; settled setup, open questions, two-task results, alternatives explored, and related work
+description: Model of competition between closed LLMs and one free open LLM; users are task-mix profiles on the simplex, models are ability vectors, per-unit prices, log per-unit value, closed models learn from their own usage and open-model usage spills over to everyone; settled setup, open questions, two- and three-task simulation results, alternatives explored, and related work
 date: 2026-10-02
 ---
 
-A model of the open-weight LLM ecosystem in which the agents are organizations rather than individual programmers. Users and models both live in a task space; closed models learn from their own usage, while usage of the open model improves every model. This note records the setup as settled on Oct 3, the questions a solved model should answer, what the two-task instance shows so far, the alternative setups that were explored and dropped, and how the model compares to existing work.
+A model of the open-weight LLM ecosystem in which the agents are organizations rather than individual programmers. Users and models both live in a task space; closed models learn from their own usage, while usage of the open model improves every model. This note records the setup as settled on Oct 3, the questions a solved model should answer, what the two- and three-task instances show so far, the alternative setups that were explored and dropped, and how the model compares to existing work.
 
 ## 1. Setup
 
@@ -54,13 +54,15 @@ At s = 1 there is a structural fact worth knowing: U₁ + U₀ is total usage wh
 
 Users are a continuum with no congestion, so they sort nonstrategically given abilities and prices. The only game is among closed firms over prices.
 - **Closed firm j** earns pⱼ·ν(Tⱼ) per unit time with zero marginal cost. In everything computed so far the firm is myopic: it re-solves max_p p·ν({m ≥ p}) at every instant given current abilities, with no shadow value on learning. The forward-looking version adds the shadow value of every ability the firm moves by ceding a border direction, four effects: own learning lost, open model strengthened, own spillover received, rivals' spillover received.
-- **Open provider.** Exogenous: price zero and no objective. Endogenizing who provides it and why is the discrete-public-good question of §5.3.
+- **Open provider.** Exogenous: price zero and no objective. Endogenizing who provides it and why is the discrete-public-good question of §4.3.
 
-### 1.6 Smallest instance
+### 1.6 Smallest instances
 
 Two tasks, θ = (t, 1 − t) with t ∈ [0, 1], one closed firm. The margin m(t) is a single curve, the firm's static problem is one-dimensional, and the myopic price is found by sorting directions by margin and maximizing margin times the user mass at or above it. Simulation: forward Euler on the ability stocks with γ = 1, step 0.05, horizon 400 to 2000, 801 directions with trapezoid weights, price re-optimized every step. Script: [open-vs-closed-two-task-log-rule.py](assets/open-vs-closed-two-task-log-rule.py).
 
-## 2. Questions the solved model should answer
+Three tasks, θ on the 2-simplex, one closed firm. Same scheme on a triangular grid of 1891 directions with step 1/60, with ν a Dirichlet density evaluated on the grid and normalized. Script: [open-vs-closed-three-task-log-rule.py](assets/open-vs-closed-three-task-log-rule.py).
+
+### 1.7 Questions the solved model should answer
 
 - **Do closed firms cede the thin tail?** The closed firm prices for the mass of users and cedes directions where too few users sit to be worth lowering the price for. Which directions those are, and how the ceded share depends on s and on the shape of ν.
 - **Does the open model survive?** Survival is U₀ > 0 in the long run. Does the open model keep a territory, or is it frozen out, and what decides between the two.
@@ -69,11 +71,11 @@ Two tasks, θ = (t, 1 − t) with t ∈ [0, 1], one closed firm. The margin m(t)
 - **Welfare.** Per-unit consumer surplus is ∫ maxⱼ uⱼ(θ) dν. How it moves with s, with the number of closed firms, and with an open price above zero.
 - **Dynamic pricing.** Whether a forward-looking firm, knowing ceded directions feed the open model, cedes less or more than the myopic firm.
 
-## 3. Two-task results
+## 2. Simulation results
 
-All statements in this section are *(computed)* for one closed firm, two tasks, log value, myopic pricing, γ = 1, the Euler scheme of §1.6, and 16 fixed random starts plus structured ones.
+All statements in this section are *(computed)* for one closed firm, log value, myopic pricing, γ = 1, the Euler schemes of §1.6, and 16 fixed random starts plus structured ones. §2.1 and §2.2 are two tasks, §2.3 is three.
 
-### 3.1 Users spread uniformly over task mixes
+### 2.1 Users spread uniformly over task mixes
 
 No stable interior. Every start ends in a corner, and which corner depends on who leads at the start.
 - A closed firm leading by a roughly uniform margin, even five percent, takes every direction. The open model freezes and the closed price grows without bound, about 6.0 log units at horizon 400.
@@ -83,7 +85,7 @@ No stable interior. Every start ends in a corner, and which corner depends on wh
 
 The uniform case is degenerate because it has no thin tail. Under the earlier depreciation rule the same case had a saddle interior and the same two corners.
 
-### 3.2 Users concentrated on one task
+### 2.2 Users concentrated on one task
 
 Density Beta(2,5) in the task-1 weight, so most users are task-2 heavy and the task-1 end of the simplex is a thin tail. From every structured start where the closed firm leads, at every s, the long run is a stable interior, reached by horizon 300 and unchanged at 2000. The closed firm specializes toward the mass and cedes the tail. The exception is s = 1, where four of sixteen random starts ended with the open model frozen out: with full spillover the monopoly corner is reachable even with a thin tail.
 
@@ -100,11 +102,33 @@ Readings.
 
 The earlier depreciation run gave the same qualitative picture for this density, with a slightly lower closed share of 0.87 to 0.90, because under depreciation the open model's level was tied to its current usage flow rather than its accumulated stock. Script for that run: [open-vs-closed-two-task-depreciation-rule.py](assets/open-vs-closed-two-task-depreciation-rule.py).
 
-### 3.3 What this says
+### 2.3 Three tasks
 
-Conjecture from one density: a thin tail in task space gives a stable interior in which the closed firm serves the mass and the open model serves the tail, except under full spillover, where the monopoly corner is also reachable. Whether that is the right stylized fact depends on whether real usage has such a tail, which it plausibly does across languages and niche domains. The two additions that matter most next are a non-usage input funded by profit, which removes the open-takes-all artifact and makes the closed firm's lead endogenous, and forward-looking pricing.
+Three user densities: uniform; one popular task, Dirichlet(2,2,6), with mean task mix (0.20, 0.20, 0.60); two popular tasks, Dirichlet(5,5,1), with mean (0.46, 0.46, 0.08). Spillover s ∈ {0, 0.5, 1}. Long-horizon checks at 2000 confirmed every steady state reported here; two near-corner runs under Dirichlet(2,2,6) at s = 1 were transients and are counted as corners.
 
-## 4. Alternatives explored
+| density | s | closed share | eᵖ | open-held vertices | a₁/a₀ by task |
+|---|---|---|---|---|---|
+| uniform | 0 | corners only | | | |
+| uniform | 0.5 | 0.38 to 0.75, several stable interiors | 2.0 | one vertex | (0.96, 3.7, 3.7) in one of them |
+| uniform | 1 | 0.85 to 0.93 | 4 to 6 | one vertex | (3.0, 18, 18) in one of them |
+| one popular task | 0, 0.5, 1 | 0.971 | 28 to 30 | the two unpopular tasks | (16, 16, 65) |
+| two popular tasks | 0, 0.5, 1 | 0.977 | 36 to 39 | the unpopular task | (51, 51, 8) |
+
+Readings.
+- **Uniform density has interiors in three tasks where it had none in two.** At s = 0 every random start still ends in a corner, and a closed firm leading uniformly takes all at every s. But at s = 0.5 six of sixteen random starts, and at s = 1 fifteen of sixteen, reach a stable interior in which the open model holds one corner of the simplex. Dimension and spillover together produce the interior, not dimension alone.
+- **Two survival modes.** In the uniform s = 0.5 interiors the open model leads outright on its task, ratio 0.96. In every other interior it trails on every task, by factors of 3 to 17 at the vertex it holds, and survives only because that corner is too thin to price for.
+- **The ceded share is pinned by density geometry.** Under both concentrated densities the closed share is the same to three decimals across s and across starting leads, 0.971 and 0.977, while the price rises with s. The open model holds exactly the corners of the unpopular tasks.
+- **Several stable interiors.** The uniform s = 0.5 runs reach closed shares from 0.38 to 0.75 while four of six hold the same vertex, so steady states are not unique even given the held vertex. History selects among them.
+- **Lopsided leaders.** A closed firm leading strongly on the popular task loses every direction at s = 0 under uniform density and takes all at s ≥ 0.5, the same pattern as in two tasks.
+- **Ratio formula.** The predicted stationary ratios of §1.4 match the simulation to about two percent at horizon 2000, with the gap due to initial conditions.
+
+### 2.4 What this says
+
+The thin-tail result is geometric. The open model survives at a corner of the simplex whose user mass is worth less to the closed firm than the price gain from excluding it. Concentrated densities create such corners at the unpopular tasks; uniform density creates them by geometry alone once d ≥ 3, since the mass within distance ε of a vertex scales like ε^{d−1}. Two tasks have no thin corners under uniform density, which is why that case tipped to monopoly. The result still holds from any start where the closed firm leads, except that under full spillover the monopoly corner is also reachable from some starts.
+
+Two things the model cannot yet produce. A closed firm that falls behind everywhere never recovers, because it has no non-usage input; R&D funded by profit does not fix this, since a firm with no users has no profit, so escaping the trap needs funding that does not depend on current profit. And the closed firm's lead is exogenous, set by the starting point; profit-funded R&D is what would make it endogenous. Forward-looking pricing is the other addition that matters next.
+
+## 3. Alternatives explored
 
 Each line says what the alternative was and why it was dropped or deferred.
 
@@ -128,9 +152,9 @@ Each line says what the alternative was and why it was dropped or deferred.
 - **Static pricing with intensity vectors** reduced to monopoly pricing over the scalar willingness to pay x·(a₁ − a₀), with the envelope result that the firm values ability where marginal users are while learning follows inframarginal heavy users. Under per-unit pricing the same tension is territorial: value at contested borders, learning from interior usage.
 - **Forward-looking pricing** as a differential game with value functions over the ability state. Deferred; the myopic firm is the special case with zero shadow values.
 
-## 5. Related work
+## 4. Related work
 
-### 5.1 LLM-era economic models
+### 4.1 LLM-era economic models
 
 - **Jamison and Yu (2026), [Competing for the Future of AI](https://bear.warrington.ufl.edu/centers/purc/docs/papers/2605-Economic-Incentives-of-Open-Source-Foundation-Models.pdf).** A two-stage structural model estimated on Hugging Face data: model owners choose a degree of openness, downstream developers choose which model to adopt. Short-run returns cover under half of openness costs; knowledge spillovers from downstream developers, which raise next-generation quality, rationalize the rest. *Comparison:* their spillover runs from downstream developers back to the model owner; ours runs from open-model users to every model. Their openness is a scalar index with data disclosure as one of six dimensions, estimated on five commercial owners; ours is a binary type with a learning asymmetry instead of an openness choice.
 - **Xu, Wang, Chen and Xie (2025), [The Economics of AI Foundation Models](https://arxiv.org/abs/2510.15200).** Two-period game: an incumbent chooses an openness scalar that lowers a deployer's fine-tuning cost, an entrant learns from it, and a data flywheel lowers the incumbent's future cost. Openness is non-monotone in flywheel strength; transparency mandates can backfire. *Comparison:* their learning is a cost reduction keyed to adoption; ours is a vector of abilities keyed to task-weighted usage, so learning has a direction. They have one incumbent and one entrant; we have several closed firms and an open model of fixed type.
@@ -141,7 +165,7 @@ Each line says what the alternative was and why it was dropped or deferred.
 
 None of the formal models above has a user population in a task space, directional learning, or a single open model whose usage improves rivals. None treats models that release training data as a distinct type: every one collapses openness to a scalar, and no sample contains a fully open producer.
 
-### 5.2 Models of open source ecosystems
+### 4.2 Models of open source ecosystems
 
 - **Lerner and Tirole (2002), [Some Simple Economics of Open Source](https://onlinelibrary.wiley.com/doi/10.1111/1467-6451.00174).** Contributions as signals of skill paid off later through jobs and reputation. *Comparison:* our agents are firms, so the analog is talent attraction and standard-setting, neither of which is in the setup yet.
 - **Johnson (2002), [Open Source Software: Private Provision of a Public Good](https://onlinelibrary.wiley.com/doi/10.1111/j.1430-9134.2002.00637.x).** User-programmers decide whether to build an enhancement that becomes a public good. *Comparison:* in our setting users do not build; they generate learning by using. The public good is the open model's ability vector, provided by usage rather than effort.
@@ -154,7 +178,7 @@ None of the formal models above has a user population in a task space, direction
 - **Mustonen (2003), [Copyleft](https://research.aalto.fi/en/publications/copyleft-the-economics-of-linux-and-other-open-source-software)** and **Lerner and Tirole (2005), [The Scope of Open Source Licensing](https://www.nber.org/papers/w9363).** License restrictiveness as a strategic variable. *Comparison:* license terms would enter through s, since restrictive terms limit what rivals can absorb.
 - **Bliss and Nalebuff (1984), Dragon-slaying and ballroom dancing, J. Public Econ. 25.** Private supply of a discrete public good as a war of attrition. *Comparison:* the natural frame for who provides the open model, which the setup leaves exogenous.
 
-### 5.3 What the setup leaves out
+### 4.3 What the setup leaves out
 
 - The open provider's identity and objective: a complement-seller commoditizing the model layer, a nonprofit, or a state. This is the discrete-public-good game among heterogeneous firms that none of the LLM-era models studies.
 - Models that release training data, whose spillover is larger because the recipe becomes non-excludable. A third type with a higher s to rivals, funded externally, would capture them.
