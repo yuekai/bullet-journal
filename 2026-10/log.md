@@ -79,3 +79,8 @@
 
 - [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
   Revised: users are now task mixes on the simplex with per-unit prices, log per-unit value and unbounded stock learning, replacing intensity vectors, fixed prices, bounded abilities and depreciation. New sections record the two-task results and every alternative setup explored. Simulation scripts are in `assets/`.
+
+## Sun, Oct 4, 2026
+
+- [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
+  Questions folded into §1.7 and later sections renumbered. Added three-task results under three user densities, with the script in `assets/`. The "what this says" section now states the thin-tail result geometrically and no longer claims that profit-funded R&D removes the open-takes-all corner.
