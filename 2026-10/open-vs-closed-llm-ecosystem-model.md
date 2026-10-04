@@ -77,7 +77,7 @@ All statements in this section are *(computed)* for one closed firm, two tasks, 
 
 No stable interior. Every start ends in a corner, and which corner depends on who leads at the start.
 - A closed firm leading by a roughly uniform margin, even five percent, takes every direction. The open model freezes and the closed price grows without bound, about 6.0 log units at horizon 400.
-- A closed firm trailing anywhere that matters, including a firm leading overall but lopsided toward one task, loses every direction. The lopsided firm prices for its strong task, cedes the other, and the open model grows there until it overtakes.
+- A closed firm trailing anywhere that matters loses every direction. A firm leading overall but lopsided toward one task loses at s ≤ 0.5 and wins at s ≥ 0.9: at low spillover it prices for its strong task, cedes the other, and the open model grows there until it overtakes; at high spillover it absorbs enough of the open model's learning on the ceded task to keep its lead there.
 - Intermediate shares appear at horizon 400 for s between 0.7 and 0.95, but they are slow transients: two of three rechecked at horizon 2000 had collapsed to a closed monopoly and the third was still drifting toward it.
 - Higher s enlarges the closed firm's basin: three of sixteen random starts at s = 0 end in closed monopoly, eleven at s = 1.
 
@@ -85,7 +85,7 @@ The uniform case is degenerate because it has no thin tail. Under the earlier de
 
 ### 3.2 Users concentrated on one task
 
-Density Beta(2,5) in the task-1 weight, so most users are task-2 heavy and the task-1 end of the simplex is a thin tail. From any start where the closed firm leads, the long run is a stable interior, reached by horizon 300 and unchanged at 2000. The closed firm specializes toward the mass and cedes the tail.
+Density Beta(2,5) in the task-1 weight, so most users are task-2 heavy and the task-1 end of the simplex is a thin tail. From every structured start where the closed firm leads, at every s, the long run is a stable interior, reached by horizon 300 and unchanged at 2000. The closed firm specializes toward the mass and cedes the tail. The exception is s = 1, where four of sixteen random starts ended with the open model frozen out: with full spillover the monopoly corner is reachable even with a thin tail.
 
 | s | closed price | closed usage share | a₁/a₀ by task |
 |---|---|---|---|
@@ -96,13 +96,13 @@ Density Beta(2,5) in the task-1 weight, so most users are task-2 heavy and the t
 Readings.
 - **Where the open model lives.** It holds the task-1-heavy tail, about five percent of usage, where neither model is good. The closed model is eight to ten times better there in ability-ratio terms, but its price, around e^2.9 ≈ 18 in quality-ratio terms, exceeds its margin in those directions, so tail users take the free model. Learning follows users, so the directions the closed firm does not price for are also the directions it is relatively weak in. The two coincide endogenously.
 - **Price rises with s, and so does coverage.** The earlier conjecture was that closed firms cede more as spillover rises, to free-ride on public learning. The computation shows price and closed share both rising with s. Spillover makes the closed firm stronger in every direction, so it charges more and covers more. The open model shrinks slightly but survives at s = 1.
-- **Who starts ahead decides.** A closed firm starting behind by five percent, or behind on task 2 only, loses every direction and never recovers. This corner is an artifact of the model having no non-usage input: a firm that falls behind has no way back without R&D funded by profit.
+- **Who starts ahead decides.** A closed firm starting behind by five percent loses every direction and never recovers. One behind on task 2 only also loses for s < 1, but at s = 1 it absorbs the open model's task-2 learning in full, overtakes, and freezes the open model out. The open-takes-all corner is an artifact of the model having no non-usage input: a firm that falls behind has no way back without R&D funded by profit.
 
 The earlier depreciation run gave the same qualitative picture for this density, with a slightly lower closed share of 0.87 to 0.90, because under depreciation the open model's level was tied to its current usage flow rather than its accumulated stock. Script for that run: [open-vs-closed-two-task-depreciation-rule.py](assets/open-vs-closed-two-task-depreciation-rule.py).
 
 ### 3.3 What this says
 
-Any density with a thin tail in task space gives a stable interior in which the closed firm serves the mass and the open model serves the tail. Whether that is the right stylized fact depends on whether real usage has such a tail, which it plausibly does across languages and niche domains. The two additions that matter most next are a non-usage input funded by profit, which removes the open-takes-all artifact and makes the closed firm's lead endogenous, and forward-looking pricing.
+Conjecture from one density: a thin tail in task space gives a stable interior in which the closed firm serves the mass and the open model serves the tail, except under full spillover, where the monopoly corner is also reachable. Whether that is the right stylized fact depends on whether real usage has such a tail, which it plausibly does across languages and niche domains. The two additions that matter most next are a non-usage input funded by profit, which removes the open-takes-all artifact and makes the closed firm's lead endogenous, and forward-looking pricing.
 
 ## 4. Alternatives explored
 
