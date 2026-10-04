@@ -74,3 +74,8 @@
 - [**Answer-conditioned reasoning**](answer-conditioned-reasoning.md) (`Claude-session: 480592c9-9154-47c0-8a6c-e5339fc733aa`)
   Revised the same day: a new proposal-distributions section covers hinted sampling and MCMC projection sampling (Karan, Chen and Du, 2026); iterative training moved to open questions; the warm-start and summary sections were dropped.
 - [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
+
+## Sat, Oct 3, 2026
+
+- [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
+  Revised: users are now task mixes on the simplex with per-unit prices, log per-unit value and unbounded stock learning, replacing intensity vectors, fixed prices, bounded abilities and depreciation. New sections record the two-task results and every alternative setup explored. Simulation scripts are in `assets/`.
