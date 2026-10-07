@@ -36,13 +36,11 @@ Abilities are non-decreasing stocks driven by usage, with no bound and no deprec
 - A model with no users is frozen, not erased. For the open model this is the defining property of released weights: they persist at their last capability and anyone can keep running them. In practice a frozen open model with no users is dead, so survival is the statement U₀ > 0, not a₀ > 0.
 - Because utility is log and learning is unbounded, the bound on abilities that earlier versions needed is gone. Margins are bounded by usage ratios, not by a ceiling on a.
 
-### 1.4 Smallest instances
+### 1.4 Timing and objectives
 
-Two tasks, θ = (t, 1 − t) with t ∈ [0, 1], one closed firm. The margin m(t) is a single curve, the firm's static problem is one-dimensional, and the myopic price is found by sorting directions by margin and maximizing margin times the user mass at or above it. Simulation: forward Euler on the ability stocks with γ = 1, step 0.05, horizon 400 to 2000, 801 directions with trapezoid weights, price re-optimized every step. Script: [open-vs-closed-two-task-log-rule.py](assets/open-vs-closed-two-task-log-rule.py).
-
-Three tasks, θ on the 2-simplex, one closed firm. Same scheme on a triangular grid of 1891 directions with step 1/60, with ν a Dirichlet density evaluated on the grid and normalized. Script: [open-vs-closed-three-task-log-rule.py](assets/open-vs-closed-three-task-log-rule.py).
-
-Both scripts above use η = 0. The comparison across η on both grids is [open-vs-closed-diminishing-returns.py](assets/open-vs-closed-diminishing-returns.py).
+Users are a continuum with no congestion, so they sort nonstrategically given abilities and prices. The only game is among closed firms over prices.
+- **Closed firm j** earns pⱼ·ν(Tⱼ) per unit time with zero marginal cost. In everything computed so far the firm is myopic: it re-solves max_p p·ν({m ≥ p}) at every instant given current abilities, with no shadow value on learning. The forward-looking version adds the shadow value of every ability the firm moves by ceding a border direction, four effects: own learning lost, open model strengthened, own spillover received, rivals' spillover received.
+- **Open provider.** Exogenous: price zero and no objective. Endogenizing who provides it and why is the discrete-public-good question of §5.3.
 
 ### 1.5 Questions the solved model should answer
 
@@ -74,13 +72,15 @@ At s = 1 there is a structural fact worth knowing: U₁ + U₀ is total usage wh
 
 ## 3. Simulation results
 
-All statements in this section are *(computed)* for one closed firm, log value, myopic pricing, γ = 1, the Euler schemes of §1.4, and 16 fixed random starts plus structured ones. §3.2 to §3.4 use the linear rule, η = 0, and are kept as the baseline; §3.5 shows what η = 1 changes. §3.2 and §3.3 are two tasks, §3.4 is three.
+All statements in this section are *(computed)* for one closed firm, log value, myopic pricing, γ = 1, the Euler schemes of §3.1, and 16 fixed random starts plus structured ones. §3.2 to §3.4 use the linear rule, η = 0, and are kept as the baseline; §3.5 shows what η = 1 changes. §3.2 and §3.3 are two tasks, §3.4 is three.
 
-### 3.1 Timing and objectives
+### 3.1 Smallest instances
 
-Users are a continuum with no congestion, so they sort nonstrategically given abilities and prices. The only game is among closed firms over prices.
-- **Closed firm j** earns pⱼ·ν(Tⱼ) per unit time with zero marginal cost. In everything computed so far the firm is myopic: it re-solves max_p p·ν({m ≥ p}) at every instant given current abilities, with no shadow value on learning. The forward-looking version adds the shadow value of every ability the firm moves by ceding a border direction, four effects: own learning lost, open model strengthened, own spillover received, rivals' spillover received.
-- **Open provider.** Exogenous: price zero and no objective. Endogenizing who provides it and why is the discrete-public-good question of §5.3.
+Two tasks, θ = (t, 1 − t) with t ∈ [0, 1], one closed firm. The margin m(t) is a single curve, the firm's static problem is one-dimensional, and the myopic price is found by sorting directions by margin and maximizing margin times the user mass at or above it. Simulation: forward Euler on the ability stocks with γ = 1, step 0.05, horizon 400 to 2000, 801 directions with trapezoid weights, price re-optimized every step. Script: [open-vs-closed-two-task-log-rule.py](assets/open-vs-closed-two-task-log-rule.py).
+
+Three tasks, θ on the 2-simplex, one closed firm. Same scheme on a triangular grid of 1891 directions with step 1/60, with ν a Dirichlet density evaluated on the grid and normalized. Script: [open-vs-closed-three-task-log-rule.py](assets/open-vs-closed-three-task-log-rule.py).
+
+Both scripts above use η = 0. The comparison across η on both grids is [open-vs-closed-diminishing-returns.py](assets/open-vs-closed-diminishing-returns.py).
 
 ### 3.2 Users spread uniformly over task mixes
 
