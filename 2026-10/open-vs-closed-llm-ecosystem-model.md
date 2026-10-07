@@ -72,7 +72,7 @@ At s = 1 there is a structural fact worth knowing: U₁ + U₀ is total usage wh
 
 ## 3. Simulation results
 
-All statements in this section are *(computed)* for one closed firm, log value, myopic pricing, γ = 1, the Euler schemes of §3.1, and 16 fixed random starts plus structured ones. §3.2 to §3.4 use the linear rule, η = 0, and are kept as the baseline; §3.5 shows what η = 1 changes. §3.2 and §3.3 are two tasks, §3.4 is three.
+All statements in this section are *(computed)* for one closed firm, log value, myopic pricing, γ = 1, the Euler schemes below, and 16 fixed random starts plus structured ones. §3.1 to §3.3 use the linear rule, η = 0, and are kept as the baseline; §3.4 shows what η = 1 changes. §3.1 and §3.2 are two tasks, §3.3 is three.
 
 **Two tasks:** θ = (t, 1 − t) with t ∈ [0, 1], one closed firm. The margin m(t) is a single curve, the firm's static problem is one-dimensional, and the myopic price is found by sorting directions by margin and maximizing margin times the user mass at or above it. Simulation: forward Euler on the ability stocks with γ = 1, step 0.05, horizon 400 to 2000, 801 directions with trapezoid weights, price re-optimized every step. Script: [open-vs-closed-two-task-log-rule.py](assets/open-vs-closed-two-task-log-rule.py).
 
@@ -80,7 +80,7 @@ All statements in this section are *(computed)* for one closed firm, log value, 
 
 Both scripts above use η = 0. The comparison across η on both grids is [open-vs-closed-diminishing-returns.py](assets/open-vs-closed-diminishing-returns.py).
 
-### 3.2 Users spread uniformly over task mixes
+### 3.1 Users spread uniformly over task mixes
 
 No stable interior. Every start ends in a corner, and which corner depends on who leads at the start.
 - A closed firm leading by a roughly uniform margin, even five percent, takes every direction. The open model freezes and the closed price grows without bound, about 6.0 log units at horizon 400.
@@ -90,7 +90,7 @@ No stable interior. Every start ends in a corner, and which corner depends on wh
 
 The uniform case is degenerate because it has no thin tail. Under the earlier depreciation rule the same case had a saddle interior and the same two corners.
 
-### 3.3 Users concentrated on one task
+### 3.2 Users concentrated on one task
 
 Density Beta(2,5) in the task-1 weight, so most users are task-2 heavy and the task-1 end of the simplex is a thin tail. From every structured start where the closed firm leads, at every s, the long run is a stable interior, reached by horizon 300 and unchanged at 2000. The closed firm specializes toward the mass and cedes the tail. The exception is s = 1, where four of sixteen random starts ended with the open model frozen out: with full spillover the monopoly corner is reachable even with a thin tail.
 
@@ -107,7 +107,7 @@ Readings.
 
 The earlier depreciation run gave the same qualitative picture for this density, with a slightly lower closed share of 0.87 to 0.90, because under depreciation the open model's level was tied to its current usage flow rather than its accumulated stock. Script for that run: [open-vs-closed-two-task-depreciation-rule.py](assets/open-vs-closed-two-task-depreciation-rule.py).
 
-### 3.4 Three tasks
+### 3.3 Three tasks
 
 Three user densities: uniform; one popular task, Dirichlet(2,2,6), with mean task mix (0.20, 0.20, 0.60); two popular tasks, Dirichlet(5,5,1), with mean (0.46, 0.46, 0.08). Spillover s ∈ {0, 0.5, 1}. Long-horizon checks at 2000 confirmed every steady state reported here; two near-corner runs under Dirichlet(2,2,6) at s = 1 were transients and are counted as corners.
 
@@ -127,7 +127,7 @@ Readings.
 - **Lopsided leaders.** A closed firm leading strongly on the popular task loses every direction at s = 0 under uniform density and takes all at s ≥ 0.5, the same pattern as in two tasks.
 - **Ratio formula.** The predicted stationary ratios of §2 match the simulation to about two percent at horizon 2000, with the gap due to initial conditions.
 
-### 3.5 Diminishing returns
+### 3.4 Diminishing returns
 
 Same instances with the penalty of §1.3, closed firm starting ahead by a factor of two, horizon 2000 in two tasks and 1200 in three.
 
@@ -151,7 +151,7 @@ Readings at η = 1.
 - **An overtaken closed firm keeps a niche.** The lopsided leader under uniform two-task density, overtaken outright at η = 0, holds 3 percent of usage at η = 1 and 19 percent at η = 2.
 - **Corners and basins are otherwise unchanged.** A uniformly leading closed firm still takes all; a closed firm starting behind by a uniform factor still loses all.
 
-### 3.6 What this says
+### 3.5 What this says
 
 The thin-tail result is geometric. The open model survives at a corner of the simplex whose user mass is worth less to the closed firm than the price gain from excluding it. Concentrated densities create such corners at the unpopular tasks; uniform density creates them by geometry alone once d ≥ 3, since the mass within distance ε of a vertex scales like ε^{d−1}. Two tasks have no thin corners under uniform density, which is why that case tipped to monopoly. The result still holds from any start where the closed firm leads, except that under full spillover the monopoly corner is also reachable from some starts. Diminishing returns in overall quality enlarge the open territory without changing which corners it holds, because they lower every margin by the same amount and the thin corners are the first to fall below the price.
 
@@ -175,7 +175,7 @@ Each line says what the alternative was and why it was dropped or deferred.
 - **Depreciation, ȧⱼ = γ(Uⱼ + sU₀) − δaⱼ.** Gave closed-form steady states with ability equal to usage flow. Dropped because it turns ability from a stock into a flow and erased losing models, which misstates the persistence of released weights. It is exactly a moving-frontier model with exogenous exponential escalation of task difficulty and learning proportional to difficulty, so what it assumed is now explicit. The real-world analog, temporal drift of knowledge after the training cutoff, is task-specific staleness and not a uniform decay.
 - **Moving frontier.** Raw capability stocks measured against a difficulty index: the frontier maxⱼ cⱼₖ, a lagged usage-weighted mean, or exogenous growth. Deferred. With a scalar index it coincides with log utility up to the outside option.
 - **Linear learning with linear utility and no bound.** Homogeneous of degree one, analyzable as detrended balanced growth. Superseded by log utility, which gives stationarity in ratios directly.
-- **Linear learning with log utility, η = 0.** The settled rule before Oct 6; §3.2 to §3.4 are computed under it. Superseded by the quality penalty because it let leads grow in proportion to usage with no slowdown, so a closed firm that was overtaken vanished rather than holding a niche.
+- **Linear learning with log utility, η = 0.** The settled rule before Oct 6; §3.1 to §3.3 are computed under it. Superseded by the quality penalty because it let leads grow in proportion to usage with no slowdown, so a closed firm that was overtaken vanished rather than holding a niche.
 - **Per-task penalty, ȧⱼₖ ∝ 1/aⱼₖ^η.** Each task saturates separately. Rejected because it compresses log-margins uniformly, which lowers prices but leaves territories unchanged; the overall-quality penalty is what makes diminishing returns matter for who serves whom.
 - **Brainstormed and not pursued.** Concave or multiplicative returns to usage; user count, coverage of task space, or failures as the usage measure; task-specific spillover matrix; closed-to-open distillation κ(max cₘ − c₀); frontier catch-up for everyone; release generations instead of continuous time; R&D funded by profit. The last is the one most likely to be added.
 
