@@ -127,7 +127,7 @@ Readings.
 - **The ceded share is pinned by density geometry.** Under both concentrated densities the closed share is the same to three decimals across s and across starting leads, 0.971 and 0.977, while the price rises with s. The open model holds exactly the corners of the unpopular tasks.
 - **Several stable interiors.** The uniform s = 0.5 runs reach closed shares from 0.38 to 0.75 while four of six hold the same vertex, so steady states are not unique even given the held vertex. History selects among them.
 - **Lopsided leaders.** A closed firm leading strongly on the popular task loses every direction at s = 0 under uniform density and takes all at s ≥ 0.5, the same pattern as in two tasks.
-- **Ratio formula.** The predicted stationary ratios of §1.4 match the simulation to about two percent at horizon 2000, with the gap due to initial conditions.
+- **Ratio formula.** The predicted stationary ratios of §2 match the simulation to about two percent at horizon 2000, with the gap due to initial conditions.
 
 ### 3.5 Diminishing returns
 
