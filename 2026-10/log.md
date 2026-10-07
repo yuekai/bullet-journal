@@ -84,3 +84,12 @@
 
 - [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
   Questions folded into §1.7 and later sections renumbered. Added three-task results under three user densities, with the script in `assets/`. The "what this says" section now states the thin-tail result geometrically and no longer claims that profit-funded R&D removes the open-takes-all corner.
+
+## Tue, Oct 6, 2026
+
+- economic modeling of LLM risk-management/safety? what do they say about open vs closed ecosystems?
+
+- [x] **Restart llama gateway after service job stopped** (`m2:~/llama`)
+  The gateway service job (2433789) had been stopped on 2026-10-02T20:26Z and the userspace Tailscale node's key had expired a day earlier, so `svc:llama` still resolved in MagicDNS while nothing served it; only the GPU engines survived, which made the stack look up.
+  Resubmitted the service job (2605661) after `validate` and the test suite, and deleted the dead `llama-gateway` device record so the replacement node re-registers cleanly. The controller adopted the three running engines because their marks matched the current namespace, so no duplicate GPU jobs were submitted.
+  The new node registered with key expiry disabled, which the old one lacked, and the four service ports, the worker list, and one completion per model verified the stack end to end.
