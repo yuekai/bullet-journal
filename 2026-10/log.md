@@ -88,12 +88,10 @@
 ## Tue, Oct 6, 2026
 
 - economic modeling of LLM risk-management/safety? what do they say about open vs closed ecosystems?
-
 - [x] **Restart llama gateway after service job stopped** (`m2:~/llama`)
   The gateway service job (2433789) had been stopped on 2026-10-02T20:26Z and the userspace Tailscale node's key had expired a day earlier, so `svc:llama` still resolved in MagicDNS while nothing served it; only the GPU engines survived, which made the stack look up.
   Resubmitted the service job (2605661) after `validate` and the test suite, and deleted the dead `llama-gateway` device record so the replacement node re-registers cleanly. The controller adopted the three running engines because their marks matched the current namespace, so no duplicate GPU jobs were submitted.
   The new node registered with key expiry disabled, which the old one lacked, and the four service ports, the worker list, and one completion per model verified the stack end to end.
-
 - [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
   Learning now slows with overall quality: usage-driven gains are divided by ‖aⱼ‖, for the open model too. The long-run section carries the corrected ratio formula and why the penalty enlarges the open territory. New §2.4 compares exponents; the comparison script is in `assets/`.
 
@@ -103,7 +101,6 @@
   The comet-gateway service job (2526343) failed on 2026-10-02 when the workspace ran out of space writing `state/`, taking the SMG gateway and the tailnet leg down while the GPU engine allocations kept serving on their own; `svc:comet` therefore still resolved in MagicDNS while nothing answered it.
   Resubmitted the singleton service as job 2606375 after `validate` passed and a write test confirmed the disk-full condition had cleared. The controller adopted the running engines because their ownership comments matched the instance namespace, and it submitted one replacement kimi-k3 low-prio replica after counting nine live allocations against a target of ten.
   Verified end to end: gateway `/health` and `/v1/models` (kimi-k3, deepseek-v4.1-flash, glm-5.3), eleven healthy registrations, and the documented tailnet checks, with `serve status` showing the TCP 8000 forwarder and `Self.CapMap["service-host"]` carrying `svc:comet`.
-
 - [x] **Prune non-connected devices from the tailnet** (`~/second-brain` @ `02bcec5`)
   The tailnet had accumulated 145 devices that were not connected, mostly per-job Slurm workers created with non-ephemeral auth keys, and they could not be removed from this machine because deleting a device is an admin-API-only operation with no corresponding `tailscale` CLI subcommand.
   Added a script that lists devices through the REST API and deletes the ones that are not currently connected, dry-run by default with `--apply` to act, plus an option to dump full device records to a backup beforehand.
