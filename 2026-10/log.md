@@ -93,3 +93,10 @@
   The gateway service job (2433789) had been stopped on 2026-10-02T20:26Z and the userspace Tailscale node's key had expired a day earlier, so `svc:llama` still resolved in MagicDNS while nothing served it; only the GPU engines survived, which made the stack look up.
   Resubmitted the service job (2605661) after `validate` and the test suite, and deleted the dead `llama-gateway` device record so the replacement node re-registers cleanly. The controller adopted the three running engines because their marks matched the current namespace, so no duplicate GPU jobs were submitted.
   The new node registered with key expiry disabled, which the old one lacked, and the four service ports, the worker list, and one completion per model verified the stack end to end.
+
+## Wed, Oct 7, 2026
+
+- [x] **Restart the Comet gateway service job** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  The comet-gateway service job (2526343) failed on 2026-10-02 when the workspace ran out of space writing `state/`, taking the SMG gateway and the tailnet leg down while the GPU engine allocations kept serving on their own; `svc:comet` therefore still resolved in MagicDNS while nothing answered it.
+  Resubmitted the singleton service as job 2606375 after `validate` passed and a write test confirmed the disk-full condition had cleared. The controller adopted the running engines because their ownership comments matched the instance namespace, and it submitted one replacement kimi-k3 low-prio replica after counting nine live allocations against a target of ten.
+  Verified end to end: gateway `/health` and `/v1/models` (kimi-k3, deepseek-v4.1-flash, glm-5.3), eleven healthy registrations, and the documented tailnet checks, with `serve status` showing the TCP 8000 forwarder and `Self.CapMap["service-host"]` carrying `svc:comet`.
