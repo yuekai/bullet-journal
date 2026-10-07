@@ -60,7 +60,8 @@ Adding mⱼ = Sⱼᵗ⁺¹ − Sⱼᵗ tokens in period t costs
 Cᵗ(mⱼ ; Sⱼ) = cₜ · |aⱼ(Sⱼ)|₁ · |mⱼ|₁ ,        cₜ = c₀ · e^{−g·t}
 ```
 
-- Compute per token is proportional to the size of the model being trained (Hoffmann et al., §5.4), and model size is proportional to total ability because each learned skill occupies a fixed number of parameters (Michaud et al.). So each developer faces one compute price per token, the same on every task, which rises as its model improves overall. This is where the overall-quality effect of the Oct 6 rule now lives, with the ℓ¹ norm and exponent one; the per-task diminishing returns live in κ.
+- Notation: for a vector x ∈ ℝᵈ₊, |x|₁ = Σₖ xₖ is the sum of its components, so |mⱼ|₁ is the total number of tokens added and |aⱼ|₁ is the model's total ability across tasks.
+- Compute per token is proportional to the size of the model being trained (Hoffmann et al., §5.4), and model size is proportional to total ability because each learned skill occupies a fixed number of parameters (Michaud et al.). So each developer faces one compute price per token, cₜ·|aⱼ|₁, the same on every task, which rises as its model improves overall. This is where the overall-quality effect of the Oct 6 rule now lives, with the ℓ¹ norm and exponent one; the per-task diminishing returns live in κ.
 - Public tokens cost the same compute as private ones. A closed firm pays to train on the book exactly as on its own logs and may ration it.
 - Units: a period's total usage is one and γ = 1, so a stock of one period's usage on a task gives ability one on it. c₀ is then the cost of training a unit-ability model on one period's worth of tokens, in revenue units; revenue per period is of order one to three. g ≥ 0 is the rate at which compute gets cheaper; g = 0 is constant compute.
 - Variant, not baseline: a full retrain per generation costs cₜ·|aⱼ(Sⱼ + mⱼ)|₁·|Sⱼ + mⱼ|₁, a fixed cost per release that grows with the stock, so releases are lumpy.
@@ -85,6 +86,8 @@ A period is a model generation. Within period t:
 
 ### 1.6 Questions the solved model should answer
 
+§2.7 collects what can be said about each by hand; the rest is for the instance in §3.6.
+
 - **Do closed firms cede the thin tail?** Which directions, and how the ceded share depends on the openness regime and the shape of ν.
 - **Does the open model survive?** Survival is U₀ > 0 in the long run. It now has three inputs: density geometry, the sponsor's budget B, and whether any closed firm wants it alive.
 - **Which closed firms want open data?** The public book erodes every closed firm's lead over the open model, but it also compresses gaps among closed firms, so a lagging closed firm gains on the leader as the pool grows. Who prices to starve the pool and who tolerates it.
@@ -95,27 +98,105 @@ A period is a model generation. Within period t:
 
 ## 2. Long-run structure
 
-Derived, not yet checked numerically.
+Everything in this section is derived by hand and not yet checked numerically. §2.1 to §2.6 establish the facts; §2.7 says what they imply for each question in §1.6 and what is left to the simulation. Two conventions. "Of order t" means growing in proportion to t for large t. For two functions of t, f ≈ g means their ratio tends to one as t grows. Vector comparisons, ratios and limits are componentwise, task by task, unless said otherwise.
 
-**Growth.** Usage per period is bounded by the population mass, so every stock grows at most linearly in t and every ability at most like t^κ. Stocks of a developer that keeps its users grow linearly; the ratio of any two stocks on a task converges, and a period's logs become negligible against the stocks.
+### 2.1 Stocks grow at most linearly, abilities at most like t^κ
 
-**Stationary ratios when data saturates.** If every developer trains on everything it can access, then S₀ᵗ = Pᵗ, Sⱼᵗ = Pᵗ⁻¹ + Qⱼᵗ, the delay washes out, and with T = I, componentwise,
+Every user uses some model, so the usage vectors of all models add up to the population's usage: Σⱼ Uⱼᵗ = Ū, with |Ū|₁ = 1 by the unit normalization of §1.4. In one period the open pool grows by U₀ᵗ, a private pool by Uⱼᵗ, and a closed firm's accessible data by U₀ᵗ⁻¹ + Uⱼᵗ. Each of these is at most Ū. So for every developer and every task
 
 ```
-aⱼ / a₀  →  ( 1 + Vⱼ / V₀ )^κ ,       Vⱼ = long-run usage of model j
+Sⱼₖᵗ ≤ Sⱼₖ⁰ + t·Ūₖ ,        aⱼₖᵗ = (Sⱼₖᵗ)^κ ≤ (Sⱼₖ⁰ + t·Ūₖ)^κ
 ```
 
-The closed firm's data is its own usage plus the open model's, which together is everything, so its lead is set by how much of the population it serves relative to the open model on each task, compressed by κ. There is no overall-norm term. The Oct 6 rule's ratio formula is in §4.
+A stock grows at most linearly, and since κ < 1 an ability grows more slowly than t. A developer that keeps a fixed positive share of users grows linearly. The fact used repeatedly below: a single period's logs are at most Ū, a fixed vector, while the stocks are of order t, so one period's data becomes negligible against the stocks. That is why the one-period delay on the book does not matter in the long run and why ratios of stocks settle down.
 
-**Whether data saturates depends on compute, and differently for the two kinds of developer.** A closed firm's compute price per token is cₜ·|aⱼ|₁, which grows with its own ability, while the value of a token falls like the marginal ability S^{κ−1} times a bounded revenue effect. At g = 0 a closed firm therefore stops training on a task once the value falls below the price; its ability and its compute price are then frozen, and whether it resumes depends on how the open model's growth moves its revenue effect. The open developer never stops under a budget: it buys B/(cₜ·|a₀|₁) tokens per period, positive at any finite ability, so at g = 0 its stock keeps growing while closed stocks stall. Whether the industry freezes, or the open model slowly overtakes stalled closed firms, is a parameter question for §3.6. Closed development continues forever only if cₜ falls at least like 1/t, and the saturated regime above is the limit of the g > 0 case.
+### 2.2 Long-run ability ratios when everyone trains on all accessible data
 
-**Asymptotic myopia.** Because ratios move like 1/t, a developer discounting in calendar time cares less each period about the effect of its choices on ratios, and forward-looking pricing converges to one-period pricing. Forward-looking effects are transients of the initial condition, which is why the lookahead horizon should matter less over time.
+Define the long-run usage of model j as Vⱼ = limₜ Uⱼᵗ, assuming the limit exists; the simulation checks that it does. Suppose every developer trains on every token it can access, so the access bounds of §1.3 hold with equality: S₀ᵗ = Pᵗ and Sⱼᵗ = Pᵗ⁻¹ + Qⱼᵗ. §2.3 says when this is the case. By the definitions of the pools, Pᵗ ≈ t·V₀ and Qⱼᵗ ≈ t·Vⱼ for large t: the initial corpus, the endowments, and the early periods before usage settled all contribute fixed amounts, negligible against t. The lagged pool Pᵗ⁻¹ differs from Pᵗ by one period's logs, also negligible. So with T = I, task by task,
 
-**Corners.**
-- **Open frozen.** If closed firms take every direction the open pool stops, the book stops, and every closed firm's lead grows with its own logs alone. The price grows without bound, as in the no-outside-option Oct 3 version, and public data stops with it.
-- **Open takes all.** A closed firm with no users adds nothing to its private pool, so its stock on task k is at most Pᵗ⁻¹ + Qⱼₖ against the open model's Pᵗ. Where Qⱼₖ exceeds one period of open logs it still leads, but the margin, the price it can charge and its revenue all vanish like 1/Pₖ as the open pool grows. The corner is a fade to zero revenue, not a trap at parity; and a firm whose private endowment exceeds one period of open logs leads from the start even with no users.
+```
+Sⱼₖᵗ / S₀ₖᵗ  →  (V₀ₖ + Vⱼₖ) / V₀ₖ          and so          aⱼₖ / a₀ₖ  →  ( 1 + Vⱼₖ / V₀ₖ )^κ
+```
 
-**Initial lead.** All developers start from P⁰. A closed firm leads on task k at t = 0 by κ·log(1 + Eⱼₖ⁰/Pₖ⁰): the lead is private data relative to the public corpus. With Eⱼ⁰ = 0 the closed firm's ability equals the open model's and it has no users at any positive price. So "who starts ahead" in §3 becomes "who brings private data," and the ratio of P⁰ to a period's usage sets how fast anything moves.
+In words: on each task, the open model's data is its own usage; a closed firm's data is its own usage plus the open model's, since the book gives it the open logs. If on task k the closed firm serves three times the usage the open model does, its stock is four times the open stock and its ability is 4^κ times the open ability. Between two closed firms j and l the same reasoning gives aⱼₖ/aₗₖ → ((V₀ₖ + Vⱼₖ)/(V₀ₖ + Vₗₖ))^κ: the public data they share compresses the gap between them.
+
+The long-run edge of closed firm j over the open model in direction θ, in the notation of §1.2, follows by substituting the long-run abilities:
+
+```
+mⱼ₀(θ)  →  log Σₖ θₖ·(V₀ₖ + Vⱼₖ)^κ  −  log Σₖ θₖ·V₀ₖ^κ
+```
+
+This is a fixed-point condition, not a formula that can be evaluated on its own: the usages V determine the edges, the edges and the prices determine the territories, and the territories determine the usages. A long-run outcome is a V that reproduces itself. Note what is absent: no term depends on how large a model is overall. Under the Oct 6 rule (§4) a bigger model learned more slowly on every task, which put an overall-size term in the ratio. Here overall size enters only through the compute cost, and in the regime of this subsection that cost is not binding.
+
+### 2.3 Whether training continues depends on compute, differently for the two kinds of developer
+
+Define the value of a token to closed firm j on task k, vⱼₖ, as the increase in its discounted future profit from having one more task-k token in its stock. It is the product of two factors. The first is how much ability one token adds, the derivative of the ability map:
+
+```
+∂aⱼₖ/∂Sⱼₖ = κ · Sⱼₖ^{κ−1}
+```
+
+which falls toward zero as the stock grows because κ < 1. The second is how much discounted future revenue one unit of ability adds, which is bounded: revenue per period is a price times a user mass, and one unit of ability moves the firm's edges by a bounded amount. So along any path where the stock grows linearly, vⱼₖ falls at least as fast as t^{κ−1}.
+
+The firm's compute price per token is cₜ·|aⱼ|₁ (§1.4). At constant compute, g = 0, this grows like t^κ as long as the firm keeps training. The firm trains on task k only while vⱼₖ exceeds the compute price. A falling value against a rising price must cross, so at g = 0 a closed firm stops training on every task in finite time. Once it stops, its ability and therefore its compute price stay fixed; whether it ever resumes depends on whether the value of a token later rises, for example because the open model catches up and the firm's edge is at stake. That is a parameter question for §3.6.
+
+The open developer behaves differently because it does not compare value with price. It spends its budget B every period, buying B/(cₜ·|a₀|₁) tokens or all of its new logs, whichever is smaller. That number is positive whenever it has users and its ability is finite. So at g = 0 the open model keeps growing while closed firms stall, its stocks eventually approach theirs, their edges shrink, and they must resume training or lose users.
+
+For a closed firm to keep training forever, the compute price must fall at least as fast as the value of a token: cₜ·t^κ no faster than t^{κ−1}, that is, cₜ falling at least like 1/t. Exponentially falling compute, g > 0, satisfies this with room to spare. Then every accessible token is eventually worth training on, the access bounds bind, and §2.2 applies.
+
+### 2.4 Pricing becomes myopic
+
+Call the price that maximizes this period's revenue pⱼ·Nⱼ, given current abilities and the rivals' prices, the myopic price. The forward-looking price of §1.5 differs from it because today's users generate data that moves tomorrow's abilities and territories. By §2.1, one period adds at most Ū to stocks of order t, so the stock ratios that determine territories change by an amount of order 1/t per period. Today's price therefore affects tomorrow's territories by an amount shrinking like 1/t, while its effect on today's revenue does not shrink. The difference between the forward-looking and the myopic price vanishes as t grows.
+
+This is a statement about prices only. Training remains forward-looking at every date, since looking ahead is the only reason to train. The practical consequence is that forward-looking pricing is a transient of the initial condition, so the lookahead horizon H of §1.5 matters early and less later.
+
+### 2.5 Two corner outcomes
+
+**Open frozen.** Suppose closed firms take every user, U₀ = 0. The open pool stops growing, so the book stops, the open model's ability is fixed, and every closed stock grows by its own logs alone. The closed firm's edge over the open model on task k, κ·log(Sⱼₖ/S₀ₖ), then grows without bound. The free model stops constraining closed prices. With one closed firm the price grows without bound, since there is no outside option (§1.1). With two or more closed firms, prices are limited by competition among them: by §1.2 a firm's price cannot exceed its edge over a rival plus the rival's price. Public data stops with the open pool, which is the welfare cost noted in §1.6.
+
+**Open takes all.** Suppose closed firm j has no users from some date on. Its private pool stops at some fixed vector Q̄ⱼ. If it trains on everything it can access, its stock is Pᵗ⁻¹ + Q̄ⱼ, while the open model's is Pᵗ = Pᵗ⁻¹ + U₀ᵗ⁻¹. On task k the stock ratio is
+
+```
+( Pₖᵗ⁻¹ + Q̄ⱼₖ ) / ( Pₖᵗ⁻¹ + U₀ₖᵗ⁻¹ )
+```
+
+The closed firm leads on task k exactly when Q̄ⱼₖ > U₀ₖᵗ⁻¹: its private pool exceeds one period of open logs on that task. Both numerator and denominator grow with the open pool, so the ratio tends to one and the edge, using log(1 + x) ≈ x for small x, is about κ·(Q̄ⱼₖ − U₀ₖ)/Pₖ, which tends to zero. A firm with a positive but shrinking edge can still sell at a positive but shrinking price, so its revenue fades to zero rather than stopping. This corner is a fade, not a trap. Since Q̄ⱼ is at least the endowment Eⱼ⁰, a firm whose endowment exceeds one period of open logs leads from the start even with no users, provided it pays the compute to train on the book, which by §2.3 it may not.
+
+### 2.6 The initial lead
+
+At t = 0 every developer has access to the public corpus P⁰ and closed firm j also to its endowment Eⱼ⁰. If each trains on everything, S₀⁰ = P⁰ and Sⱼ⁰ = P⁰ + Eⱼ⁰, so on task k
+
+```
+aⱼₖ / a₀ₖ = ( 1 + Eⱼₖ⁰ / Pₖ⁰ )^κ ,        edge on pure task k = κ · log( 1 + Eⱼₖ⁰ / Pₖ⁰ )
+```
+
+The initial lead is private data relative to the public corpus. With Eⱼ⁰ = 0 the closed firm has the open model's ability and no users at any positive price. So "who starts ahead" in §3 becomes "who brings private data." The size of P⁰ also sets the speed of everything that follows: one period's usage is one, so stock ratios change by about 1/|P⁰|₁ per period at the start. A public corpus large relative to a period's usage makes the dynamics slow, and P⁰ is a parameter of the instance rather than a normalization.
+
+### 2.7 What this says about the questions of §1.6
+
+Each item names the question, what §2.1 to §2.6 already imply, and what remains for §3.6.
+
+- **Do closed firms cede the thin tail?** By §2.4, long-run pricing is myopic, so the long-run ceded set is whatever the one-period price excludes given the long-run abilities of §2.2. The geometric argument of §3.5 therefore carries over unchanged: a corner of the task space is ceded when the users in it are worth less than the price increase from excluding them. What changes is the edge the firm is pricing against, now the fixed-point expression of §2.2 rather than the old ratio formula. Which corners, and how the share depends on ν, are for the simulation.
+- **Does the open model survive?** Three things are known. At constant compute, §2.3 says the open developer keeps growing while closed firms stall, so under g = 0 survival is favored and it is the closed firms who must resume training to hold their edge. At falling compute, §2.2 applies and survival is the thin-tail question above. And the open-frozen corner of §2.5 is self-sustaining: once closed firms take every user the pool stops, the open model never improves, and nothing brings users back, so survival has to be maintained in every period, not won once. Left to the simulation: whether closed firms price the open model out before the g = 0 mechanism takes hold, and how large B must be.
+- **Which closed firms want open data?** §2.2 gives the two ratios that matter, and both fall as the open model's long-run usage V₀ rises. A closed firm's edge over the open model, (1 + Vⱼₖ/V₀ₖ)^κ, falls in V₀ₖ. The gap between closed firms j and l, ((V₀ₖ + Vⱼₖ)/(V₀ₖ + Vₗₖ))^κ, moves toward one in V₀ₖ. So the leading closed firm loses on both counts and never wants open data. The lagging closed firm loses its edge over the open model but gains on the leader; its net position depends on whether its territory borders mostly on the open model or on the leader. That is the simulation question, and it is the one the linked model was built to ask.
+- **Where do stocks and abilities diverge?** §2.3 says a closed firm exhausts the data on tasks where the stock is small and the task is contested, since the value of a token is marginal ability times a revenue effect, rations tasks where the value falls to the compute price before the data runs out, and discards tasks where it has ceded the territory or already holds a large stock. The open developer is weaker than its own pool exactly when its budget cannot cover its new logs:
+
+```
+B  <  cₜ · |a₀|₁ · |U₀ᵗ|₁
+```
+
+  At g = 0 this eventually always holds, since |a₀|₁ grows while B is fixed; at g > 0 it eventually never holds, since ability grows like t^κ while compute falls exponentially. Which tasks each developer exhausts, rations and discards along the way is for the simulation.
+- **Prices across regimes.** §2.2 gives the long-run ratios in all three regimes, holding the usages V fixed, which is a partial-equilibrium comparison since the fixed point itself shifts across regimes:
+
+```
+open data:                  aⱼ/a₀ → (1 + Vⱼ/V₀)^κ       aⱼ/aₗ → ((V₀ + Vⱼ)/(V₀ + Vₗ))^κ
+open weights, private logs: aⱼ/a₀ → (Vⱼ/V₀)^κ           aⱼ/aₗ → (Vⱼ/Vₗ)^κ
+no open model:              —                           aⱼ/aₗ → (Vⱼ/Vₗ)^κ
+```
+
+  Open data pulls closed prices in two directions. It raises every closed firm's edge over the free model, because the closed firm trains on the open logs as well as its own, which leaves room for higher prices against the free alternative; this is the old §3.2 finding that price rises with spillover. And it compresses the gaps between closed firms, which sharpens competition where closed territories border each other and lowers prices there. Which effect dominates for a given firm depends on where its territory borders, so the net is for the simulation.
+- **Welfare.** §2.5 says a closed monopoly that freezes the open model stops public data, which is a loss the old model could not register. Beyond that, once the simulation delivers V, the §2.2 ratios give long-run consumer surplus directly; nothing more is available by hand.
+- **Dynamic pricing.** §2.4 says the forward-looking correction to prices shrinks like 1/t, so the question is about the early periods, before stocks dwarf a period's logs. All three channels in §1.5 are of the same order, one period's data against the stocks, so which dominates early is a quantitative matter for the simulation, and the lookahead horizon H should be varied there.
 
 ## 3. Simulation results under the superseded rule
 
