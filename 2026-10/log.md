@@ -16,8 +16,8 @@
 12 M
 13 Tu
 14 W
-15 Th
-16 F
+15 Th : fly to AA
+16 F : faculty meeting; fly to SF
 17 Sa
 18 Su
 19 M
