@@ -94,6 +94,9 @@
   Resubmitted the service job (2605661) after `validate` and the test suite, and deleted the dead `llama-gateway` device record so the replacement node re-registers cleanly. The controller adopted the three running engines because their marks matched the current namespace, so no duplicate GPU jobs were submitted.
   The new node registered with key expiry disabled, which the old one lacked, and the four service ports, the worker list, and one completion per model verified the stack end to end.
 
+- [**Open vs closed LLM ecosystem model**](open-vs-closed-llm-ecosystem-model.md) (`Claude-session: 0e13ea82-cce8-4589-9bb0-028ffd5747ed`)
+  Learning now slows with overall quality: usage-driven gains are divided by ‖aⱼ‖, for the open model too. The long-run section carries the corrected ratio formula and why the penalty enlarges the open territory. New §2.4 compares exponents; the comparison script is in `assets/`.
+
 ## Wed, Oct 7, 2026
 
 - [x] **Restart the Comet gateway service job** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
