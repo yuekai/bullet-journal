@@ -17,7 +17,7 @@
 13 Tu
 14 W
 15 Th : fly to AA
-16 F : faculty meeting; fly to SF
+16 F  : faculty meeting; fly to SF
 17 Sa
 18 Su
 19 M
@@ -107,7 +107,7 @@
   Selection keys off `connectedToControl` rather than `lastSeen`, since distinct devices can share a hostname and report recent timestamps, and deletions match on device id so a stale record cannot collide with a live device of the same name. Ran it with a backup: 145 deleted, 0 failed, leaving the 6 connected devices, all of which still respond.
 - [x] **Add a harness-engineering skill for all harnesses**
   There was no shared guidance on setting up repos for agents, so each harness had to rediscover it. A new skill in `~/.agents/skills/harness-engineering`, symlinked from `~/.claude/skills` and `~/.kimi-code/skills`, condenses OpenAI's harness-engineering principles into a mechanical repo audit and a setup procedure sized to the repo.
-- [x] **Create repo from the bullet-journal model note** (`~/llm-market` @ `e89204a`)
+- [x] **Create repo from the bullet-journal model note** (`~/llm-marketplace` @ `e89204a`)
   The open-vs-closed LLM model, its simulations and results lived in one journal note with loose asset files, so nothing checked that numbers matched scripts or that references resolved. Now docs, scripts and per-run results sit together under lint and tests.
   - The note is split by top-level section with global § numbers, and the lint checks every reference resolves.
   - Each simulation configuration writes its own result file, a generated summary backs every number in the results section, and a test checks the committed results reproduce.
@@ -147,3 +147,8 @@
   - Audit gaps left open: local runs under `jobs/` break the grader parity test (offered as a separate task), no CI smoke for the Kind environment, and live vs historical docs are not separated.
 - [x] **Skip v2 verdicts in grader parity replay** (`~/sre-world` @ `f503378`)
   The parity test replayed every rundir under `jobs/` through the v1 oracle, so QUICKSTART 7b oracle trials (v2 verdicts) crashed it with KeyError. It now selects only v1 verdicts, the calibrate.py harvests it was written for.
+- [x] **Gate Kind NetworkPolicy enforcement in CI** (`~/sre-world` @ `4fa7200`)
+  The Calico fix rested on one oracle run, and nothing would notice if a kind or Calico update broke policy enforcement again. A one-minute smoke builds the trusted cluster, applies the chart's exporter policy and checks probes, DNS and replies; CI runs it on change and weekly.
+  - Run against plain kindnet, the smoke fails exactly the two reply checks, matching the original diagnosis.
+- [x] **Separate live docs from historical ones** (`~/sre-world` @ `f1762d7`)
+  Live guidance sat beside runbooks for the original's infrastructure and dated snapshots, so agents could not tell which to follow. Eight historical docs move to docs/archive/ with banners; a docs/README.md index lists the live ones, and a test makes new docs pick a side.
