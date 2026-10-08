@@ -167,8 +167,8 @@
   - The kindnet breakage came from this session's Calico commit (`a8484fc`); only the changed bring-up was tested locally, so the first CI run is the full end-to-end check.
 - [x] **Keep task-ci impact outputs under 1 MB** (`~/sre-world` @ `e8a80a1`)
   On a wide change the impact job's tasks output (every affected task with its reasons) passed GitHub's 1 MB job-output limit and failed the job. No job reads it, so it now carries task names only; the full detail stays in the task-impact artifact.
+- [x] **Make the repo legible and self-checking for agents** (`~/scientific-db-schemas` @ `ce009f0`)
+  Knowledge lived in a 91-line AGENTS.md manual, chat and a journal note, and only some rules were checked, manually. AGENTS.md is now a map into docs/ (design, collecting, tech debt, plans). `pixi run check` (validate, stale-output check, tests) runs from a pre-commit hook. ID names and leaked emails are now validator errors.
 - [x] **Pin the episode clock in the kind surface proof** (`~/sre-world` @ `7222d60`)
   The loadgen recovered from the images answers verifier reads with 500 until the episode clock is pinned, which Harbor's healthcheck does and this script never did, so kind-surface failed. The script now pins it the same way first; it passes end to end.
   - Reproduced and verified with a full local run of `kind_agent_surfaces.sh` on the Calico cluster; auto-merge on yuekai/sre-world#1 waits on this check.
-- [x] **Make the repo legible and self-checking for agents** (`~/scientific-db-schemas` @ `ce009f0`)
-  Knowledge lived in a 91-line AGENTS.md manual, chat and a journal note, and only some rules were checked, manually. AGENTS.md is now a map into docs/ (design, collecting, tech debt, plans). `pixi run check` (validate, stale-output check, tests) runs from a pre-commit hook. ID names and leaked emails are now validator errors.
