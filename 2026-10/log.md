@@ -138,7 +138,10 @@
 - [x] **Diagnose why Slack task 007 won't start on Kind** (`~/sre-world`)
   The tech-debt note blamed kindnet for dropping the exporter's kubelet probes. Reproduction on throwaway Kind clusters disproved that: probes pass. The real causes are private GHCR images (anonymous pulls get 403) and kindnet's NetworkPolicy engine dropping reply packets to any pod under an Ingress policy, which breaks DNS and outbound connections for prometheus, loki, the exporter and the agent-* pods. The same test passes under Calico, so the chart is correct. The tech-debt and QUICKSTART §7b text now names these causes; the edits are uncommitted.
   - Suggested fixes: make the packages public (or mount the host's GHCR auth as the kubelet config), and give the Kind env `disableDefaultCNI` + Calico with `podSubnet: 10.42.0.0/16`.
-- [x] **Run the Kind environment on Calico** (`~/sre-world`)
+- [x] **Run the Kind environment on Calico** (`~/sre-world` @ `a8484fc`)
   Slack tasks could not come up on local Kind because kindnet drops replies to pods under the chart's Ingress NetworkPolicies. The trusted Kind environment now disables kindnet, uses k3s's pod CIDR and installs a sha256-pinned Calico before Helm runs. The chart and generated tasks are unchanged, so Arena parity holds.
   - The user made the codex-tools and Slack GHCR packages public (verified anonymously); Frappe and Saleor stay private.
-  - Oracle trial of Arena task 007 on the new environment scored reward 1.0 with all ten evidence packs passing; smoke gates 17/17. Changes are uncommitted.
+  - Oracle trial of Arena task 007 on the new environment scored reward 1.0 with all ten evidence packs passing; smoke gates 17/17.
+- [x] **Close four harness-audit gaps** (`~/sre-world` @ `788c6ea`)
+  Agents hit Arena numbers no file mapped, dead task paths in README and QUICKSTART, a debt entry stating a guess as fact, and an out-of-order decision log. Each now has a check: arena_parity verifies the README catalog, and doc tests check paths, evidence tags and D-numbering.
+  - Audit gaps left open: local runs under `jobs/` break the grader parity test (offered as a separate task), no CI smoke for the Kind environment, and live vs historical docs are not separated.
