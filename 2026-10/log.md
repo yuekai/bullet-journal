@@ -118,3 +118,5 @@
   - Local branch `parity-sep28`, unpushed; `tools/arena_parity.py` is the gate and `tools/arena_backport.py` recovers scenario sources.
   - 35 scenarios on the old report-graded contract were retired by deletion (`9acb124`).
   - Still open: Frappe 000/003/004/005 and Slack 017 need loadgen/main changes recovered from the GHCR images (blocked pending the user's go-ahead), the Saleor 10-T1 spec, re-hosting images, and cluster runs.
+- [x] **Add tech-debt list and doc link check** (`~/bullet-journal` @ `ec555b5`)
+  A harness-engineering audit found known compromises scattered across design.md and commit messages, and nothing catching broken links in the agent-facing docs. Cleanup passes now have one list to work from, and pixi run check fails when a rename or heading change breaks the map.
