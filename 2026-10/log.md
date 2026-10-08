@@ -166,3 +166,6 @@
 - [x] **Sample rows for every catalogued table** (`~/genebench-max` @ `5eec4d9`)
   Collectors sampled at most ~20 core tables per database, leaving 974 tables schema-only. The cap is gone: 777 of them now have samples, and the rest carry a specific reason. Re-runs reuse cached samples, and the call budget is now per table, since flat ~300 can't cover SDSS.
   - MouseMine's 150 tables are still blocked by HTTP 429; 47 others are empty or need access (e.g. GI_API_KEY).
+- [x] **Stop parsing bare times of day as dates** (`~/genebench-max` @ `d665091`)
+  collect_stats sent strings like "14:30:00" or "20:00:00+00:00" to pandas, which anchors them to today, so date_range changed on every rerun. Time-only values are now excluded from datetime parsing; such columns become categorical.
+  - Regenerated 8 affected stats files (usgs, alphavantage, cod, imaging-data-commons, sdss, treasury, usfiscaldata); on branch claude/inspiring-margulis-47b6df, not merged.
