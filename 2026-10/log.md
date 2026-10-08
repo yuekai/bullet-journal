@@ -156,7 +156,7 @@
   §3.7 labelled runs in prose, so most result files could not be found by search, one was cited nowhere, and the H = 0 claim had no run. Now every number names its configuration and the lint enforces it; new H = 0 runs correct the σ = 0 claim. CI and the trailer check do the rest.
   - The new runs showed the one-period game cycles in 39 of 100 periods at σ = 0 once the open model is gone; §3.7 had said it settles. §3.7 and §6 now say so.
   - Remote: github.com/UMich-FATML/llm-marketplace (private); CI runs `pixi run check` and passed on the first push.
-- [x] **Collect schemas and stats for all 108 databases** (`~/scientific-db-schemas` @ `7c24c84`)
+- [x] **Collect schemas and stats for all 108 databases** (`~/genebench-max` @ `7c24c84`)
   GeneBench-Pro-style task generation needs every table's columns, join keys, units, missing-value meaning and data artifacts, but the skills repo's 108 databases had only endpoint docs. A new repo now holds per-database schemas, stats from up to 370 sampled rows per table, and a cross-database identifier crosswalk, each regenerable by a collector script.
   - Coverage, sampling designs, gaps and open questions: [scientific-db-schemas.md](scientific-db-schemas.md)
 - [x] **Treat unloadable base contracts as affected** (`~/sre-world` @ `0ddaf7b`)
@@ -167,7 +167,7 @@
   - The kindnet breakage came from this session's Calico commit (`a8484fc`); only the changed bring-up was tested locally, so the first CI run is the full end-to-end check.
 - [x] **Keep task-ci impact outputs under 1 MB** (`~/sre-world` @ `e8a80a1`)
   On a wide change the impact job's tasks output (every affected task with its reasons) passed GitHub's 1 MB job-output limit and failed the job. No job reads it, so it now carries task names only; the full detail stays in the task-impact artifact.
-- [x] **Make the repo legible and self-checking for agents** (`~/scientific-db-schemas` @ `ce009f0`)
+- [x] **Make the repo legible and self-checking for agents** (`~/genebench-max` @ `ce009f0`)
   Knowledge lived in a 91-line AGENTS.md manual, chat and a journal note, and only some rules were checked, manually. AGENTS.md is now a map into docs/ (design, collecting, tech debt, plans). `pixi run check` (validate, stale-output check, tests) runs from a pre-commit hook. ID names and leaked emails are now validator errors.
 - [x] **Pin the episode clock in the kind surface proof** (`~/sre-world` @ `7222d60`)
   The loadgen recovered from the images answers verifier reads with 500 until the episode clock is pinned, which Harbor's healthcheck does and this script never did, so kind-surface failed. The script now pins it the same way first; it passes end to end.

@@ -12,7 +12,7 @@ GeneBench-Pro problems stage 5–7 related tables joined on shared keys, plus a 
 
 ## Where it lives
 
-`~/scientific-db-schemas` is a local git repo, managed with pixi and not pushed anywhere.
+`~/genebench-max` is a local git repo, managed with pixi and not pushed anywhere.
 - **Docs:** its `AGENTS.md` maps into `docs/`: design decisions, collection procedure, tech debt and plans.
 - **Checks:** `pixi run check` runs validation, a stale-output check and the tests, and it runs from the pre-commit hook.
 
