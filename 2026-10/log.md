@@ -158,7 +158,7 @@
   - Remote: github.com/UMich-FATML/llm-marketplace (private); CI runs `pixi run check` and passed on the first push.
 - [x] **Collect schemas and stats for all 108 databases** (`~/genebench-max` @ `7c24c84`)
   GeneBench-Pro-style task generation needs every table's columns, join keys, units, missing-value meaning and data artifacts, but the skills repo's 108 databases had only endpoint docs. A new repo now holds per-database schemas, stats from up to 370 sampled rows per table, and a cross-database identifier crosswalk, each regenerable by a collector script.
-  - Coverage, sampling designs, gaps and open questions: [scientific-db-schemas.md](scientific-db-schemas.md)
+  - Coverage, sampling designs, gaps and open questions: [genebench-max.md](genebench-max.md)
 - [x] **Treat unloadable base contracts as affected** (`~/sre-world` @ `0ddaf7b`)
   task-ci's impact job loaded base-side contracts with the head's verifier, and Sep 19 contracts name materializers it now rejects, so every PR into main crashed classification. An unloadable contract now counts as affected: over-reporting impact is safe, crashing is not.
   - Found by Auto-fix on yuekai/sre-world#1, which reconstructs sre-world to Incident Arena parity.
@@ -175,8 +175,8 @@
 
 ## Thu, Oct 8, 2026
 
-- [x] **Rename ~/scientific-db-schemas to ~/genebench-max** (`~/genebench-max`)
-  The repo's name now matches its purpose, GeneBench-Pro-style task generation. Pixi's env hardcoded the old path, so it was rebuilt; `pixi run check` passes. Journal references were updated (`97e2a53`).
-  - The pixi project name, AGENTS.md heading and API User-Agent strings still say scientific-db-schemas.
+- [x] **Rename ~/scientific-db-schemas to ~/genebench-max** (`~/genebench-max` @ `c56e9d4`)
+  The repo's name now matches its purpose, GeneBench-Pro-style task generation. Pixi's env hardcoded the old path, so it was rebuilt; `pixi run check` passes. The pixi project name, AGENTS.md heading and API caller IDs now say genebench-max too.
+  - The journal note is now [genebench-max.md](genebench-max.md); the repo's original plan doc keeps the old path as history.
 - [x] **Let the Kind smoke wait for Calico to converge** (`~/sre-world` @ `bdbb9a9`)
   CI failed the allowed-peer check once right after the pod went Ready: Calico programs a new pod into a policy's peer set asynchronously. Pass-expected checks now retry for 30 s and the deny check runs last, once; kindnet still fails the two reply checks.
