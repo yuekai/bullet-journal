@@ -152,3 +152,7 @@
   - Run against plain kindnet, the smoke fails exactly the two reply checks, matching the original diagnosis.
 - [x] **Separate live docs from historical ones** (`~/sre-world` @ `f1762d7`)
   Live guidance sat beside runbooks for the original's infrastructure and dated snapshots, so agents could not tell which to follow. Eight historical docs move to docs/archive/ with banners; a docs/README.md index lists the live ones, and a test makes new docs pick a side.
+- [x] **Trace results by name, check trailer, add CI** (`~/llm-market` @ `cf2f136`)
+  §3.7 labelled runs in prose, so most result files could not be found by search, one was cited nowhere, and the H = 0 claim had no run. Now every number names its configuration and the lint enforces it; new H = 0 runs correct the σ = 0 claim. CI and the trailer check do the rest.
+  - The new runs showed the one-period game cycles in 39 of 100 periods at σ = 0 once the open model is gone; §3.7 had said it settles. §3.7 and §6 now say so.
+  - Remote: github.com/UMich-FATML/llm-marketplace (private); CI runs `pixi run check` and passed on the first push.
