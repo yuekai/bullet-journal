@@ -180,3 +180,6 @@
   - The journal note is now [genebench-max.md](genebench-max.md); the repo's original plan doc keeps the old path as history.
 - [x] **Let the Kind smoke wait for Calico to converge** (`~/sre-world` @ `bdbb9a9`)
   CI failed the allowed-peer check once right after the pod went Ready: Calico programs a new pod into a policy's peer set asynchronously. Pass-expected checks now retry for 30 s and the deny check runs last, once; kindnet still fails the two reply checks.
+- [x] **Hold compute cost constant in the LLM market** (`~/llm-marketplace`)
+  The model had compute getting cheaper at rate g, which kept closed firms training forever; the user asked to simplify to a constant cost. Spec, script and all results now use cₜ = c₀; §2.2 becomes a cheap-compute benchmark and §2.3 says closed firms stall while the budgeted open model keeps growing.
+  - Uncommitted: §3.7 is on hold. The solver pins each plan's last-period training fraction at 1; optimizing it flips the baseline from the open model squeezed out to the open model taking every user (recorded in §6). The user decides which solver to use.
