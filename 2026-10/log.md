@@ -163,3 +163,5 @@
 - [x] **Sample 370 rows per table unless it has fewer** (`~/genebench-max` @ `b25ae4e`)
   Collectors capped calls at ~10 per table, so APIs returning 10 rows per call gave 10-120-row samples. The row count now wins: 794 short tables were re-sampled, and validate fails any sample under 370 rows without a stated reason, so the rule can't silently slip again.
   - 18 tables stay short with reasons; Alpha Vantage and NASA need re-runs once their daily quotas reset.
+- [x] **Merge bare-time date fix and regenerate stats** (`~/genebench-max` @ `573cd37`)
+  The fix landed on a branch whose regenerated stats predated today's re-sampling, so those conflicted. Kept the current samples and regenerated every database's stats with the fixed script; 21 files changed, and four collectors re-ran from cache to refresh column kinds.
