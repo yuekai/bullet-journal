@@ -111,30 +111,19 @@
   The open-vs-closed LLM model, its simulations and results lived in one journal note with loose asset files, so nothing checked that numbers matched scripts or that references resolved. Now docs, scripts and per-run results sit together under lint and tests.
   - The note is split by top-level section with global § numbers, and the lint checks every reference resolves.
   - Each simulation configuration writes its own result file, a generated summary backs every number in the results section, and a test checks the committed results reproduce.
-- [x] **Fast-forward sre-world mirror to Sep 19 history** (`~/sre-world` @ `28d44ce`)
-  abundant-ai/sre-world went offline and the yuekai/sre-world fork was a Jul 21 snapshot. The public mrshu/sre-world fork carries the original's main through Sep 19 (#488); its 312 commits were checked as the original's (no fork-owner authorship, GitHub-signed merges, Arena answer-key SHAs in history) and fast-forwarded onto main.
-- [x] **Reconstruct post-Sep-19 generator from Arena tasks** (`~/sre-world` @ `bd9f688`)
-  The fork stops at Sep 19; Incident Arena holds the original's later output. Back-port its verifier (now verifier/), chart edits, task.toml/test.sh, window-derived profiles, answer keys and RC image pins: 14 of 20 Arena tasks regenerate exactly, up to documented snapshot drift.
-  - Local branch `parity-sep28`, unpushed; `tools/arena_parity.py` is the gate and `tools/arena_backport.py` recovers scenario sources.
-  - 35 scenarios on the old report-graded contract were retired by deletion (`9acb124`).
-  - Still open: Frappe 000/003/004/005 and Slack 017 need loadgen/main changes recovered from the GHCR images (blocked pending the user's go-ahead), the Saleor 10-T1 spec, re-hosting images, and cluster runs.
+- [x] **Reconstruct sre-world to Incident Arena parity** (`~/sre-world` @ `9102533`)
+  abundant-ai/sre-world went offline, leaving the yuekai/sre-world fork at a Jul 21 snapshot; the original's later work survived only in a public fork, the 20 Incident Arena tasks and its GHCR images. Branch `parity-sep28` rebuilds it from those: all 20 Arena tasks regenerate exactly (up to documented snapshot drift), tests and gates pass, and an AGENTS.md harness makes it workable.
+  - `28d44ce`: the public mrshu/sre-world fork's 312 commits through Sep 19 (#488) were checked as the original's (no fork-owner authorship, GitHub-signed merges, Arena answer-key SHAs in history) and fast-forwarded onto main.
+  - `bd9f688`: verifier (now verifier/), chart edits, task.toml/test.sh, window-derived profiles, answer keys and RC image pins back-ported from the Arena tasks; `tools/arena_parity.py` is the gate and `tools/arena_backport.py` recovers scenario sources. 35 scenarios on the old report-graded contract were retired (`9acb124`).
+  - Images: every digest the Arena tasks pin (24 images, 136 tags) plus Slack v22, Saleor v10 and the Sep 19 lock images were copied with crane to ghcr.io/yuekai/sre-world with identical digests, verified tag by tag, before the original's registry changed further.
+  - `9635551`: post-Sep-19 loadgen, sidecar and main code recovered from the published images (newest wins) and Saleor 10-T1 added; rebuilding the Go source with the image's toolchain reproduces the v21 slack-go binaries byte-for-byte. Slack images build again after pinning pnpm and mirroring MinIO (`fcfee30`).
+  - `f0cd838`: 186 tests that encoded Sep 19 behaviour were ported to the recovered contract and gates retargeted at shipped tasks; 1938 tests and 17/17 smoke gates pass, with the one unrecoverable verifier profile a strict xfail.
+  - `9102533`: AGENTS.md map, docs/plans with tech debt, D25, an arena gate in validate.sh and CI, a doc-link test and a scoped pre-commit hook.
+  - Local Kind runs, the private packages and merging into main were handled next; see "Ready sre-world PR #1 and get its CI green".
 - [x] **Add tech-debt list and doc link check** (`~/bullet-journal` @ `ec555b5`)
   A harness-engineering audit found known compromises scattered across design.md and commit messages, and nothing catching broken links in the agent-facing docs. Cleanup passes now have one list to work from, and pixi run check fails when a rename or heading change breaks the map.
 - [x] **Compare Xian Zhang's E&E scores to Stats 506** (`~/xian-zhang-review`)
   The interim review draft (.md and .docx) discussed Stats 507 enrollment trends, which say little about teaching quality. That sentence is replaced with a comparison against the Stats 506 instructor from the department comparison report: Xian matched or exceeded on every item in FA24, trailed in FA25 (largest gap Q199), with similar mean grades and her class considerably larger.
-- [x] **Re-host the original sre-world images on GHCR**
-  The original's container registry (ghcr.io/abundant-ai/sre-world) was the last public copy of its built images and was still being written to. Every digest the 20 Incident Arena tasks pin (24 images, 136 tags) plus Slack v22, Saleor v10 and the Sep 19 lock images were copied with crane to ghcr.io/yuekai/sre-world with identical digests, verified tag by tag. The packages are private by default and GitHub has no API to change that, so they need flipping to public in the UI.
-- [x] **Recover loadgen, sidecar and main from images** (`~/sre-world` @ `9635551`)
-  Five Arena tasks needed post-Sep-19 runtime code that survives only in the original's published images. Port it (newest image wins), add Saleor 10-T1, and re-host image refs under ghcr.io/yuekai: all 20 Arena tasks regenerate exactly, up to documented snapshot drift.
-  - Rebuilding the mirror's Go source with the image's toolchain reproduces the v21 slack-go binaries byte-for-byte; the TypeScript and Python sources match the image copies too.
-  - Slack images build again after pinning pnpm 11.24.0 and pulling MinIO from the project mirror (`fcfee30`).
-- [x] **Update tests and gates to recovered behaviour** (`~/sre-world` @ `f0cd838`)
-  186 tests encoded Sep 19 behaviour the recovered code replaced, and several gates still named retired scenarios or the verifier_v2 layout. Port tests to the new contract, retarget gates at shipped tasks, and fix stale callers; the one unrecoverable verifier profile is a strict xfail.
-  - Result: 1938 tests pass and `./validate.sh smoke` is 17/17 green, including the new arena gate.
-  - A pinned-image oracle trial of Arena task 007 on local Kind could not start: the chart's telemetry NetworkPolicies assume hosted k3s and kindnet drops the exporter's probes and DNS; recorded in the repo's tech-debt list.
-- [x] **Add agent harness: AGENTS.md map, plans, gates** (`~/sre-world` @ `9102533`)
-  Agents had no entry point into ~10k lines of docs, the reconstruction's plan and debt lived outside the repo, and parity ran only by hand. Add an AGENTS.md map, docs/plans with tech debt, D25, an arena gate in validate.sh and CI, a doc-link test and a scoped pre-commit hook.
-  - Branch `parity-sep28` is pushed to yuekai/sre-world; main stays at the Sep 19 history until the cluster trials pass.
 - [x] **Ready sre-world PR #1 and get its CI green** (`~/sre-world` @ `bdbb9a9`)
   The reconstruction could not be trialled or merged: Slack tasks never came up on local Kind, the agent harness had gaps an audit ranked, and yuekai/sre-world#1's task-ci had never run on this fork. Kind now runs Calico (oracle of Arena task 007 scores 1.0), all seven audit gaps are closed, and five CI fixes get task-ci running end to end; auto-merge waits on task-ci, parity and smoke.
   - Diagnosis: a tech-debt note blamed kindnet for dropping kubelet probes, but a repro showed probes pass; the causes were private GHCR images and kindnet dropping reply packets to pods under Ingress NetworkPolicies (DNS included). The user made the codex-tools and Slack packages public; Frappe and Saleor stay private.
