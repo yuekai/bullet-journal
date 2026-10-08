@@ -135,23 +135,16 @@
 - [x] **Add agent harness: AGENTS.md map, plans, gates** (`~/sre-world` @ `9102533`)
   Agents had no entry point into ~10k lines of docs, the reconstruction's plan and debt lived outside the repo, and parity ran only by hand. Add an AGENTS.md map, docs/plans with tech debt, D25, an arena gate in validate.sh and CI, a doc-link test and a scoped pre-commit hook.
   - Branch `parity-sep28` is pushed to yuekai/sre-world; main stays at the Sep 19 history until the cluster trials pass.
-- [x] **Diagnose why Slack task 007 won't start on Kind** (`~/sre-world`)
-  The tech-debt note blamed kindnet for dropping the exporter's kubelet probes. Reproduction on throwaway Kind clusters disproved that: probes pass. The real causes are private GHCR images (anonymous pulls get 403) and kindnet's NetworkPolicy engine dropping reply packets to any pod under an Ingress policy, which breaks DNS and outbound connections for prometheus, loki, the exporter and the agent-* pods. The same test passes under Calico, so the chart is correct. The tech-debt and QUICKSTART §7b text now names these causes; the edits are uncommitted.
-  - Suggested fixes: make the packages public (or mount the host's GHCR auth as the kubelet config), and give the Kind env `disableDefaultCNI` + Calico with `podSubnet: 10.42.0.0/16`.
-- [x] **Run the Kind environment on Calico** (`~/sre-world` @ `a8484fc`)
-  Slack tasks could not come up on local Kind because kindnet drops replies to pods under the chart's Ingress NetworkPolicies. The trusted Kind environment now disables kindnet, uses k3s's pod CIDR and installs a sha256-pinned Calico before Helm runs. The chart and generated tasks are unchanged, so Arena parity holds.
-  - The user made the codex-tools and Slack GHCR packages public (verified anonymously); Frappe and Saleor stay private.
-  - Oracle trial of Arena task 007 on the new environment scored reward 1.0 with all ten evidence packs passing; smoke gates 17/17.
-- [x] **Close four harness-audit gaps** (`~/sre-world` @ `788c6ea`)
-  Agents hit Arena numbers no file mapped, dead task paths in README and QUICKSTART, a debt entry stating a guess as fact, and an out-of-order decision log. Each now has a check: arena_parity verifies the README catalog, and doc tests check paths, evidence tags and D-numbering.
-  - Audit gaps left open: local runs under `jobs/` break the grader parity test (offered as a separate task), no CI smoke for the Kind environment, and live vs historical docs are not separated.
-- [x] **Skip v2 verdicts in grader parity replay** (`~/sre-world` @ `f503378`)
-  The parity test replayed every rundir under `jobs/` through the v1 oracle, so QUICKSTART 7b oracle trials (v2 verdicts) crashed it with KeyError. It now selects only v1 verdicts, the calibrate.py harvests it was written for.
-- [x] **Gate Kind NetworkPolicy enforcement in CI** (`~/sre-world` @ `4fa7200`)
-  The Calico fix rested on one oracle run, and nothing would notice if a kind or Calico update broke policy enforcement again. A one-minute smoke builds the trusted cluster, applies the chart's exporter policy and checks probes, DNS and replies; CI runs it on change and weekly.
-  - Run against plain kindnet, the smoke fails exactly the two reply checks, matching the original diagnosis.
-- [x] **Separate live docs from historical ones** (`~/sre-world` @ `f1762d7`)
-  Live guidance sat beside runbooks for the original's infrastructure and dated snapshots, so agents could not tell which to follow. Eight historical docs move to docs/archive/ with banners; a docs/README.md index lists the live ones, and a test makes new docs pick a side.
+- [x] **Ready sre-world PR #1 and get its CI green** (`~/sre-world` @ `bdbb9a9`)
+  The reconstruction could not be trialled or merged: Slack tasks never came up on local Kind, the agent harness had gaps an audit ranked, and yuekai/sre-world#1's task-ci had never run on this fork. Kind now runs Calico (oracle of Arena task 007 scores 1.0), all seven audit gaps are closed, and five CI fixes get task-ci running end to end; auto-merge waits on task-ci, parity and smoke.
+  - Diagnosis: a tech-debt note blamed kindnet for dropping kubelet probes, but a repro showed probes pass; the causes were private GHCR images and kindnet dropping reply packets to pods under Ingress NetworkPolicies (DNS included). The user made the codex-tools and Slack packages public; Frappe and Saleor stay private.
+  - `a8484fc`: the trusted Kind environment disables kindnet, uses k3s's pod CIDR and installs a sha256-pinned Calico; the chart and generated tasks are unchanged, so Arena parity holds.
+  - `788c6ea`: four audit gaps get checks: a README Arena-number catalog verified by arena_parity, live-doc path checks, evidence tags on tech-debt entries, and ordered D-numbering.
+  - `f503378` (separate session): the grader parity test replays only v1 verdicts, so local oracle runs under `jobs/` no longer crash the unit suite.
+  - `4fa7200`: `./validate.sh kind` and the kind-netpol workflow check NetworkPolicy enforcement on the trusted cluster; on plain kindnet it fails the two reply checks.
+  - `f1762d7`: eight historical docs moved to docs/archive/ with banners; docs/README.md indexes the live ones and a test makes new docs pick a side.
+  - CI fixes found by Auto-fix: `0ddaf7b` counts base contracts the head's verifier rejects as affected instead of crashing the impact job; `e8a80a1` keeps the impact job's outputs under GitHub's 1 MB limit; `3707c1d` moves kind-surface to ubuntu-latest and gives its script Calico; `7222d60` pins the episode clock before the kind-surface verifier check; `bdbb9a9` (Oct 8) lets the Kind smoke wait for Calico to converge.
+  - The user turned on repo auto-merge and made task-ci, parity and smoke required on main.
 - [x] **Trace results by name, check trailer, add CI** (`~/llm-market` @ `cf2f136`)
   §3.7 labelled runs in prose, so most result files could not be found by search, one was cited nowhere, and the H = 0 claim had no run. Now every number names its configuration and the lint enforces it; new H = 0 runs correct the σ = 0 claim. CI and the trailer check do the rest.
   - The new runs showed the one-period game cycles in 39 of 100 periods at σ = 0 once the open model is gone; §3.7 had said it settles. §3.7 and §6 now say so.
@@ -159,13 +152,6 @@
 - [x] **Collect schemas and stats for all 108 databases** (`~/genebench-max` @ `7c24c84`)
   GeneBench-Pro-style task generation needs every table's columns, join keys, units, missing-value meaning and data artifacts, but the skills repo's 108 databases had only endpoint docs. A new repo now holds per-database schemas, stats from up to 370 sampled rows per table, and a cross-database identifier crosswalk, each regenerable by a collector script.
   - Coverage, sampling designs, gaps and open questions: [genebench-max.md](genebench-max.md)
-- [x] **Fix the CI failures blocking sre-world PR #1** (`~/sre-world` @ `7222d60`)
-  yuekai/sre-world#1 merges the Incident Arena reconstruction into main, and its task-ci had never run on this fork: it crashed on Sep 19 contracts, overflowed GitHub's output limit, and asked for runners and a CNI the fork lacks. Four fixes, found by Auto-fix, get it running end to end; auto-merge (merge commit) waits on task-ci, parity and smoke.
-  - `0ddaf7b`: the impact job loaded main's Sep 19 contracts with the head's verifier, which rejects their materializer names; an unloadable contract now counts as affected, since over-reporting is safe and crashing is not.
-  - `e8a80a1`: the impact job's `tasks` output (every affected task with its reasons) passed the 1 MB job-output limit; no job reads it, so it now carries names only and the detail stays in the task-impact artifact.
-  - `3707c1d`: kind-surface moved off the original's Blacksmith runners to ubuntu-latest, and its script installs the pinned Calico, since the Kind config change in `a8484fc` had left its cluster without a CNI.
-  - `7222d60`: the recovered loadgen answers verifier reads with 500 until Harbor's healthcheck pins the episode clock, which the kind-surface script never did; it now pins it the same way and passes end to end locally.
-  - The user turned on repo auto-merge and made those three checks required on main.
 - [x] **Make the repo legible and self-checking for agents** (`~/genebench-max` @ `ce009f0`)
   Knowledge lived in a 91-line AGENTS.md manual, chat and a journal note, and only some rules were checked, manually. AGENTS.md is now a map into docs/ (design, collecting, tech debt, plans). `pixi run check` (validate, stale-output check, tests) runs from a pre-commit hook. ID names and leaked emails are now validator errors.
 
@@ -174,8 +160,6 @@
 - [x] **Rename ~/scientific-db-schemas to ~/genebench-max** (`~/genebench-max` @ `c56e9d4`)
   The repo's name now matches its purpose, GeneBench-Pro-style task generation. Pixi's env hardcoded the old path, so it was rebuilt; `pixi run check` passes. The pixi project name, AGENTS.md heading and API caller IDs now say genebench-max too.
   - The journal note is now [genebench-max.md](genebench-max.md); the repo's original plan doc keeps the old path as history.
-- [x] **Let the Kind smoke wait for Calico to converge** (`~/sre-world` @ `bdbb9a9`)
-  CI failed the allowed-peer check once right after the pod went Ready: Calico programs a new pod into a policy's peer set asynchronously. Pass-expected checks now retry for 30 s and the deny check runs last, once; kindnet still fails the two reply checks.
 - [x] **Hold compute cost constant in the LLM market** (`~/llm-marketplace`)
   The model had compute getting cheaper at rate g, which kept closed firms training forever; the user asked to simplify to a constant cost. Spec, script and all results now use cₜ = c₀; §2.2 becomes a cheap-compute benchmark and §2.3 says closed firms stall while the budgeted open model keeps growing.
   - Uncommitted: §3.7 is on hold. The solver pins each plan's last-period training fraction at 1; optimizing it flips the baseline from the open model squeezed out to the open model taking every user (recorded in §6). The user decides which solver to use.
