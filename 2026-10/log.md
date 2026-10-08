@@ -158,3 +158,8 @@
 - [x] **Stop parsing bare times of day as dates** (`~/genebench-max` @ `d665091`)
   collect_stats sent strings like "14:30:00" or "20:00:00+00:00" to pandas, which anchors them to today, so date_range changed on every rerun. Time-only values are now excluded from datetime parsing; such columns become categorical.
   - Regenerated 8 affected stats files (usgs, alphavantage, cod, imaging-data-commons, sdss, treasury, usfiscaldata); on branch claude/inspiring-margulis-47b6df, not merged.
+- [x] **Catalogue KEGG and openFDA's remaining endpoints** (`~/genebench-max` @ `2736df4`)
+  Both databases named endpoints in a gap but never catalogued them, so tasks couldn't stage them. KEGG gains 10 tables and openFDA 24 (every endpoint its download index lists), all sampled, with contact details dropped from rows.
+- [x] **Sample 370 rows per table unless it has fewer** (`~/genebench-max` @ `b25ae4e`)
+  Collectors capped calls at ~10 per table, so APIs returning 10 rows per call gave 10-120-row samples. The row count now wins: 794 short tables were re-sampled, and validate fails any sample under 370 rows without a stated reason, so the rule can't silently slip again.
+  - 18 tables stay short with reasons; Alpha Vantage and NASA need re-runs once their daily quotas reset.
