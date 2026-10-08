@@ -17,13 +17,14 @@ A Markdown bullet journal the user reads, and agents mostly maintain. It also se
 | `scripts/install.sh` | Enables `.githooks/` and links each skill into each harness | [docs/design.md](docs/design.md) |
 | `docs/design.md` | Core beliefs and why things are the way they are | — |
 | `docs/plans/` | Execution plans for non-trivial changes to this repo | — |
+| `docs/tech-debt.md` | Known compromises and gaps; add one when you accept a shortcut, remove it when you pay it off | — |
 
 ## Commands
 
 ```bash
 pixi run init-monthly-log YYYY-MM   # the only way to create a monthly log
 pixi run lint                       # also runs as the pre-commit hook
-pixi run check                      # lint + tests; run before every commit that touches scripts/ or docs/
+pixi run check                      # lint + tests (incl. doc link check); run before every commit that touches scripts/ or docs/
 pixi run install                    # once per machine: git hooks + skill symlinks; rerun after adding or renaming a skill
 ```
 
