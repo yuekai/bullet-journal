@@ -145,3 +145,5 @@
 - [x] **Close four harness-audit gaps** (`~/sre-world` @ `788c6ea`)
   Agents hit Arena numbers no file mapped, dead task paths in README and QUICKSTART, a debt entry stating a guess as fact, and an out-of-order decision log. Each now has a check: arena_parity verifies the README catalog, and doc tests check paths, evidence tags and D-numbering.
   - Audit gaps left open: local runs under `jobs/` break the grader parity test (offered as a separate task), no CI smoke for the Kind environment, and live vs historical docs are not separated.
+- [x] **Skip v2 verdicts in grader parity replay** (`~/sre-world` @ `f503378`)
+  The parity test replayed every rundir under `jobs/` through the v1 oracle, so QUICKSTART 7b oracle trials (v2 verdicts) crashed it with KeyError. It now selects only v1 verdicts, the calibrate.py harvests it was written for.
