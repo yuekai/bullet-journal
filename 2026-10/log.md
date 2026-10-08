@@ -162,3 +162,6 @@
 - [x] **Treat unloadable base contracts as affected** (`~/sre-world` @ `0ddaf7b`)
   task-ci's impact job loaded base-side contracts with the head's verifier, and Sep 19 contracts name materializers it now rejects, so every PR into main crashed classification. An unloadable contract now counts as affected: over-reporting impact is safe, crashing is not.
   - Found by Auto-fix on yuekai/sre-world#1, which reconstructs sre-world to Incident Arena parity.
+- [x] **Run kind-surface on GitHub runners with Calico** (`~/sre-world` @ `3707c1d`)
+  kind-surface asked for a Blacksmith runner this fork lacks, so it would never start; it now runs on ubuntu-latest. Its script also built from the Kind config that now disables kindnet, leaving the cluster without a CNI; it installs the same pinned Calico.
+  - The kindnet breakage came from this session's Calico commit (`a8484fc`); only the changed bring-up was tested locally, so the first CI run is the full end-to-end check.
