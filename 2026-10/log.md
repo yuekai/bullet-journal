@@ -165,3 +165,5 @@
 - [x] **Run kind-surface on GitHub runners with Calico** (`~/sre-world` @ `3707c1d`)
   kind-surface asked for a Blacksmith runner this fork lacks, so it would never start; it now runs on ubuntu-latest. Its script also built from the Kind config that now disables kindnet, leaving the cluster without a CNI; it installs the same pinned Calico.
   - The kindnet breakage came from this session's Calico commit (`a8484fc`); only the changed bring-up was tested locally, so the first CI run is the full end-to-end check.
+- [x] **Keep task-ci impact outputs under 1 MB** (`~/sre-world` @ `e8a80a1`)
+  On a wide change the impact job's tasks output (every affected task with its reasons) passed GitHub's 1 MB job-output limit and failed the job. No job reads it, so it now carries task names only; the full detail stays in the task-impact artifact.
