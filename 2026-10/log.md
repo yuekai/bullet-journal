@@ -159,19 +159,15 @@
 - [x] **Collect schemas and stats for all 108 databases** (`~/genebench-max` @ `7c24c84`)
   GeneBench-Pro-style task generation needs every table's columns, join keys, units, missing-value meaning and data artifacts, but the skills repo's 108 databases had only endpoint docs. A new repo now holds per-database schemas, stats from up to 370 sampled rows per table, and a cross-database identifier crosswalk, each regenerable by a collector script.
   - Coverage, sampling designs, gaps and open questions: [genebench-max.md](genebench-max.md)
-- [x] **Treat unloadable base contracts as affected** (`~/sre-world` @ `0ddaf7b`)
-  task-ci's impact job loaded base-side contracts with the head's verifier, and Sep 19 contracts name materializers it now rejects, so every PR into main crashed classification. An unloadable contract now counts as affected: over-reporting impact is safe, crashing is not.
-  - Found by Auto-fix on yuekai/sre-world#1, which reconstructs sre-world to Incident Arena parity.
-- [x] **Run kind-surface on GitHub runners with Calico** (`~/sre-world` @ `3707c1d`)
-  kind-surface asked for a Blacksmith runner this fork lacks, so it would never start; it now runs on ubuntu-latest. Its script also built from the Kind config that now disables kindnet, leaving the cluster without a CNI; it installs the same pinned Calico.
-  - The kindnet breakage came from this session's Calico commit (`a8484fc`); only the changed bring-up was tested locally, so the first CI run is the full end-to-end check.
-- [x] **Keep task-ci impact outputs under 1 MB** (`~/sre-world` @ `e8a80a1`)
-  On a wide change the impact job's tasks output (every affected task with its reasons) passed GitHub's 1 MB job-output limit and failed the job. No job reads it, so it now carries task names only; the full detail stays in the task-impact artifact.
+- [x] **Fix the CI failures blocking sre-world PR #1** (`~/sre-world` @ `7222d60`)
+  yuekai/sre-world#1 merges the Incident Arena reconstruction into main, and its task-ci had never run on this fork: it crashed on Sep 19 contracts, overflowed GitHub's output limit, and asked for runners and a CNI the fork lacks. Four fixes, found by Auto-fix, get it running end to end; auto-merge (merge commit) waits on task-ci, parity and smoke.
+  - `0ddaf7b`: the impact job loaded main's Sep 19 contracts with the head's verifier, which rejects their materializer names; an unloadable contract now counts as affected, since over-reporting is safe and crashing is not.
+  - `e8a80a1`: the impact job's `tasks` output (every affected task with its reasons) passed the 1 MB job-output limit; no job reads it, so it now carries names only and the detail stays in the task-impact artifact.
+  - `3707c1d`: kind-surface moved off the original's Blacksmith runners to ubuntu-latest, and its script installs the pinned Calico, since the Kind config change in `a8484fc` had left its cluster without a CNI.
+  - `7222d60`: the recovered loadgen answers verifier reads with 500 until Harbor's healthcheck pins the episode clock, which the kind-surface script never did; it now pins it the same way and passes end to end locally.
+  - The user turned on repo auto-merge and made those three checks required on main.
 - [x] **Make the repo legible and self-checking for agents** (`~/genebench-max` @ `ce009f0`)
   Knowledge lived in a 91-line AGENTS.md manual, chat and a journal note, and only some rules were checked, manually. AGENTS.md is now a map into docs/ (design, collecting, tech debt, plans). `pixi run check` (validate, stale-output check, tests) runs from a pre-commit hook. ID names and leaked emails are now validator errors.
-- [x] **Pin the episode clock in the kind surface proof** (`~/sre-world` @ `7222d60`)
-  The loadgen recovered from the images answers verifier reads with 500 until the episode clock is pinned, which Harbor's healthcheck does and this script never did, so kind-surface failed. The script now pins it the same way first; it passes end to end.
-  - Reproduced and verified with a full local run of `kind_agent_surfaces.sh` on the Calico cluster; auto-merge on yuekai/sre-world#1 waits on this check.
 
 ## Thu, Oct 8, 2026
 
