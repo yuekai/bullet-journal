@@ -120,3 +120,5 @@
   - Still open: Frappe 000/003/004/005 and Slack 017 need loadgen/main changes recovered from the GHCR images (blocked pending the user's go-ahead), the Saleor 10-T1 spec, re-hosting images, and cluster runs.
 - [x] **Add tech-debt list and doc link check** (`~/bullet-journal` @ `ec555b5`)
   A harness-engineering audit found known compromises scattered across design.md and commit messages, and nothing catching broken links in the agent-facing docs. Cleanup passes now have one list to work from, and pixi run check fails when a rename or heading change breaks the map.
+- [x] **Compare Xian Zhang's E&E scores to Stats 506** (`~/xian-zhang-review`)
+  The interim review draft (.md and .docx) discussed Stats 507 enrollment trends, which say little about teaching quality. That sentence is replaced with a comparison against the Stats 506 instructor from the department comparison report: Xian matched or exceeded on every item in FA24, trailed in FA25 (largest gap Q199), with similar mean grades and her class considerably larger.
