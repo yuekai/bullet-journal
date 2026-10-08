@@ -178,3 +178,5 @@
 - [x] **Rename ~/scientific-db-schemas to ~/genebench-max** (`~/genebench-max`)
   The repo's name now matches its purpose, GeneBench-Pro-style task generation. Pixi's env hardcoded the old path, so it was rebuilt; `pixi run check` passes. Journal references were updated (`97e2a53`).
   - The pixi project name, AGENTS.md heading and API User-Agent strings still say scientific-db-schemas.
+- [x] **Let the Kind smoke wait for Calico to converge** (`~/sre-world` @ `bdbb9a9`)
+  CI failed the allowed-peer check once right after the pod went Ready: Calico programs a new pod into a policy's peer set asynchronously. Pass-expected checks now retry for 30 s and the deny check runs last, once; kindnet still fails the two reply checks.
