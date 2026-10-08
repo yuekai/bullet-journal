@@ -107,3 +107,7 @@
   Selection keys off `connectedToControl` rather than `lastSeen`, since distinct devices can share a hostname and report recent timestamps, and deletions match on device id so a stale record cannot collide with a live device of the same name. Ran it with a backup: 145 deleted, 0 failed, leaving the 6 connected devices, all of which still respond.
 - [x] **Add a harness-engineering skill for all harnesses**
   There was no shared guidance on setting up repos for agents, so each harness had to rediscover it. A new skill in `~/.agents/skills/harness-engineering`, symlinked from `~/.claude/skills` and `~/.kimi-code/skills`, condenses OpenAI's harness-engineering principles into a mechanical repo audit and a setup procedure sized to the repo.
+- [x] **Create repo from the bullet-journal model note** (`~/llm-market` @ `e89204a`)
+  The open-vs-closed LLM model, its simulations and results lived in one journal note with loose asset files, so nothing checked that numbers matched scripts or that references resolved. Now docs, scripts and per-run results sit together under lint and tests.
+  - The note is split by top-level section with global § numbers, and the lint checks every reference resolves.
+  - Each simulation configuration writes its own result file, a generated summary backs every number in the results section, and a test checks the committed results reproduce.
