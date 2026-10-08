@@ -172,3 +172,9 @@
 - [x] **Pin the episode clock in the kind surface proof** (`~/sre-world` @ `7222d60`)
   The loadgen recovered from the images answers verifier reads with 500 until the episode clock is pinned, which Harbor's healthcheck does and this script never did, so kind-surface failed. The script now pins it the same way first; it passes end to end.
   - Reproduced and verified with a full local run of `kind_agent_surfaces.sh` on the Calico cluster; auto-merge on yuekai/sre-world#1 waits on this check.
+
+## Thu, Oct 8, 2026
+
+- [x] **Rename ~/scientific-db-schemas to ~/genebench-max** (`~/genebench-max`)
+  The repo's name now matches its purpose, GeneBench-Pro-style task generation. Pixi's env hardcoded the old path, so it was rebuilt; `pixi run check` passes. Journal references were updated (`97e2a53`).
+  - The pixi project name, AGENTS.md heading and API User-Agent strings still say scientific-db-schemas.
