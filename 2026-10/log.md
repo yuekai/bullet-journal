@@ -111,3 +111,10 @@
   The open-vs-closed LLM model, its simulations and results lived in one journal note with loose asset files, so nothing checked that numbers matched scripts or that references resolved. Now docs, scripts and per-run results sit together under lint and tests.
   - The note is split by top-level section with global § numbers, and the lint checks every reference resolves.
   - Each simulation configuration writes its own result file, a generated summary backs every number in the results section, and a test checks the committed results reproduce.
+- [x] **Fast-forward sre-world mirror to Sep 19 history** (`~/sre-world` @ `28d44ce`)
+  abundant-ai/sre-world went offline and the yuekai/sre-world fork was a Jul 21 snapshot. The public mrshu/sre-world fork carries the original's main through Sep 19 (#488); its 312 commits were checked as the original's (no fork-owner authorship, GitHub-signed merges, Arena answer-key SHAs in history) and fast-forwarded onto main.
+- [x] **Reconstruct post-Sep-19 generator from Arena tasks** (`~/sre-world` @ `ff5aeeb`)
+  The fork stops at Sep 19; Incident Arena holds the original's later output. Back-port its verifier (now verifier/), chart edits, task.toml/test.sh, window-derived profiles, answer keys and RC image pins: 14 of 20 Arena tasks regenerate exactly, up to documented snapshot drift.
+  - Local branch `parity-sep28`, unpushed; `tools/arena_parity.py` is the gate and `tools/arena_backport.py` recovers scenario sources.
+  - 35 scenarios on the old report-graded contract were retired by deletion (`9acb124`).
+  - Still open: Frappe 000/003/004/005 and Slack 017 need loadgen/main changes recovered from the GHCR images (blocked pending the user's go-ahead), the Saleor 10-T1 spec, re-hosting images, and cluster runs.
