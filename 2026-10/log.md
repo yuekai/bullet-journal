@@ -163,3 +163,6 @@
 - [x] **Hold compute cost constant in the LLM market** (`~/llm-marketplace`)
   The model had compute getting cheaper at rate g, which kept closed firms training forever; the user asked to simplify to a constant cost. Spec, script and all results now use cₜ = c₀; §2.2 becomes a cheap-compute benchmark and §2.3 says closed firms stall while the budgeted open model keeps growing.
   - Uncommitted: §3.7 is on hold. The solver pins each plan's last-period training fraction at 1; optimizing it flips the baseline from the open model squeezed out to the open model taking every user (recorded in §6). The user decides which solver to use.
+- [x] **Sample rows for every catalogued table** (`~/genebench-max` @ `5eec4d9`)
+  Collectors sampled at most ~20 core tables per database, leaving 974 tables schema-only. The cap is gone: 777 of them now have samples, and the rest carry a specific reason. Re-runs reuse cached samples, and the call budget is now per table, since flat ~300 can't cover SDSS.
+  - MouseMine's 150 tables are still blocked by HTTP 429; 47 others are empty or need access (e.g. GI_API_KEY).
