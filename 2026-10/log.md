@@ -165,3 +165,5 @@
   - 18 tables stay short with reasons; Alpha Vantage and NASA need re-runs once their daily quotas reset.
 - [x] **Merge bare-time date fix and regenerate stats** (`~/genebench-max` @ `573cd37`)
   The fix landed on a branch whose regenerated stats predated today's re-sampling, so those conflicted. Kept the current samples and regenerated every database's stats with the fixed script; 21 files changed, and four collectors re-ran from cache to refresh column kinds.
+- [x] **Read keys from the repo's .env; finish NASA NeoWs** (`~/genebench-max` @ `a118976`)
+  Keys moved from ~/.env to a git-ignored .env in the repo, which neither the collectors nor the credential scan read. Both now load it first. NASA's collector capped calls even with a real key; with NASA_API_KEY, neo and close_approach now reach 370 rows.
