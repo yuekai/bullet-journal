@@ -204,3 +204,5 @@
   - The controller submits at most one allocation per pool per 300 s cooldown, so the seven new engines arrived over half an hour (17:34-18:04) and each then needed about 19 minutes to load shards; the last of eight was serving at 18:33.
   - Verified: all eight records ready and attached to the gateway (17 workers total, the rest being kimi-lowprio, glm-5.3 and deepseek-v4.1-flash), and a completion through the gateway returned the expected text.
   - Left uncommitted, consistent with the previous turn's choice; the engine key, jobs list, and node names stay out of the journal.
+- [x] **Resume Alpha Vantage symbol searches** (`~/genebench-max` @ `78e1202`)
+  economic_cpi sampled only 364 rows after an old chunking bug, and symbol_search was empty because the 25-call daily budget ran out. This run re-fetches CPI (370 rows) and searches 24 of 56 keywords (211 matches); the next daily run continues the searches.
