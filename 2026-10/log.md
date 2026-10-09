@@ -175,3 +175,8 @@
 - [x] **Sample all 164 MouseMine classes** (`~/genebench-max` @ `bdcd150`)
   MouseMine's query endpoint returned HTTP 429, so no class had rows, and the collector still capped core classes at 100 rows. The service answers again: classes are now drawn by random object IDs, avoiding slow deep offsets, and every non-empty class has 370 rows or all of its objects.
   - Found that lib.random_offsets draws overlapping pages; 107 cached samples have repeated rows. Suggested as a separate task, not fixed yet.
+- [x] **Sample each record once and flag duplicate rows** (`~/genebench-max` @ `6a251cb`)
+  Random page starts weren't spaced, and some APIs repeat records or ignore offsets, so 107 samples held repeats. Pages now never overlap, draws are deduped and topped up, stats count repeats, and validate fails keyed tables with repeated rows.
+  - On branch claude/lucid-leavitt-727843, not yet merged to main; the main checkout's cache/ already holds the re-sampled rows.
+  - Not the offset bug: BioGRID ignores start above ~510k (now sampled by random ID); gnomAD answered batches of 19 or more variants with another query's cached response; BRENDA and GTEx repeat records in responses.
+  - About 50 wrong primary-key declarations fixed. DisGeNET, OMIM and Data Commons samples were topped up, not redrawn, to save quota.
