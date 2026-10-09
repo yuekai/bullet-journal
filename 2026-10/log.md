@@ -172,3 +172,6 @@
 - [x] **Let Alpha Vantage searches span several days** (`~/genebench-max` @ `188e3b9`)
   The 25-call daily quota can't reach 370 search matches in one run, and a run that hit the quota replaced earlier rows with none. Searches now cache per keyword and resume, and a short series is re-fetched but kept if the call fails.
   - Scheduled tasks alphavantage-recollect-day1/-day2 run the re-collection at 10:30 PDT on Oct 9 and Oct 10; the quota looks like a rolling 24 h window, not a UTC-midnight reset.
+- [x] **Sample all 164 MouseMine classes** (`~/genebench-max` @ `bdcd150`)
+  MouseMine's query endpoint returned HTTP 429, so no class had rows, and the collector still capped core classes at 100 rows. The service answers again: classes are now drawn by random object IDs, avoiding slow deep offsets, and every non-empty class has 370 rows or all of its objects.
+  - Found that lib.random_offsets draws overlapping pages; 107 cached samples have repeated rows. Suggested as a separate task, not fixed yet.
