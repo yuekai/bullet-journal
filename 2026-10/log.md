@@ -190,3 +190,7 @@
   - The constant-compute work is kept in the git stash "constant-compute WIP (Oct 8), reverted Oct 9"; its plan is marked Abandoned.
   - Kept its finding as a §6 issue: the solver pins each plan's last-period training at 1, which biases firms toward training.
   - Rebuilt the stale pixi env (built under the old ~/llm-market path) so pytest runs. Uncommitted.
+- [x] **Keep falling compute as a variant of g = 0** (`~/llm-marketplace`)
+  The revert above misread the request: the user wants falling compute alongside the constant-compute baseline, not instead of it. The Oct 8 work is restored from the stash, and g is back in the cost with baseline 0 and a `g-falling` configuration at 0.03, which reproduces the Oct 7 baseline. The spec covers both cases.
+  - Existing result files only gained g = 0 in their configs, so no rerun was needed beyond g-falling.
+  - §3.7 is still mostly Oct 7 numbers, pending the user's choice of solver fix; a note there says which rows are current. Uncommitted.
