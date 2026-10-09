@@ -167,3 +167,5 @@
   The fix landed on a branch whose regenerated stats predated today's re-sampling, so those conflicted. Kept the current samples and regenerated every database's stats with the fixed script; 21 files changed, and four collectors re-ran from cache to refresh column kinds.
 - [x] **Read keys from the repo's .env; finish NASA NeoWs** (`~/genebench-max` @ `a118976`)
   Keys moved from ~/.env to a git-ignored .env in the repo, which neither the collectors nor the credential scan read. Both now load it first. NASA's collector capped calls even with a real key; with NASA_API_KEY, neo and close_approach now reach 370 rows.
+- [x] **Sample Census data and GI async-job tables** (`~/genebench-max` @ `f89afe7`)
+  With CENSUS_API_KEY and GI_API_KEY set, 20 tables that had no rows now have 370. The Census collector never sent its key, so county-level sampling was added; GI now submits its own async jobs to sample their lifecycle. GI's variant tables still need a VCF in S3.
