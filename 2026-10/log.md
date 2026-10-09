@@ -169,3 +169,6 @@
   Keys moved from ~/.env to a git-ignored .env in the repo, which neither the collectors nor the credential scan read. Both now load it first. NASA's collector capped calls even with a real key; with NASA_API_KEY, neo and close_approach now reach 370 rows.
 - [x] **Sample Census data and GI async-job tables** (`~/genebench-max` @ `f89afe7`)
   With CENSUS_API_KEY and GI_API_KEY set, 20 tables that had no rows now have 370. The Census collector never sent its key, so county-level sampling was added; GI now submits its own async jobs to sample their lifecycle. GI's variant tables still need a VCF in S3.
+- [x] **Let Alpha Vantage searches span several days** (`~/genebench-max` @ `188e3b9`)
+  The 25-call daily quota can't reach 370 search matches in one run, and a run that hit the quota replaced earlier rows with none. Searches now cache per keyword and resume, and a short series is re-fetched but kept if the call fails.
+  - Scheduled tasks alphavantage-recollect-day1/-day2 run the re-collection at 10:30 PDT on Oct 9 and Oct 10; the quota looks like a rolling 24 h window, not a UTC-midnight reset.
