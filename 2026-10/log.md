@@ -194,3 +194,5 @@
   The revert above misread the request: the user wants falling compute alongside the constant-compute baseline, not instead of it. The Oct 8 work is restored from the stash, and g is back in the cost with baseline 0 and a `g-falling` configuration at 0.03, which reproduces the Oct 7 baseline. The spec covers both cases.
   - Existing result files only gained g = 0 in their configs, so no rerun was needed beyond g-falling.
   - §3.7 is still mostly Oct 7 numbers, pending the user's choice of solver fix; a note there says which rows are current.
+- [x] **Merge the duplicate-rows fix into main** (`~/genebench-max` @ `075f0c0`)
+  The duplicate-rows fix (6a251cb) was cut before the data/ move, so it couldn't fast-forward main. Merged main into it, kept the new data/ paths in the docs and validator messages, and fast-forwarded main; pixi run check passes in the main checkout.
