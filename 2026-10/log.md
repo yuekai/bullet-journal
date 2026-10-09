@@ -196,3 +196,6 @@
   - §3.7 is still mostly Oct 7 numbers, pending the user's choice of solver fix; a note there says which rows are current.
 - [x] **Merge the duplicate-rows fix into main** (`~/genebench-max` @ `075f0c0`)
   The duplicate-rows fix (6a251cb) was cut before the data/ move, so it couldn't fast-forward main. Merged main into it, kept the new data/ paths in the docs and validator messages, and fast-forwarded main; pixi run check passes in the main checkout.
+- [x] **Start a Kimi-K3 engine on the main partition** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  The kimi-main pool target was 0, so nothing served K3 on the high-priority path while all ten kimi-lowprio K3 allocations sat pending. Raising the target to 1 had the running controller submit one 2x8-H200 allocation (2626508) on its next reconcile cycle; the engine loaded, registered healthy, and answered a completion through the gateway.
+  - Left uncommitted by request: the target stays local, together with the file's other uncommitted pool reductions (gemma4/mova/qwen36/k26 to 0, glm53 2 to 1).
