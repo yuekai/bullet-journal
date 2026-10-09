@@ -180,3 +180,8 @@
   - On branch claude/lucid-leavitt-727843, not yet merged to main; the main checkout's cache/ already holds the re-sampled rows.
   - Not the offset bug: BioGRID ignores start above ~510k (now sampled by random ID); gnomAD answered batches of 19 or more variants with another query's cached response; BRENDA and GTEx repeat records in responses.
   - About 50 wrong primary-key declarations fixed. DisGeNET, OMIM and Data Commons samples were topped up, not redrawn, to save quota.
+
+## Fri, Oct 9, 2026
+
+- [x] **Move schema collection into data/** (`~/genebench-max` @ `9980d13`)
+  Collectors, scripts and their outputs filled the repo's top level, leaving no room for the modeling and task-generation work built on them. They now live in data/; docs, tests, vendor/ and .env stay at the root since they serve the whole repo.
