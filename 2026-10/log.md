@@ -185,3 +185,8 @@
 
 - [x] **Move schema collection into data/** (`~/genebench-max` @ `9980d13`)
   Collectors, scripts and their outputs filled the repo's top level, leaving no room for the modeling and task-generation work built on them. They now live in data/; docs, tests, vendor/ and .env stay at the root since they serve the whole repo.
+- [x] **Revert to slowly falling compute cost** (`~/llm-marketplace`)
+  The Oct 8 simplification to constant compute (g = 0) was uncommitted. Under it closed firms stop training at a point set by the transient, so the long run has no closed form. The model is back to the committed cₜ = c₀·e^{−g·t} with g = 0.03, where every developer eventually trains on all it can access and the §2.2 fixed point is the long run.
+  - The constant-compute work is kept in the git stash "constant-compute WIP (Oct 8), reverted Oct 9"; its plan is marked Abandoned.
+  - Kept its finding as a §6 issue: the solver pins each plan's last-period training at 1, which biases firms toward training.
+  - Rebuilt the stale pixi env (built under the old ~/llm-market path) so pytest runs. Uncommitted.
