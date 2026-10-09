@@ -199,3 +199,8 @@
 - [x] **Start a Kimi-K3 engine on the main partition** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
   The kimi-main pool target was 0, so nothing served K3 on the high-priority path while all ten kimi-lowprio K3 allocations sat pending. Raising the target to 1 had the running controller submit one 2x8-H200 allocation (2626508) on its next reconcile cycle; the engine loaded, registered healthy, and answered a completion through the gateway.
   - Left uncommitted by request: the target stays local, together with the file's other uncommitted pool reductions (gemma4/mova/qwen36/k26 to 0, glm53 2 to 1).
+- [x] **Scale the main Kimi-K3 pool to eight engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  One main-partition K3 allocation left no high-priority spare, so losing it to preemption would drop K3 off the main path while the low-priority pool stayed pending. Raising the kimi-main target from 1 to 8 let the running controller fill the pool itself, with no service restart.
+  - The controller submits at most one allocation per pool per 300 s cooldown, so the seven new engines arrived over half an hour (17:34-18:04) and each then needed about 19 minutes to load shards; the last of eight was serving at 18:33.
+  - Verified: all eight records ready and attached to the gateway (17 workers total, the rest being kimi-lowprio, glm-5.3 and deepseek-v4.1-flash), and a completion through the gateway returned the expected text.
+  - Left uncommitted, consistent with the previous turn's choice; the engine key, jobs list, and node names stay out of the journal.
