@@ -206,3 +206,7 @@
   - Left uncommitted, consistent with the previous turn's choice; the engine key, jobs list, and node names stay out of the journal.
 - [x] **Resume Alpha Vantage symbol searches** (`~/genebench-max` @ `78e1202`)
   economic_cpi sampled only 364 rows after an old chunking bug, and symbol_search was empty because the 25-call daily budget ran out. This run re-fetches CPI (370 rows) and searches 24 of 56 keywords (211 matches); the next daily run continues the searches.
+- [x] **Add reasoning efforts to the llama provider models** (`~/.dsh`)
+  The glm and kimi models on the llama route offered no reasoning levels in the picker, and deepseek-v4.1-flash's had been silently erased. The Models settings page rebuilds each model entry from only the fields it shows, so any save there drops reasoningEfforts. All three now declare their documented tiers in cordis.patch.yml, with a comment marking that file as the field's only editor.
+  - Probed the live gateway rather than trusting the docs: all three honor top-level reasoning_effort, including GLM, whose docs prescribe chat_template_kwargs. This lets all three share one plain dispatch with no compat override.
+  - GLM and Kimi deliberately omit xhigh, since their documented tiers stop at max and undeclared levels resolve as unsupported.
