@@ -217,3 +217,10 @@
   - Verified end to end: solo grading unchanged (golden captures vs vuln, fails vs PATCHED=1, full xchg verifier flow rewards 1.0); defender golden scores 1 alone; the simultaneous race goes to the attacker first (~15 s; documented in the arena README); staged "stupid defender" violations each fail the named gate check; 23 checker unit tests pass.
 - [x] **Publish cyber-arena to the LLM360 org remote** (`~/cyber-arena` @ `3c41924`)
   The workspace had an unborn branch with no commits. Made the initial import commit (collinear packs + rollout data; sre-world excluded as a symlink to its own repo, .DS_Store ignored; secret scan found only shipped test certs), added origin, and pushed main to github.com/LLM360/cyber-arena.git.
+
+## Sat, Oct 10, 2026
+
+- [x] **Reduce the main Kimi-K3 pool to two replicas** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `099e158`)
+  The main K3 pool had been scaled to eight 2x8-H200 allocations, more main-partition capacity than serving needs. The target is now 2, so the running controller cancelled the six excess allocations on its next reconcile cycle, with no service restart.
+  - Scale-down cancels the newest running allocations first, so the two oldest engines survived and kept serving; the gateway lists two kimi-k3 workers, verified against the ready records.
+  - Only this hunk was committed; the file's other uncommitted pool reductions were left as they are.
