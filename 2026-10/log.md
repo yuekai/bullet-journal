@@ -230,3 +230,10 @@
   The receding-horizon solver pinned each plan's last training fraction at 1 and valued nothing past t + H, which biased firms toward training and valued stocks over at most H periods. Plans are now scored over 30 extra periods repeating their last actions, every fraction is chosen, and the suite runs in parallel.
   - Rerun headline: both closed firms price at 0 to grab data and the open model is gone by period 4 at every H and K; open weights no longer saves it. At c0 = 0.08 the open model stalls closed firms out and climbs to 0.89.
   - The tail makes the closed firms' plan game cycle (18 to 80 of 100 periods) after the open model is gone; per the user, cycles are reported, not smoothed.
+
+## Sun, Oct 11, 2026
+
+- [x] **Add two more main Kimi-K3 engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `62b90df`)
+  The main K3 pool served two 2x8-H200 allocations; raising kimi-main to four had the running controller submit the two new allocations five minutes apart, the 300 s submit cooldown, with no service restart.
+  - Both are still queued on QOSGrpNodeLimit: the k2m QOS group sits about 100 nodes over its 226-node allowance cluster-wide, so they start only as that usage drops, then need about 19 minutes to load shards. The two running engines keep serving meanwhile.
+  - Only this hunk was committed; the file's other uncommitted pool reductions were left as they are.
