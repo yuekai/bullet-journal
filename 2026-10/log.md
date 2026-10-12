@@ -245,6 +245,11 @@
   - Reasoning defaults were left unset per the user, so flash (0 reasoning tokens with no effort sent) still does not think by default; kimi and glm do. A route-level `reasoning` would fix flash but also changes glm, as per-model default effort is not expressible in the profile.
   - Both files were validated through dsh's own loader with --patch --dump-config, and the pre-edit files are kept as .20261011-align.bak. The local change needs an app restart, since the desktop profile has no patchReload: live.
 
+- [x] **Mirror m2's web profile patch into headless**
+  m2's headless profile patch was an empty list, so a headless run there had no llama models and no default model. It now carries a verbatim copy of the web profile's cordis.patch.yml, so both profiles on m2 resolve the same three models and the same default.
+  - Patch entries turn out to be id-targeted overrides rather than inserts: an entry whose id is absent from the tree is reported "entry X not found" and skipped. llm-pi-ai and agent-default-model both exist in the headless tree so the mirror takes effect, while ui-settings-general does not - it is a client UI plugin belonging to the web bundle - so that one is inert in headless and emits a startup warning.
+  - Verified by md5 that the headless file is byte-identical to the web file, and that those exact bytes compose against a headless profile (--patch --dump-config exits 0 with only the not-found warning). The previous empty patch is kept as .20261011-align.bak.
+
 ## Mon, Oct 12, 2026
 
 - [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
