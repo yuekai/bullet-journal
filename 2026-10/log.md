@@ -244,3 +244,11 @@
   - m2's GLM comment claimed every effort maps to max; measured reasoning tokens contradict it (absent 65, low ~10, high ~33, max ~67), and the endpoint's wire grammar accepts 'none' but rejects 'off' with a 422. Since the harness sends nothing for a null `off:`, offering `off` for kimi would falsely promise no thinking, which is why neither kimi nor glm lists it.
   - Reasoning defaults were left unset per the user, so flash (0 reasoning tokens with no effort sent) still does not think by default; kimi and glm do. A route-level `reasoning` would fix flash but also changes glm, as per-model default effort is not expressible in the profile.
   - Both files were validated through dsh's own loader with --patch --dump-config, and the pre-edit files are kept as .20261011-align.bak. The local change needs an app restart, since the desktop profile has no patchReload: live.
+
+## Mon, Oct 12, 2026
+
+- [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
+  The fleet served only Kimi K3, DeepSeek V4.1 Flash, and GLM-5.3. The recipe is the cookbook H200 Pro cell (marlin MoE) with llama standard metrics, cache-report, and HiCache flags, admission capped at 64, and an audio_tokenizer mount the eager AudioTokenizer load needs.
+  - Weights were already mirrored complete at /mnt/weka/shrd/k2pta/models/MiMo-V2.6-Pro-RL (130/130 shards), so nothing was downloaded. The running controller submitted job 2646025 on fs-mbz-gpu-637 within a minute; it reached ready in 47 minutes (tp8, marlin MoE, fa3 attention auto-selected, hicache host pool 2.46M tokens).
+  - Gateway validation passed: /v1/models lists mimo-v2.6-pro, a thinking completion split reasoning_content (25 reasoning tokens), an identical repeat prompt reported cached_tokens 21/22, and a weather tool request returned parsed tool_calls with finish_reason tool_calls.
+  - The image is pinned to lmsysorg/sglang:v0.5.21, the stable release containing the cookbook cell, rather than the cookbook's moving dev tag, so 28-day replacement allocations stay reproducible.
