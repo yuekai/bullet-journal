@@ -268,6 +268,12 @@
   - Comments that document a single model entry travelled with that entry, but desktop's provider-level CAUTION note about the Models settings page was left out, since the instruction was to mirror model config rather than provider commentary.
   - Both profiles compose cleanly with no warnings, unlike the merged version, which had logged four not-found entries for headless.
 
+- [x] **Restore m2's headless patch, keep only the llama models**
+  Mirroring m2's web patch into headless had copied the whole entry set into a profile that had none, so headless also acquired the glm-5.3 default model and a client-UI entry that only web can mount. Headless is restored from .20261011-align.bak, an empty list, and now carries only an llm-pi-ai entry configuring the llama provider's models, byte-identical to the other profiles'.
+  - The provider's transport fields (api, baseURL 127.0.0.1:8000, apiKeyEnv) came along because a models list means nothing without the route it belongs to; agent-default-model and ui-settings-general were deliberately not mirrored.
+  - Consequence worth knowing: with no agent-default-model override, m2's headless falls back to the bundle default of deepseek-official/deepseek-flash, so the llama models are selectable there but not the default.
+  - The pre-restore mirrored state is kept as cordis.patch.yml.20261011-mirrored.bak beside the align backup, and the file composes against a headless tree with no warnings.
+
 ## Mon, Oct 12, 2026
 
 - [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
