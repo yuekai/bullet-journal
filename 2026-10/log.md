@@ -250,6 +250,12 @@
   - Patch entries turn out to be id-targeted overrides rather than inserts: an entry whose id is absent from the tree is reported "entry X not found" and skipped. llm-pi-ai and agent-default-model both exist in the headless tree so the mirror takes effect, while ui-settings-general does not - it is a client UI plugin belonging to the web bundle - so that one is inert in headless and emits a startup warning.
   - Verified by md5 that the headless file is byte-identical to the web file, and that those exact bytes compose against a headless profile (--patch --dump-config exits 0 with only the not-found warning). The previous empty patch is kept as .20261011-align.bak.
 
+- [x] **Mirror desktop dsh patch into web and headless**
+  Desktop's profile patch held the aligned llama config plus its client-UI entries, while web and headless still ran the old single-model llama block and had never seen kimi-k3 or glm-5.3. Web and headless now share desktop's entry set with each target's unique entries appended rather than dropped, because a verbatim copy would have removed web's ui-settings-general and llm-deepseek and headless's llm-deepseek and its permission pin of defaultPreset danger-full-access.
+  - Patch entries are id-targeted overrides, so the shared ids (llm-pi-ai, agent-default-model) take desktop's values; that also moved both targets' baseURL from llama.taildd337d to llama-gateway.taildd337d, which serves the same backend.
+  - Headless has no ui-chat, ui-settings, ui-settings-account or agent-preset-registry in its tree, so those four mirrored entries are inert and log "not found" warnings on every start; dropping them from the headless file is a one-line follow-up.
+  - Verified with --dump-config that both profiles compose cleanly and resolve three llama models with the new limits, and that headless still pins danger-full-access while web keeps ui-settings-general and llm-deepseek. Previous files kept as .20261011-mirror.bak.
+
 ## Mon, Oct 12, 2026
 
 - [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
