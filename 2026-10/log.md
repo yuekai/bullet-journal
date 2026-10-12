@@ -274,6 +274,11 @@
   - Consequence worth knowing: with no agent-default-model override, m2's headless falls back to the bundle default of deepseek-official/deepseek-flash, so the llama models are selectable there but not the default.
   - The pre-restore mirrored state is kept as cordis.patch.yml.20261011-mirrored.bak beside the align backup, and the file composes against a headless tree with no warnings.
 
+- [x] **Default m2's headless runs to llama**
+  Headless carried no agent-default-model override, so it fell back to the bundle default of deepseek-official/deepseek-flash and the freshly configured llama models were merely selectable. An agent-default-model entry pinning provider llama and model deepseek-v4.1-flash now sits alongside the model config, so fresh headless agents start on flash.
+  - reasoningEffort was left out, since the field is optional and the standing decision was to leave reasoning defaults unset; the practical effect is that flash will not think unless a level is chosen, as it reports no reasoning tokens when no effort is sent, whereas local headless pins high.
+  - Verified with --dump-config against a headless tree: the profile composes with no warnings, the default resolves to llama/deepseek-v4.1-flash, and all three llama models stay available. The pre-edit state is kept as .20261011-modelonly.bak.
+
 ## Mon, Oct 12, 2026
 
 - [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
