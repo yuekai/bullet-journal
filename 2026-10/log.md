@@ -279,6 +279,11 @@
   - reasoningEffort was left out, since the field is optional and the standing decision was to leave reasoning defaults unset; the practical effect is that flash will not think unless a level is chosen, as it reports no reasoning tokens when no effort is sent, whereas local headless pins high.
   - Verified with --dump-config against a headless tree: the profile composes with no warnings, the default resolves to llama/deepseek-v4.1-flash, and all three llama models stay available. The pre-edit state is kept as .20261011-modelonly.bak.
 
+- [x] **Pin reasoningEffort high for m2's headless default**
+  The headless default-model entry added a moment earlier omitted reasoningEffort, which would have left flash not thinking, since it reports no reasoning tokens when no effort is sent, unlike the local profiles that pin high. The entry now reads provider llama, model deepseek-v4.1-flash, reasoningEffort high, so headless runs reason by default.
+  - This reverses the earlier leave-reasoning-unset choice for this one default-selection field only, not for the route-level setting, which would also have moved glm-5.3 off its own default.
+  - Verified with --dump-config against a headless tree: the profile composes with no warnings and resolves the pinned effort.
+
 ## Mon, Oct 12, 2026
 
 - [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
