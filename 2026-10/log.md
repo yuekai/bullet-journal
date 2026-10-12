@@ -262,6 +262,12 @@
   - m2's profiles deliberately keep baseURL 127.0.0.1:8000: m2 sits off the tailnet with no DNS for the tailscale names, so it reaches a node-local gateway instead.
   - The gateway now also serves mimo-v2.6-pro, which no profile configures yet; adding it is a separate decision.
 
+- [x] **Restore web and headless patches, mirror only the llama models**
+  Mirroring desktop's whole entry set into web and headless had dragged in its client-UI entries and dropped each target's own settings. Both files are now restored from .20261011-mirror.bak, so web keeps ui-settings-general and llm-deepseek and headless keeps llm-deepseek and its permission pin of defaultPreset danger-full-access, with only the models list under the llama provider copied across.
+  - The three profiles' models blocks are byte-identical (41 lines, confirmed by diff and sha), covering flash, kimi-k3 and glm-5.3 with the shared limits and glm's developer-role compat flag, while each target keeps its own displayName and baseURL fields.
+  - Comments that document a single model entry travelled with that entry, but desktop's provider-level CAUTION note about the Models settings page was left out, since the instruction was to mirror model config rather than provider commentary.
+  - Both profiles compose cleanly with no warnings, unlike the merged version, which had logged four not-found entries for headless.
+
 ## Mon, Oct 12, 2026
 
 - [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
