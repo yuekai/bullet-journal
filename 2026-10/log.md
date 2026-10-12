@@ -256,6 +256,12 @@
   - Headless has no ui-chat, ui-settings, ui-settings-account or agent-preset-registry in its tree, so those four mirrored entries are inert and log "not found" warnings on every start; dropping them from the headless file is a one-line follow-up.
   - Verified with --dump-config that both profiles compose cleanly and resolve three llama models with the new limits, and that headless still pins danger-full-access while web keeps ui-settings-general and llm-deepseek. Previous files kept as .20261011-mirror.bak.
 
+- [x] **Point local dsh profiles at llama.taildd337d**
+  Mirroring desktop's entries into web and headless had also carried over desktop's llama-gateway baseURL, an incidental side effect of the shared llm-pi-ai id rather than a deliberate choice. Both hostnames front the same backend, so all three local profiles now name llama.taildd337d.ts.net, which is what web and headless used before and removes an unexplained discrepancy between profiles.
+  - Verified both hostnames resolve to distinct Tailscale IPs yet return identical model lists and identical developer-role behavior, so the choice is cosmetic; standardizing keeps the profiles diffable against each other.
+  - m2's profiles deliberately keep baseURL 127.0.0.1:8000: m2 sits off the tailnet with no DNS for the tailscale names, so it reaches a node-local gateway instead.
+  - The gateway now also serves mimo-v2.6-pro, which no profile configures yet; adding it is a separate decision.
+
 ## Mon, Oct 12, 2026
 
 - [x] **Serve MiMo-V2.6-Pro as a fourth engine pool** (`~/llama` @ `e40c096`)
