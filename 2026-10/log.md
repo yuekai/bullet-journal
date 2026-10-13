@@ -291,3 +291,11 @@
   - Weights were already mirrored complete at /mnt/weka/shrd/k2pta/models/MiMo-V2.6-Pro-RL (130/130 shards), so nothing was downloaded. The running controller submitted job 2646025 on fs-mbz-gpu-637 within a minute; it reached ready in 47 minutes (tp8, marlin MoE, fa3 attention auto-selected, hicache host pool 2.46M tokens).
   - Gateway validation passed: /v1/models lists mimo-v2.6-pro, a thinking completion split reasoning_content (25 reasoning tokens), an identical repeat prompt reported cached_tokens 21/22, and a weather tool request returned parsed tool_calls with finish_reason tool_calls.
   - The image is pinned to lmsysorg/sglang:v0.5.21, the stable release containing the cookbook cell, rather than the cookbook's moving dev tag, so 28-day replacement allocations stay reproducible.
+
+## Tue, Oct 13, 2026
+
+- [x] **Mirror harness-engineering skill to m2**
+  The skill existed only on the laptop, so the agents running on m2 could not consult it. On m2 it now lives at `~/.agents/skills/harness-engineering`, the shared user-level root that Codex and DSH both scan, with `~/.claude/skills/harness-engineering` symlinked to it for Claude Code.
+  - The canonical copy stays on the laptop and m2 holds the mirror, because the skill is authored locally; re-syncing is one rsync of the skill directory, so the link layout never has to be revisited.
+  - Only one link was needed: DSH's installed skill provider already scans `$HOME/.agents/skills` alongside `$DSH_HOME/skills`, which is also why the hf-cli and tailscale skills sit there, and Codex's roots are `~/.codex/skills` plus `~/.agents/skills`.
+  - Verified by enumerating skills in each harness rather than by eye: Codex's rendered prompt input lists harness-engineering from the `~/.agents/skills` root, and a headless Claude Code run lists it among its skills. The DSH there runs under the llama service, so instead of starting a second server its installed provider's roots were checked, and that service sets no DSH_AGENTS_HOME override.
