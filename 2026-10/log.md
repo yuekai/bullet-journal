@@ -305,3 +305,10 @@
   - npm 11 blocked five install scripts. Rather than allow them, each was checked: node-pty ships no spawn-helper on linux-x64, and node-pty and koffi both load, so nothing is missing. The CLI reports 0.2.0-rc.2 and resolves profiles.
   - An earlier attempt was interrupted mid-install and left a partial 0.1.7-rc.2 global tree with no bin link; it was removed before the latest install.
   - Non-interactive ssh still sees no dsh, because nvm is loaded only by the shell rc files. Scripts and agents must keep using an absolute path.
+
+## Wed, Oct 14, 2026
+
+- [x] **Adapt vendored static checks to science-tasks** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks`)
+  The static checks vendored from tb-science assumed human authors, upstream's canary and names, Modal GPUs, a proposal step and GitHub runners, and most fixtures failed several checks besides their target. The checks now enforce this repo's format: its own canary, `science-tasks/` names, agent-author metadata with sources, a taxonomy file, one task per PR, CPU-only tasks, an EC2 box budget and required hints. Every FAIL or WARN line says how to fix it and names the doc section that owns the rule.
+  - A single `ci_checks/checks.txt` lists the per-task checks, which the coordinator's runner reads. Every fixture was upgraded, so each `fail-static-*` fixture fails only its target and every other fixture passes; 95 pytest cases hold this in place.
+  - Also added `docs/authoring/task-format.md`, a `templates/task` scaffold with `scripts/new-task.sh`, and a `check-no-todo.sh` that fails on placeholders the scaffold leaves behind. Uncommitted, at the coordinator's request.
