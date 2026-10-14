@@ -315,6 +315,7 @@
 - [x] **Grant read access to comet-gateway.json**
   The SGLang serving state file at /mnt/weka/shrd/k2m/yuekai.sun/sglang-serve/state/ was mode 0600, so k2m members such as hao.wang could not read the Comet gateway config even though every directory on the path is group-traversable. It is now mode 0644, readable by all, at the file owner's request.
   - Effective access is the k2m group rather than the whole cluster, because the root-owned /mnt/weka/shrd/k2m directory is mode 2770 and blocks traversal by non-members; changing that would need an admin.
-- [x] **Swap deepseek capacity for three glm engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `5a3d4fa`)
+- [x] **Swap deepseek capacity for three glm engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `1d74474`)
   The comet fleet ran one deepseek-v4.1-flash and one glm-5.3 engine. Zeroing deepseek-main frees its 8xH200 node and drops the model from the gateway; raising glm53-main to four has the controller submit three additional single-node engines, one per 300 s cooldown, with no service restart.
-  - The deepseek job was cancelled within one reconcile cycle and the gateway stopped advertising the model immediately; of the three new engines, two had nodes assigned at log time and the third sat pending on the QOS group node limit.
+  - The deepseek job was cancelled within one reconcile cycle and the gateway stopped advertising the model immediately; all three new engines booted, registered healthy, and passed a gateway generation smoke test, with one landing on the node the deepseek stop freed.
+  - The three main-partition nodes pushed the QOS group over its node limit, so Slurm preempted four of the ten kimi-lowprio engines at 04:42 and requeued them; they pend on priority and the pool self-heals when group capacity frees, but lowprio ran six engines until then.
