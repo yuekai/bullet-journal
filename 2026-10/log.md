@@ -347,3 +347,7 @@
 - [x] **Label task PRs new task or task fix** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `f63028d`)
   Task proposals were only findable by the "New task:" title convention, which nothing enforces. A label job in static-checks now tags every task PR, drafts included, from the file list, reusing the labels expected-settings already defines.
   - Committed on branch label-task-prs, not pushed; classification dry-run against PR #2 gave `new task`; the `task fix` path is untested because main has no tasks yet.
+- [x] **Add glm-5.3 himem canary at mem-fraction 0.85** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `70d9501`)
+  The cookbook says tune mem-fraction up from 0.8 on H200. A glm53-himem pool runs one engine at 0.85 while glm53-main keeps three at 0.8 as controls, so no controller resubmit can silently shift the experiment.
+  - It boots clean: KV tokens 338,496 → 457,536 per engine (+35%), 20.7 GB still free after the pool, no OOM at cuda-graph capture or warmup, and a direct smoke test answers correctly with reasoning parsing intact.
+  - The k2m QOS group is at its node limit (QOSGrpNodeLimit), so the canary could not add a 5th node; it replaced the newest 0.8 engine instead, dipping glm capacity to 3 workers for the ~22-minute boot.
