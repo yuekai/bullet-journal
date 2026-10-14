@@ -341,3 +341,6 @@
 - [x] **Add rubric-eval and fix judges on large tasks** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `b4b9350`)
   Judge assignments rested on recall alone. rubric-eval now runs the real check on boxes over the 37 planted-defect fixtures and the 71 merged terminal-bench-science tasks, which adds a precision measure. Large tasks failed because the instruction overflowed argv, and judges timed out because `-k 2` ran two of them. The instruction is now uploaded as a file, and each judge runs one rollout with a 60-min timeout.
   - r2 (PR #16): glm-5.3 caught 37/37 fixtures, with false fails on 15 of 69 tb-science tasks and 2 timeouts; kimi-k3 caught 35/37, with false fails on 19 of 71 tasks; glm-5.3 stays the check judge.
+- [x] **Install Keenable WebQL MCP server for DSH**
+  The keenable-webql MCP server was configured in Claude Code only, so DSH agents could not use its web-search and report tools. Added it as a dsh-mcp-client streamable-http entry in DSH's home-level user patch layer (~/.dsh/cordis.patch.yml), which the hmr plugin applies live to every profile — the same scope semantics as claude mcp add -s user.
+  - Verified end to end without an app restart: a fresh subagent sees mcp__keenable-webql__select plus the two html-report tools and the shared MCP resource tools.
