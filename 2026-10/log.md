@@ -355,3 +355,7 @@
   The 0.85 canary booted clean, so the same pool now tests the next step toward a fleet default raise. The 0.85 engine was cancelled and the controller's replacement picked up the edited recipe, keeping glm capacity at 3 workers only for the ~19-minute boot.
   - It boots: KV pool 33.0 GiB / 576,512 tokens per rank (+70% over the 0.8 fleet default, +26% over 0.85), 13.4 GB free after the pool, 4.2 GB still free after graph capture and DeepGEMM warmup, no OOM.
   - Serving verified directly (EAGLE accept length 3.1-3.5 on cuda graphs) and through the gateway (exact-reply smoke test); the gateway lists the canary healthy and ready.
+- [x] **Stress glm-5.3 himem canary with primality checks** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  Long primality reasonings (random 10-digit numbers, ground truth via local Miller-Rabin) made GLM-5.3 burn every token given: one 32k-token request at 300-380 tok/s, then 15 concurrent 16k-token requests against the 0.9 canary.
+  - Peak KV token usage 36% of the 576k pool, aggregate 1.4-1.7k tok/s, EAGLE accept length 4.1-4.7, queue empty, no retraction, no OOM; engine and gateway stayed healthy and returned to idle.
+  - No request concluded: 10-digit primality exceeds what the model settles within 16-32k reasoning tokens, so all hit the length limit without a verdict — load fully exercised, accuracy untested.
