@@ -305,6 +305,11 @@
   - npm 11 blocked five install scripts. Rather than allow them, each was checked: node-pty ships no spawn-helper on linux-x64, and node-pty and koffi both load, so nothing is missing. The CLI reports 0.2.0-rc.2 and resolves profiles.
   - An earlier attempt was interrupted mid-install and left a partial 0.1.7-rc.2 global tree with no bin link; it was removed before the latest install.
   - Non-interactive ssh still sees no dsh, because nvm is loaded only by the shell rc files. Scripts and agents must keep using an absolute path.
+- [x] **Update llama's vendored dsh to 0.2.0-rc.2** (`~/llama`)
+  The vendored install pinned 0.1.7-rc.2, and the plugin bundles that `~/.dsh/profiles/node_modules` symlinks to come from that same tree, so the CLI and the profile bundles it boots could only move together. The lockfile now resolves 0.2.0-rc.2 and holds no 0.1.7-rc.2 reference, which also matches the global install from earlier today, so both CLIs boot the same bundles.
+  - Verified by booting the web app with the service's exact argv and env on a scratch port against the real `DSH_HOME`: the custom `cordis.patch.yml` still composes, the UI serves (303 with its token, 401 without), and the one-line banner that `record_dsh_url` regexes is unchanged, so the gate keeps publishing the URL. The test process was killed afterwards.
+  - `vendor/` is gitignored, so this leaves no repo diff and `llama validate` still passes. The profile, token and settings files were copied to `~/.dsh/backup-pre-0.2.0-rc.2-20261014T053527` first, so the update can be rolled back.
+  - npm 11 again blocked five install scripts, the same set checked during the global install: node-pty ships no spawn-helper on linux-x64 and both node-pty and koffi load, so nothing is missing.
 
 ## Wed, Oct 14, 2026
 
