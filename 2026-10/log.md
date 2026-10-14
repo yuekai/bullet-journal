@@ -332,3 +332,6 @@
 - [x] **Post required checks on the PR head explicitly** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `1028ced`)
   execution-checks and merge-gate came only from the first pull_request_target run's jobs: a /pipeline re-run attached them to main's commit and slash commands made none, so a PR whose first run failed could never merge. pipeline.py now posts both itself.
   - Verified by reopening smoke PR 2: the new run posted green execution-checks over the cancelled one, and merge-gate failed on the two request-changes reviews as intended; PR 2 closed unmerged.
+- [x] **Switch glm-5.3 recipe to fp8 KV cache** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `0be5733`)
+  Hopper DSA defaulted GLM-5.3 to bf16 KV. Per the cookbook config tips, fp8_e4m3 KV with flashmla_sparse_q8 prefill (native FP8, no dequant round-trip) and flashmla_kv decode halves per-token KV bytes: more tokens at the same 0.8 mem fraction.
+  - All four glm53-main engines rolled one at a time via the raise-target/cancel-older runbook; each boot logged the fp8 backends with 338,496 KV tokens per rank (was 207,744 bf16), zero errors, healthy EAGLE accept length ~3.0, and correct gateway smoke-test answers with reasoning parsing intact.
