@@ -335,3 +335,6 @@
 - [x] **Switch glm-5.3 recipe to fp8 KV cache** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `0be5733`)
   Hopper DSA defaulted GLM-5.3 to bf16 KV. Per the cookbook config tips, fp8_e4m3 KV with flashmla_sparse_q8 prefill (native FP8, no dequant round-trip) and flashmla_kv decode halves per-token KV bytes: more tokens at the same 0.8 mem fraction.
   - All four glm53-main engines rolled one at a time via the raise-target/cancel-older runbook; each boot logged the fp8 backends with 338,496 KV tokens per rank (was 207,744 bf16), zero errors, healthy EAGLE accept length ~3.0, and correct gateway smoke-test answers with reasoning parsing intact.
+- [x] **Run author agents with a scoped fine-grained PAT** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `e030796`)
+  Agents pushed with the owner's full gh login, so they could change workflows or settings. A repo-only PAT without Workflows/Admin now makes GitHub reject that. It can't read check runs, so agents poll sticky comments; it still acts as the owner.
+  - Open as PR #15, unmerged; verified gh and git authenticate via the PAT with an empty GH_CONFIG_DIR, not yet run end to end with a dsh author.
