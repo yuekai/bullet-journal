@@ -351,3 +351,7 @@
   The cookbook says tune mem-fraction up from 0.8 on H200. A glm53-himem pool runs one engine at 0.85 while glm53-main keeps three at 0.8 as controls, so no controller resubmit can silently shift the experiment.
   - It boots clean: KV tokens 338,496 → 457,536 per engine (+35%), 20.7 GB still free after the pool, no OOM at cuda-graph capture or warmup, and a direct smoke test answers correctly with reasoning parsing intact.
   - The k2m QOS group is at its node limit (QOSGrpNodeLimit), so the canary could not add a 5th node; it replaced the newest 0.8 engine instead, dipping glm capacity to 3 workers for the ~22-minute boot.
+- [x] **Raise glm-5.3 himem canary to mem-fraction 0.9** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `b2becd3`)
+  The 0.85 canary booted clean, so the same pool now tests the next step toward a fleet default raise. The 0.85 engine was cancelled and the controller's replacement picked up the edited recipe, keeping glm capacity at 3 workers only for the ~19-minute boot.
+  - It boots: KV pool 33.0 GiB / 576,512 tokens per rank (+70% over the 0.8 fleet default, +26% over 0.85), 13.4 GB free after the pool, 4.2 GB still free after graph capture and DeepGEMM warmup, no OOM.
+  - Serving verified directly (EAGLE accept length 3.1-3.5 on cuda graphs) and through the gateway (exact-reply smoke test); the gateway lists the canary healthy and ready.
