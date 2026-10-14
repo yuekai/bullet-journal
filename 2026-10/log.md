@@ -344,9 +344,9 @@
 - [x] **Install Keenable WebQL MCP server for DSH**
   The keenable-webql MCP server was configured in Claude Code only, so DSH agents could not use its web-search and report tools. Added it as a dsh-mcp-client streamable-http entry in DSH's home-level user patch layer (~/.dsh/cordis.patch.yml), which the hmr plugin applies live to every profile — the same scope semantics as claude mcp add -s user.
   - Verified end to end without an app restart: a fresh subagent sees mcp__keenable-webql__select plus the two html-report tools and the shared MCP resource tools.
-- [x] **Label task PRs new task or task fix** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `f63028d`)
+- [x] **Label task PRs new task or task fix** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `43b2f83`)
   Task proposals were only findable by the "New task:" title convention, which nothing enforces. A label job in static-checks now tags every task PR, drafts included, from the file list, reusing the labels expected-settings already defines.
-  - Committed on branch label-task-prs, not pushed; classification dry-run against PR #2 gave `new task`; the `task fix` path is untested because main has no tasks yet.
+  - Merged as PR #18 via maintainer-merge (enforce_admins restored); classification dry-run against PR #2 gave `new task`; not yet run in Actions on a task PR, and the `task fix` path is untested because main has no tasks yet.
 - [x] **Add glm-5.3 himem canary at mem-fraction 0.85** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `70d9501`)
   The cookbook says tune mem-fraction up from 0.8 on H200. A glm53-himem pool runs one engine at 0.85 while glm53-main keeps three at 0.8 as controls, so no controller resubmit can silently shift the experiment.
   - It boots clean: KV tokens 338,496 → 457,536 per engine (+35%), 20.7 GB still free after the pool, no OOM at cuda-graph capture or warmup, and a direct smoke test answers correctly with reasoning parsing intact.
