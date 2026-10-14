@@ -327,3 +327,8 @@
 - [x] **Tag calibration re-runs; clarify reviewer errors** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `11668d8`)
   Calibration always reused a model's earlier S3 records, so re-measuring after comet capacity changed meant re-reading stale timeouts; `--run` tags a fresh measurement. A reviewer that crashed told the author to fix "items", though nothing was theirs to fix.
   - glm-5.3 re-run on four glm engines (tag r2): 37/37 planted defects caught, agent time median 271 s and max 489 s, vs 20/37 with all 17 misses being 1800 s timeouts on the single overloaded engine.
+- [x] **Start each box run from an empty output dir** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `77eb994`)
+  A re-run on the same PR sha synced its record into the dir holding the earlier run's jobs, and readers took the oldest: /reviewers on PR 2 reported the old timeout though the new review finished. Error reviews now also show their cause.
+- [x] **Post required checks on the PR head explicitly** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `1028ced`)
+  execution-checks and merge-gate came only from the first pull_request_target run's jobs: a /pipeline re-run attached them to main's commit and slash commands made none, so a PR whose first run failed could never merge. pipeline.py now posts both itself.
+  - Verified by reopening smoke PR 2: the new run posted green execution-checks over the cancelled one, and merge-gate failed on the two request-changes reviews as intended; PR 2 closed unmerged.
