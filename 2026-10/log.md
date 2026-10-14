@@ -338,3 +338,6 @@
 - [x] **Run author agents with a scoped fine-grained PAT** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `e030796`)
   Agents pushed with the owner's full gh login, so they could change workflows or settings. A repo-only PAT without Workflows/Admin now makes GitHub reject that. It can't read check runs, so agents poll sticky comments; it still acts as the owner.
   - Open as PR #15, unmerged; verified gh and git authenticate via the PAT with an empty GH_CONFIG_DIR, not yet run end to end with a dsh author.
+- [x] **Add rubric-eval and fix judges on large tasks** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `b4b9350`)
+  Judge assignments rested on recall alone. rubric-eval now runs the real check on boxes over the 37 planted-defect fixtures and the 71 merged terminal-bench-science tasks, which adds a precision measure. Large tasks failed because the instruction overflowed argv, and judges timed out because `-k 2` ran two of them. The instruction is now uploaded as a file, and each judge runs one rollout with a 60-min timeout.
+  - r2 (PR #16): glm-5.3 caught 37/37 fixtures, with false fails on 15 of 69 tb-science tasks and 2 timeouts; kimi-k3 caught 35/37, with false fails on 19 of 71 tasks; glm-5.3 stays the check judge.
