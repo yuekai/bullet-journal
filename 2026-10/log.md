@@ -390,3 +390,5 @@
   - Verified live without an app restart: the running web instance hot-reloaded the patch mid-session and an end-to-end mcp__keenable__search_web_pages call returned live results; --dump-config composes both entries for both local profiles.
 - [x] **Cap glm-5.3 at 400k context and 64k output**
   The dsh web profile advertised glm-5.3 with a 1M-token context window and 128k max output, larger than intended. The web profile's patch layer (~/.dsh/profiles/web/cordis.patch.yml) now sets contextWindow 409600 (400k) and maxTokens 65536 (64k), matching the file's binary-k convention (131072 = 128k); the profile hot-reloads, so no app restart is needed.
+- [x] **Raise glm-5.3 max output tokens to 128k**
+  The 400k-context change had also cut glm-5.3's max output tokens to 64k (65536). Restored to 128k (131072, its original value) in the web profile patch (~/.dsh/profiles/web/cordis.patch.yml), keeping the 400k context window (409600); the profile hot-reloads, so no restart is needed.
