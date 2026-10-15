@@ -392,3 +392,5 @@
   The dsh web profile advertised glm-5.3 with a 1M-token context window and 128k max output, larger than intended. The web profile's patch layer (~/.dsh/profiles/web/cordis.patch.yml) now sets contextWindow 409600 (400k) and maxTokens 65536 (64k), matching the file's binary-k convention (131072 = 128k); the profile hot-reloads, so no app restart is needed.
 - [x] **Raise glm-5.3 max output tokens to 128k**
   The 400k-context change had also cut glm-5.3's max output tokens to 64k (65536). Restored to 128k (131072, its original value) in the web profile patch (~/.dsh/profiles/web/cordis.patch.yml), keeping the 400k context window (409600); the profile hot-reloads, so no restart is needed.
+- [x] **Sync desktop glm-5.3 limits to web's**
+  The 400k-context cap had only been applied to the web profile; desktop still advertised glm-5.3 with a 1M context window. Desktop's patch layer (~/.dsh/profiles/desktop/cordis.patch.yml) now matches web: contextWindow 409600 / maxTokens 131072 (128k output, unchanged from before). The desktop profile is Electron-managed so the CLI cannot dump it; its patch file parses to exactly those values.
