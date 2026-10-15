@@ -388,3 +388,5 @@
 - [x] **Install Keenable search MCP server for DSH**
   The keenable search server (api.keenable.ai, search_web_pages/fetch_page_content tools) was configured in Claude Code only, so DSH agents had just the webql server from this morning. Added it as a second dsh-mcp-client streamable-http entry in the home-level user patch layer (~/.dsh/cordis.patch.yml), next to the webql entry, with the same API key sent in the X-API-Key header.
   - Verified live without an app restart: the running web instance hot-reloaded the patch mid-session and an end-to-end mcp__keenable__search_web_pages call returned live results; --dump-config composes both entries for both local profiles.
+- [x] **Cap glm-5.3 at 400k context and 64k output**
+  The dsh web profile advertised glm-5.3 with a 1M-token context window and 128k max output, larger than intended. The web profile's patch layer (~/.dsh/profiles/web/cordis.patch.yml) now sets contextWindow 409600 (400k) and maxTokens 65536 (64k), matching the file's binary-k convention (131072 = 128k); the profile hot-reloads, so no app restart is needed.
