@@ -371,3 +371,10 @@
   - The glm53-himem pool and recipe are retired; a gateway smoke test on the rolled fleet answered exactly, and live traffic flowed on the new engines immediately.
 - [x] **Scale glm53-main to four engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `c03ebf2`)
   Raised the pool target from three to four for more glm-5.3 capacity after the 0.85 rollout. The controller submitted job 2686887, which started immediately (no QOSGrpNodeLimit pend) and booted with the rolled recipe's exact numbers (KV 26.19 GiB / 457,536 tokens per rank, ~20.7 GB free) before registering as the fourth healthy gateway worker.
+
+## Thu, Oct 15, 2026
+
+- [x] **Install Keenable WebQL MCP server for DSH**
+  On the llama machine, keenable-webql was configured in Claude Code only, so DSH agents could not use its web-search and report tools. Added it as a dsh-mcp-client streamable-http entry in DSH's home-level user patch layer (~/.dsh/cordis.patch.yml), which applies over every profile — the same scope semantics as claude mcp add -s user.
+  - A per-profile cordis.patch.yml entry works too but must be copied into each profile; the home layer covers web, headless, and future profiles from one file.
+  - Verified live without an app restart: the running web instance hot-reloaded the patch mid-session (the tool set appeared in the in-flight session's next request) and an end-to-end mcp__keenable-webql__select call returned rows; --dump-config composes the entry for both local profiles.
