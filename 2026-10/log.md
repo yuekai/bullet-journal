@@ -378,3 +378,10 @@
   On the llama machine, keenable-webql was configured in Claude Code only, so DSH agents could not use its web-search and report tools. Added it as a dsh-mcp-client streamable-http entry in DSH's home-level user patch layer (~/.dsh/cordis.patch.yml), which applies over every profile — the same scope semantics as claude mcp add -s user.
   - A per-profile cordis.patch.yml entry works too but must be copied into each profile; the home layer covers web, headless, and future profiles from one file.
   - Verified live without an app restart: the running web instance hot-reloaded the patch mid-session (the tool set appeared in the in-flight session's next request) and an end-to-end mcp__keenable-webql__select call returned rows; --dump-config composes the entry for both local profiles.
+- [x] **Exercise science-tasks QC with 3 ported tasks** (`~/shrd/science-tasks` @ `dbe7f2e`)
+  To test the autonomous QC/review pipeline end to end, ported three MultiphysicsBench tasks (packaging only: canary, task.toml fields, README sections, hints) and ran them as author PRs #19 rubber-relaxation-fit, #20 pemfc-design and #21 seismic-trace-solver. Stopped once the pipeline had been exercised; the PRs are left open.
+  - Gate blocked all three correctly as too easy (pass rates 100%, 100% after fixes, 75%).
+  - Reviewers caught #20's undisclosed key names, a hidden precision bound and a leaked hidden value (fixed in round 2), plus #21's archive-replay cheat hole and a regex false positive in its verifier.
+  - Misses: no reviewer flagged #19's datasheet Arruda-Boyce exponent error (N^k vs N^(k-1)), and #20 kept a stale round-1 hinted-trials comment.
+- [x] **Use glm-5.3 for the domain reviewer** (`~/shrd/science-tasks` @ `5522771`)
+  kimi-k3 at max effort was the long pole of agent-review: 21 min on PR #19 vs 4 min for the glm-5.3 technical reviewer, from ~33 s per step vs ~5 s. Both reviewers now use glm-5.3. Review quality is unmeasured, since calibration doesn't cover reviewer rubrics. Opened as pipeline PR #22, not yet merged.
