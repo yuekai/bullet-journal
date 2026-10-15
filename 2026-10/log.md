@@ -385,3 +385,6 @@
   - Misses: no reviewer flagged #19's datasheet Arruda-Boyce exponent error (N^k vs N^(k-1)), and #20 kept a stale round-1 hinted-trials comment.
 - [x] **Use glm-5.3 for the domain reviewer** (`~/shrd/science-tasks` @ `5522771`)
   kimi-k3 at max effort was the long pole of agent-review: 21 min on PR #19 vs 4 min for the glm-5.3 technical reviewer, from ~33 s per step vs ~5 s. Both reviewers now use glm-5.3. Review quality is unmeasured, since calibration doesn't cover reviewer rubrics. Opened as pipeline PR #22, not yet merged.
+- [x] **Install Keenable search MCP server for DSH**
+  The keenable search server (api.keenable.ai, search_web_pages/fetch_page_content tools) was configured in Claude Code only, so DSH agents had just the webql server from this morning. Added it as a second dsh-mcp-client streamable-http entry in the home-level user patch layer (~/.dsh/cordis.patch.yml), next to the webql entry, with the same API key sent in the X-API-Key header.
+  - Verified live without an app restart: the running web instance hot-reloaded the patch mid-session and an end-to-end mcp__keenable__search_web_pages call returned live results; --dump-config composes both entries for both local profiles.
