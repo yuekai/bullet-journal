@@ -410,3 +410,7 @@
 - [x] **Serve Muse-Spark-Open as a fifth engine pool** (`~/llama` @ `db51940`)
   The llama fleet served only Kimi K3, DeepSeek V4.1 Flash, GLM-5.3, and MiMo V2.6 Pro. The recipe is the cookbook H200 NVFP4 cell (marlin MoE, DFlash V2 draft, fp8 KV) on the dedicated dev-muse-spark-open image; the cell's hicache-size 200 is GB per rank and OOMs the 1152G host cgroup, so HiCache uses the fleet ratio-2/write-through standard instead.
   - The gated meta-models checkpoint (464GB) and its DFlash2 draft were downloaded to /mnt/weka/shrd/k2pta/models and checksum-verified; engine ready on job 2694789 and registered in the gateway as muse-spark-open.
+- [x] **Restore the task-proposal step** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `134f8d7`)
+  Author agents opened task PRs directly and the proposal rubric only ran as an advisory pass afterwards, so bad ideas cost hours of agent and box time. Agents now file a `task proposal` issue that glm-5.3 judges with the adapted tb-science rubric, and code maps the verdict to approve, revise (3 judged versions) or decline.
+  - Approval is a github-actions[bot] marker bound to a digest of the issue text, because the author PAT can set labels; new-task PRs must close an approved proposal, checked by check-task-proposal-link and the merge gate.
+  - A live judge test showed glm-5.3 truncates before the Decision line at 8192 tokens, so the cap is 32768. Open as PR #23 (branch proposal-step); after merge the owner runs settings apply and the end-to-end check.
