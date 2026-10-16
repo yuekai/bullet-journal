@@ -404,3 +404,9 @@
   Both llama profiles now agree on 400k/96k, the values settled on in today's earlier rounds.
 - [x] **Sync local headless glm-5.3 to 400k/96k**
   The llama machine's headless sync covered that machine only; this Mac's headless profile still advertised glm-5.3 at 1M context / 128k output. Its patch layer (~/.dsh/profiles/headless/cordis.patch.yml) now matches this Mac's web and desktop profiles: contextWindow 409600 (400k) / maxTokens 98304 (96k), verified in the composed config via --dump-config and a direct patch parse. All three local profiles now agree on glm-5.3 limits.
+
+## Fri, Oct 16, 2026
+
+- [x] **Serve Muse-Spark-Open as a fifth engine pool** (`~/llama` @ `db51940`)
+  The llama fleet served only Kimi K3, DeepSeek V4.1 Flash, GLM-5.3, and MiMo V2.6 Pro. The recipe is the cookbook H200 NVFP4 cell (marlin MoE, DFlash V2 draft, fp8 KV) on the dedicated dev-muse-spark-open image; the cell's hicache-size 200 is GB per rank and OOMs the 1152G host cgroup, so HiCache uses the fleet ratio-2/write-through standard instead.
+  - The gated meta-models checkpoint (464GB) and its DFlash2 draft were downloaded to /mnt/weka/shrd/k2pta/models and checksum-verified; engine ready on job 2694789 and registered in the gateway as muse-spark-open.
