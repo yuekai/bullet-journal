@@ -414,3 +414,6 @@
   Author agents opened task PRs directly and the proposal rubric only ran as an advisory pass afterwards, so bad ideas cost hours of agent and box time. Agents now file a `task proposal` issue that glm-5.3 judges with the adapted tb-science rubric, and code maps the verdict to approve, revise (3 judged versions) or decline.
   - Approval is a github-actions[bot] marker bound to a digest of the issue text, because the author PAT can set labels; new-task PRs must close an approved proposal, checked by check-task-proposal-link and the merge gate.
   - A live judge test showed glm-5.3 truncates before the Decision line at 8192 tokens, so the cap is 32768. Open as PR #23 (branch proposal-step); after merge the owner runs settings apply and the end-to-end check.
+- [x] **Set llama glm-5.3 max output to 102400**
+  glm-5.3's max output tokens moved from 96k (98304) to 102400 (100k binary) on both llama profiles, web and headless, keeping the 400k context window (409600); the web profile hot-reloads, so no restart is needed.
+  - This round covers the llama machine only; the Mac's profiles were last recorded at 96k output.
