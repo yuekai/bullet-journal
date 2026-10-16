@@ -402,3 +402,5 @@
 - [x] **Sync llama headless glm-5.3 to 400k/96k**
   The llama machine's headless profile still advertised glm-5.3 with a 1M context window and 128k output; its patch layer (~/.dsh/profiles/headless/cordis.patch.yml) now matches web: contextWindow 409600 (400k) / maxTokens 98304 (96k).
   Both llama profiles now agree on 400k/96k, the values settled on in today's earlier rounds.
+- [x] **Sync local headless glm-5.3 to 400k/96k**
+  The llama machine's headless sync covered that machine only; this Mac's headless profile still advertised glm-5.3 at 1M context / 128k output. Its patch layer (~/.dsh/profiles/headless/cordis.patch.yml) now matches this Mac's web and desktop profiles: contextWindow 409600 (400k) / maxTokens 98304 (96k), verified in the composed config via --dump-config and a direct patch parse. All three local profiles now agree on glm-5.3 limits.
