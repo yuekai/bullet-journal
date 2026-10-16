@@ -431,3 +431,6 @@
 - [x] **Raise glm53-main to fourteen engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `1a78a9c`)
   The owner asked for four more glm-5.3 engines on top of the morning's 4->10 reallocation, matching the originally stated absolute target of fourteen. Adds four TP8 nodes (32 H200s) beyond the earlier GPU-neutral swap.
   - The controller raised desired to 14 within one 60s cycle with eight allocations already counted; remaining engines arrive one per 300s cooldown.
+
+- [x] **Stop the kimi, MiMo, and Muse engine pools** (`~/llama` @ `9960a54`)
+  All five pools served one replica each. Scale kimi-main, mimo-main, and muse-main to zero at the user's request; DeepSeek V4.1 Flash and GLM-5.3 keep serving. Zero targets make the controller cancel the owned jobs and deregister the workers; recipes stay for a later scale-up.
