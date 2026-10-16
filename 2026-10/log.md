@@ -396,3 +396,6 @@
   The 400k-context cap had only been applied to the web profile; desktop still advertised glm-5.3 with a 1M context window. Desktop's patch layer (~/.dsh/profiles/desktop/cordis.patch.yml) now matches web: contextWindow 409600 / maxTokens 131072 (128k output, unchanged from before). The desktop profile is Electron-managed so the CLI cannot dump it; its patch file parses to exactly those values.
 - [x] **Set glm-5.3 max output to 96k on both profiles**
   The 128k restore lasted one round; the user settled on 96k output. Both the web and desktop patch layers now set glm-5.3 maxTokens 98304 (96k), keeping the 400k context window; web's composed config dumps the values and desktop's patch parses to the same. Desktop's patch had been rewritten in between (comments stripped by its Electron app); the 400k context edit survived it.
+- [x] **Set llama web glm-5.3 max output to 96k**
+  glm-5.3's max output tokens on the llama machine's web profile (~/.dsh/profiles/web/cordis.patch.yml) went from 128k (131072) to 96k (98304), keeping the 400k context window (409600); the profile hot-reloads, so no restart is needed.
+  - Today's earlier 96k and desktop-sync entries cover another machine's profiles; the llama headless profile still advertises 1M context / 128k output, left unchanged as not requested.
