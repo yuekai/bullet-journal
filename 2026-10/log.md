@@ -427,3 +427,7 @@
 - [x] **Scale kimi-main to one and glm53-main to ten** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `3450ec5`)
   Requested main-partition reallocation: kimi-k3 4->1 frees three 2-node TP16 allocations (48 H200s); glm-5.3 4->10 adds six TP8 nodes (48 H200s), roughly GPU-neutral. glm target applies the requested +6 delta to the actual count of four; the fleet was never at eight.
   - The running controller picked up comet.toml within one 60s cycle: kimi-main cancelled its three newest jobs, and glm53-main submits one new engine per 300s cooldown toward ten.
+
+- [x] **Raise glm53-main to fourteen engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `1a78a9c`)
+  The owner asked for four more glm-5.3 engines on top of the morning's 4->10 reallocation, matching the originally stated absolute target of fourteen. Adds four TP8 nodes (32 H200s) beyond the earlier GPU-neutral swap.
+  - The controller raised desired to 14 within one 60s cycle with eight allocations already counted; remaining engines arrive one per 300s cooldown.
