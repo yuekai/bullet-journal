@@ -454,3 +454,6 @@
 - [x] **Start two kimi-main Kimi-K3 engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `18ff375`)
   kimi-main sat at zero after its engines were traded for glm53-main capacity, and the owner asked for two main-partition kimi-k3 engines again. The controller picked the target up within one 60s cycle and submitted both allocations, one per 300s cooldown window.
   - Both jobs (2699993, 2700005) pend on QOSGrpNodeLimit: the shared k2m QOS group holds ~303 nodes against its 226-node cap, so the engines start automatically once the group drains below the cap (~20 min startup per engine once nodes land). Scaling glm53-main down would not unblock it; the owner chose to wait.
+- [x] **Get a Decision from capped judge runs** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `1f3a18d`)
+  At the tool cap the judge was called without tools; glm-5.3 then wrote tool calls as raw markup and no Decision, so #224 errored. Tools now stay listed but disabled, markup is stripped, and a review cut before its Decision line is completed alone.
+  - Merged #222 (search-based judge) and this fix #262 with maintainer-merge at the owner's request. After #262, 25 approved and 1 revise with no errors; 12 proposals judged by the buggy code still need an owner /review (#215 #224 #226 #227 #229 #230 #231 #237 #238 #241 #244 #252).
