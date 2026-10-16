@@ -434,3 +434,7 @@
 
 - [x] **Stop the kimi, MiMo, and Muse engine pools** (`~/llama` @ `9960a54`)
   All five pools served one replica each. Scale kimi-main, mimo-main, and muse-main to zero at the user's request; DeepSeek V4.1 Flash and GLM-5.3 keep serving. Zero targets make the controller cancel the owned jobs and deregister the workers; recipes stay for a later scale-up.
+
+- [x] **Stop kimi-main and raise glm53-main to sixteen** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `0b1696d`)
+  The owner retired the last main-partition kimi-k3 engine (its 2-node TP16 allocation frees 16 more H200s) and asked for two more glm-5.3 engines on top of the fourteen already targeted, bringing glm53-main to sixteen TP8 nodes.
+  - The controller cancelled job 2626508 within one cycle (sacct: CANCELLED 14:29:39) and raised glm desired to 16; kimi-lowprio's ten engines are untouched.
