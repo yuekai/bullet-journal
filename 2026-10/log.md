@@ -417,3 +417,5 @@
 - [x] **Set llama glm-5.3 max output to 102400**
   glm-5.3's max output tokens moved from 96k (98304) to 102400 (100k binary) on both llama profiles, web and headless, keeping the 400k context window (409600); the web profile hot-reloads, so no restart is needed.
   - This round covers the llama machine only; the Mac's profiles were last recorded at 96k output.
+- [x] **Set local glm-5.3 max output to 102400**
+  The llama round left this Mac at 96k output; the web and headless patch layers here now set glm-5.3 maxTokens 102400, keeping the 400k context window. Desktop's patch already carried 102400 — its Electron app had rewritten the file in between, also bumping kimi-k3 output to 64k — so only web and headless were edited. All three local profiles verified at contextWindow 409600 / maxTokens 102400 (web and headless via --dump-config, desktop via a patch parse).
