@@ -450,3 +450,7 @@
   The judge got every approved proposal in its prompt, costing one API call per open issue per run; at campaign scale that exhausted the token, timed out and grows past the context. It now searches via tools, and older open proposals count as duplicates.
   - Open as PR #222 for the owner to merge. Live check: #31's text marked older came back Reject naming #31 (8 tool calls, 75s); #24 with itself excluded came back Strong Accept.
   - The campaign's queue runner lifts its open-proposal gate on its own once proposal_search.py is on main; until then the limit is 180 and 198 are open, so no new agents launch. All 82 catalogs are done, 9564 dossiers queued.
+
+- [x] **Start two kimi-main Kimi-K3 engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `18ff375`)
+  kimi-main sat at zero after its engines were traded for glm53-main capacity, and the owner asked for two main-partition kimi-k3 engines again. The controller picked the target up within one 60s cycle and submitted both allocations, one per 300s cooldown window.
+  - Both jobs (2699993, 2700005) pend on QOSGrpNodeLimit: the shared k2m QOS group holds ~303 nodes against its 226-node cap, so the engines start automatically once the group drains below the cap (~20 min startup per engine once nodes land). Scaling glm53-main down would not unblock it; the owner chose to wait.
