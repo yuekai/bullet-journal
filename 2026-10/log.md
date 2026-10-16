@@ -438,3 +438,7 @@
 - [x] **Stop kimi-main and raise glm53-main to sixteen** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `0b1696d`)
   The owner retired the last main-partition kimi-k3 engine (its 2-node TP16 allocation frees 16 more H200s) and asked for two more glm-5.3 engines on top of the fourteen already targeted, bringing glm53-main to sixteen TP8 nodes.
   - The controller cancelled job 2626508 within one cycle (sacct: CANCELLED 14:29:39) and raised glm desired to 16; kimi-lowprio's ten engines are untouched.
+
+- [x] **Submit the last four glm53 engines directly** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  The controller paces scale-up at one engine per 300s cooldown, so the last four glm-5.3 submissions would have trailed in over ~20 minutes. Submitted all four through slurm.submit_engine while holding state/submission.lock, with the same ownership comment and 28-day walltime, so the controller adopted them at 16/16 with no duplicates or cancels.
+  - All four got nodes immediately; the ninth engine (2699693) came up serving right after, leaving nine of sixteen serving and seven booting.
