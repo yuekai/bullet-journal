@@ -474,3 +474,7 @@
   Six runners left proposal reviews queued 10+ minutes at the campaign's 128 agents. A second job now runs runners 7-16 beside the first (1-6), so adding runners never restarts the first job and cancels its reviews.
   - Registered runners 7-16 with the owner's gh login; job 2704583 on fs-mbz-cpu-006 runs them, and its first reviews succeeded. PR #1043 awaits the owner's merge; until then a requeue of the second job would start runners 1-16 and clash with the first.
   - Also raised the proposal campaign from 64 to 128 agents (knob `max-parallel`).
+- [x] **Update llama's dsh to 0.2.1-rc.2** (`~/llama`)
+  The llama service ran dsh 0.2.0-rc.2 (npm `latest`); it now runs 0.2.1-rc.2 (npm `next`, released Oct 17). The vendored install is gitignored, so there is no commit.
+  - Requeued the llama-gateway service job 2605661 (now on fs-mbz-gpu-379) in place; engines kept running and re-registered, and the gateway is healthy.
+  - npm 11 skipped install scripts, but node-pty's linux-x64 prebuild loads, so dsh needs no native build.
