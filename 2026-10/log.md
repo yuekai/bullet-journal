@@ -478,3 +478,6 @@
   The llama service ran dsh 0.2.0-rc.2 (npm `latest`); it now runs 0.2.1-rc.2 (npm `next`, released Oct 17). The vendored install is gitignored, so there is no commit.
   - Requeued the llama-gateway service job 2605661 (now on fs-mbz-gpu-379) in place; engines kept running and re-registered, and the gateway is healthy.
   - npm 11 skipped install scripts, but node-pty's linux-x64 prebuild loads, so dsh needs no native build.
+- [x] **Resize proposal campaign job to 32 CPU/256G** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks-proposals`)
+  After the campaign went to 128 agents, the 6 CPU/48G Slurm job sat at its cgroup memory cap from about 07:00 UTC: the agents' own pilot scripts filled it, file pages thrashed (numpy import 15 s), 82 agents opened no issue in 7 h and only ~65 proposals were approved in 8 h. The owner chose a restart: campaign.sbatch and a fresh successor now ask for 32 CPUs and 256G, and the stalled job 2699764 was cancelled.
+  - Successor 2706588 on fs-mbz-cpu-008 resumed 102 runs from their dsh sessions and relaunched 26 that had none; 128 agents use ~97G with zero memory pressure, and 26 approvals landed in its first 12 minutes.
