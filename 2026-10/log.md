@@ -470,3 +470,7 @@
   The 12-engine pool left over from the earlier cut started queueing under the morning demand ramp (19 requests queued, one latency window at ~17s mean vs ~6s lifetime), so the four engines were brought back. The pool target is 16 again; the four new allocations (gpu-148/535/627/017) became ready and registered healthy within ~25 minutes.
   - Submit cooldown was briefly lowered to 30s (the reconciler re-reads comet.toml each cycle) so all four submissions landed within four minutes instead of fifteen, then restored to 300s; the committed diff is the replica line only.
   - Queueing drained as the engines joined: 19 queued before the restore, 2 queued after all sixteen were serving.
+- [x] **Run 16 self-hosted runners in two Slurm jobs** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `e040de8`)
+  Six runners left proposal reviews queued 10+ minutes at the campaign's 128 agents. A second job now runs runners 7-16 beside the first (1-6), so adding runners never restarts the first job and cancels its reviews.
+  - Registered runners 7-16 with the owner's gh login; job 2704583 on fs-mbz-cpu-006 runs them, and its first reviews succeeded. PR #1043 awaits the owner's merge; until then a requeue of the second job would start runners 1-16 and clash with the first.
+  - Also raised the proposal campaign from 64 to 128 agents (knob `max-parallel`).
