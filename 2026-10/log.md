@@ -457,3 +457,9 @@
 - [x] **Get a Decision from capped judge runs** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `1f3a18d`)
   At the tool cap the judge was called without tools; glm-5.3 then wrote tool calls as raw markup and no Decision, so #224 errored. Tools now stay listed but disabled, markup is stripped, and a review cut before its Decision line is completed alone.
   - Merged #222 (search-based judge) and this fix #262 with maintainer-merge at the owner's request. After #262, 25 approved and 1 revise with no errors; 12 proposals judged by the buggy code still need an owner /review (#215 #224 #226 #227 #229 #230 #231 #237 #238 #241 #244 #252).
+
+## Sat, Oct 17, 2026
+
+- [x] **Record lenient proposal judge as tech debt** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks` @ `8f4bbe7`)
+  A quick check of the campaign's approved proposals found 369 of 381 approved and none declined. The search-based judge finds sibling proposals (#245 vs #243) but approves them, and proposers converge on one hidden-perturbation design per skill (9 of 19 pycalphad approvals). The rubric tells the judge to err on the side of accepting, and its duplicate test never fires on the same design over a different dataset.
+  - Recorded as `proposal-judge` in docs/tech-debt.md with two candidate fixes (a wider duplicate test in the rubric; archetype enforcement in the proposer brief), in PR #425 for the owner to merge. No pipeline change; the campaign keeps running.
