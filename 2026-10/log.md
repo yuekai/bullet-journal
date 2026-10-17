@@ -466,3 +466,7 @@
 - [x] **Lower glm53-main to twelve engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `37350da`)
   Load checks showed the 16-engine glm-5.3 pool at ~1-1.5 req/s with 11-21 requests in flight, zero queueing and no errors, so at least four GPUs sat idle. The pool target is now 12; the controller cancelled the four newest allocations (gpu-221/766/433/052) on its next reconcile cycle, with no service restart.
   - Demand ramped almost immediately after (39 requests in system, brief queueing on the busiest engines, mean latency up from ~6s to ~17s in one window), so the pool may need raising again if the trend holds; arrival rate itself stayed ~1.6 req/s.
+- [x] **Restore glm53-main to sixteen engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `e19a87f`)
+  The 12-engine pool left over from the earlier cut started queueing under the morning demand ramp (19 requests queued, one latency window at ~17s mean vs ~6s lifetime), so the four engines were brought back. The pool target is 16 again; the four new allocations (gpu-148/535/627/017) became ready and registered healthy within ~25 minutes.
+  - Submit cooldown was briefly lowered to 30s (the reconciler re-reads comet.toml each cycle) so all four submissions landed within four minutes instead of fifteen, then restored to 300s; the committed diff is the replica line only.
+  - Queueing drained as the engines joined: 19 queued before the restore, 2 queued after all sixteen were serving.
