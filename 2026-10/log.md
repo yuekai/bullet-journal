@@ -515,3 +515,7 @@
 - [x] **Track the next tag for DSH updates** (`spark:~/dsh-web` @ `a82caf8`)
   The daily update followed npm's latest tag, which lags the release candidates (latest was 0.2.0-rc.2 while next was 0.2.1-rc.2). It now follows next, as the user asked; the switch run moved spark back to 0.2.1-rc.2.
   - Notes committed in `~/bullet-journal` @ `5edbff0`.
+- [x] **Mirror Mac skills and keenable MCP to spark**
+  spark's skill set was a stale August copy: missing harness-engineering and wandb-primary, carrying 14 training skills no longer on the Mac, and Claude Code there saw none of the shared skills; no keenable MCP server was configured.
+  The six Mac skills were rsynced over (checksum mode), the 14 remote-only dirs deleted, and the skill lock file mirrored; every skill now resolves in both ~/.claude/skills and ~/.agents/skills on spark, sha256-identical to the Mac, and the office suite ships inside dsh itself so needed no mirroring.
+  keenable and keenable-webql were added to Claude Code (user scope, both report Connected) and to a new ~/.dsh/cordis.patch.yml (mode 600), so every dsh profile gets mcp__keenable* tools; dsh-web was restarted and both entries verified in the composed web profile. True mirror per the user: both harnesses see every skill, remote-only skills deleted; tokens were piped over ssh, never echoed or logged.
