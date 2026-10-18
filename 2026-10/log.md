@@ -508,3 +508,7 @@
   - Notes committed in `~/bullet-journal` @ `e600854`: [DSH on spark](dsh-on-spark.md).
 - [x] **Record removal of the spark Kimi web UI** (`m2:~/llama` @ `592417c`)
   The spark kimi-web unit pointed at a deleted install and only an orphaned process kept it up. It was removed (unit, process, serve on 58627; `~/.kimi-code` kept) and the llama docs now say so and use the new `spark` name.
+- [x] **Auto-update DSH daily and cap its logs** (`spark:~/dsh-web` @ `58f932c`)
+  DSH was pinned to an RC from npm's next tag and never updated, and dsh.log grew without bound. A daily 05:30 ET timer now installs npm's latest tag when it differs, restarts, and rolls back if DSH fails to come up; logs roll over past 5 MB.
+  - Follows `latest` only, per the user, so the first run moved spark from 0.2.1-rc.2 to 0.2.0-rc.2. Rollback was tested with a forced health-check failure.
+  - Notes committed in `~/bullet-journal` @ `c36fe5c`: [DSH on spark](dsh-on-spark.md).
