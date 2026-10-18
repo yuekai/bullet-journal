@@ -492,3 +492,9 @@
   Best deal on a 15-inch MacBook Air 24GB/1TB as of 2026-10-17: Best Buy open box at ~$1,573–1,680, ahead of Amazon new at $1,799 and the $1,899 education price. No purchase made yet.
 - [**RoboLab 10k-scene generation plan**](robolab-10k-scene-generation-plan.md) (`DSH-session: session-f3867dd1-d0e3-4c3b-9d03-ac61639ca169`)
   Plan: adapt TextWorld's logic layer and backward-chained quest generation to RoboLab — LLM parametrized templates instantiated by a seeded sampler, overgenerate-and-reject with batched Isaac settling, generated 3D assets (EmbodiedGen-class) validated by a policy-ranking preservation check. Goal: 10k scenes with solvable, partially-credit-scored tasks.
+
+## Sun, Oct 18, 2026
+
+- [x] **Move glm-5.3 fleet to the iq Slurm account** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `3268927`)
+  Pools gain an optional account passed to sbatch; glm53-main now pins account/qos iq so every submission lands in the iq queue instead of the submitter's default (k2m). The 16 engines were rolled one at a time (raise, wait ready+registered, cancel oldest, restore) with no capacity dip. submit() also strips inherited SLURM_RESTART_COUNT: a stale value from an ancestor allocation survives --export=ALL chains, corrupts engine records, and the registry's requeue guard then silently skips those workers (observed: 8 unregistered engines until fixed).
+  - The service job needed two restarts to load new code (the new account key made comet.toml unparseable to the running controller; each restart is a ~1-2 min gateway blip, engines unaffected). The restart-count leak came from submitting the service from inside the requeued llama-gateway allocation; probe, code fix, and record repairs restored 28/28 registrations before the roll resumed.
