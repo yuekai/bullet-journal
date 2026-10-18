@@ -63,7 +63,7 @@ The gateway answers `/health` and `/v1/models` without a key. The gateway
 needs the engine key for `/workers`. The engine key is in `engine-key.yaml`.
 
 The member grant for `svc:llama` covers all four ports. A policy test covers
-the same four ports. See `notes/tailnet-config.md` for the access rules.
+the same four ports. See [tailnet-config.md](tailnet-config.md) for the access rules.
 
 ## Model engines
 
@@ -396,7 +396,7 @@ cancel the job by hand.
   instance, and the general pattern for a Slurm cluster.
 - `~/llama/docs/dsh-web-ui.md` holds the DSH web UI.
 - `~/llama/docs/tailnet-config.md` holds the service and approval checks.
-- `notes/tailnet-config.md` holds the tailnet access rules.
+- [tailnet-config.md](tailnet-config.md) holds the tailnet access rules.
 
 ## History
 
