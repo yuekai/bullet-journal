@@ -78,8 +78,8 @@ with the host name `127.0.0.1`.
 
 ## Install
 
-DSH follows npm's `latest` tag only, never `next` or `alpha` (see
-[Updates](#updates)). On 2026-10-18 that was 0.2.0-rc.2. m2 runs 0.2.1-rc.2.
+DSH follows npm's `next` tag (release candidates), not `latest` or `alpha`
+(see [Updates](#updates)). On 2026-10-18 that was 0.2.1-rc.2, the same as m2.
 npm installs DSH in its default global prefix. Node comes from `pixi global install nodejs`, so the binary is
 `~/.pixi/envs/nodejs/bin/dsh`.
 
@@ -111,8 +111,8 @@ The user journal on spark is unreadable, so the logs are files.
 `dsh-update.timer` runs `dshweb.py update` at 05:30 America/New_York each day.
 A missed run happens at the next boot.
 
-- If the installed version differs from npm's `latest` tag, the script
-  installs `latest` and restarts `dsh-web`.
+- If the installed version differs from npm's `next` tag, the script installs
+  `next` and restarts `dsh-web`.
 - The update counts as good when DSH publishes a new address and port 3080
   answers within 90 seconds.
 - If the install or the check fails, the script installs the previous version
@@ -135,3 +135,5 @@ A manual install of another version lasts only until the next run.
 - 2026-10-18: DSH started on spark at `spark.taildd337d.ts.net:3081`.
 - 2026-10-18: The daily update timer and the log cap were added. The first
   run moved DSH from 0.2.1-rc.2 (`next`) to 0.2.0-rc.2 (`latest`).
+- 2026-10-18: The update switched from the `latest` tag to the `next` tag,
+  which moved DSH back to 0.2.1-rc.2.
