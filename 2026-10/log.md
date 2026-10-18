@@ -502,3 +502,9 @@
   These notes lived only in ~/second-brain, so agents reading the journal could not find them. Copied as-is into 2026-10, adding the date frontmatter the note format requires.
   - [Tailnet](tailnet-config.md)
   - [Llama serving stack](llama-serving-stack.md)
+- [x] **Add DSH web UI with a fixed-token gate on spark** (`spark:~/dsh-web` @ `e74bc0e`)
+  DSH rotates its browser token on every restart, so no URL stays valid. A loopback gate now redirects a fixed token to DSH's current URL, copying the llama stack design, so `spark.taildd337d.ts.net:3081` is a permanent bookmark. Providers are the llama gateway (default glm-5.3) and the DeepSeek API.
+  - Tailnet: `dgx-spark` was renamed to `spark` with key expiry disabled, and the ports are served by spark's own tailscaled rather than a Tailscale Service or tag. A policy test pins tcp 3080/3081.
+  - Notes committed in `~/bullet-journal` @ `e600854`: [DSH on spark](dsh-on-spark.md).
+- [x] **Record removal of the spark Kimi web UI** (`m2:~/llama` @ `592417c`)
+  The spark kimi-web unit pointed at a deleted install and only an orphaned process kept it up. It was removed (unit, process, serve on 58627; `~/.kimi-code` kept) and the llama docs now say so and use the new `spark` name.
