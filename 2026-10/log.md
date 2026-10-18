@@ -488,3 +488,5 @@
 - [x] **Stop proposer agents from editing workspace env** (`/mnt/weka/shrd/k2m/yuekai.sun/science-tasks-proposals`)
   Proposer agents work inside the campaign workspace, so a bare `pixi add` from an agent's work dir edited the workspace manifest. At 17:04 UTC one pinned python 3.10 and added xlrd and pip; the launchers' verdict helper then crashed on a 3.11-only call, and ~100 agents sat on posted verdicts for 40 minutes. The manifest is restored to python 3.12 and made read-only (pixi add now fails with permission denied), the helper no longer needs 3.11, and the brief tells agents to `pixi init` in their own work dir.
   - 54 approvals landed within minutes of the fix. Issue #796 had never been judged (no workflow run since 05:03); re-dispatched it. The agent-modified manifest is kept at `status/pixi.toml.agent-modified-20261017`.
+- [**MacBook Air 15 M5 buying research**](macbook-air-15-m5-buying-research.md) (`DSH-session: session-75e056db-d462-42b7-b232-3c02e029fa05`)
+  Best deal on a 15-inch MacBook Air 24GB/1TB as of 2026-10-17: Best Buy open box at ~$1,573–1,680, ahead of Amazon new at $1,799 and the $1,899 education price. No purchase made yet.
