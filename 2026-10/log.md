@@ -498,3 +498,7 @@
 - [x] **Move glm-5.3 fleet to the iq Slurm account** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `3268927`)
   Pools gain an optional account passed to sbatch; glm53-main now pins account/qos iq so every submission lands in the iq queue instead of the submitter's default (k2m). The 16 engines were rolled one at a time (raise, wait ready+registered, cancel oldest, restore) with no capacity dip. submit() also strips inherited SLURM_RESTART_COUNT: a stale value from an ancestor allocation survives --export=ALL chains, corrupts engine records, and the registry's requeue guard then silently skips those workers (observed: 8 unregistered engines until fixed).
   - The service job needed two restarts to load new code (the new account key made comet.toml unparseable to the running controller; each restart is a ~1-2 min gateway blip, engines unaffected). The restart-count leak came from submitting the service from inside the requeued llama-gateway allocation; probe, code fix, and record repairs restored 28/28 registrations before the roll resumed.
+- [x] **Add tailnet and llama serving stack notes** (`~/bullet-journal` @ `7c20702`)
+  These notes lived only in ~/second-brain, so agents reading the journal could not find them. Copied as-is into 2026-10, adding the date frontmatter the note format requires.
+  - [Tailnet](tailnet-config.md)
+  - [Llama serving stack](llama-serving-stack.md)
