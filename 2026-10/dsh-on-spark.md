@@ -78,8 +78,9 @@ with the host name `127.0.0.1`.
 
 ## Install
 
-DSH 0.2.1-rc.2 is the same version as m2. npm installs DSH in its default
-global prefix. Node comes from `pixi global install nodejs`, so the binary is
+DSH follows npm's `latest` tag only, never `next` or `alpha` (see
+[Updates](#updates)). On 2026-10-18 that was 0.2.0-rc.2. m2 runs 0.2.1-rc.2.
+npm installs DSH in its default global prefix. Node comes from `pixi global install nodejs`, so the binary is
 `~/.pixi/envs/nodejs/bin/dsh`.
 
 Important: the npm install needs `--allow-scripts` for
@@ -102,7 +103,28 @@ rm ~/.dsh/web.token                    # new bookmark; old bookmarks return 401
 ```
 
 `~/dsh-web/logs/dsh.log` holds the DSH output with mode 600. The startup line
-holds the DSH token.
+holds the DSH token. Each log in `logs/` rolls over to `<name>.1` past 5 MB.
+The user journal on spark is unreadable, so the logs are files.
+
+## Updates
+
+`dsh-update.timer` runs `dshweb.py update` at 05:30 America/New_York each day.
+A missed run happens at the next boot.
+
+- If the installed version differs from npm's `latest` tag, the script
+  installs `latest` and restarts `dsh-web`.
+- The update counts as good when DSH publishes a new address and port 3080
+  answers within 90 seconds.
+- If the install or the check fails, the script installs the previous version
+  again and exits nonzero.
+- Each run adds one line to `~/dsh-web/logs/update.log`.
+
+```bash
+systemctl --user list-timers dsh-update.timer   # next run
+systemctl --user start dsh-update               # run it now
+```
+
+A manual install of another version lasts only until the next run.
 
 ## History
 
@@ -111,3 +133,5 @@ holds the DSH token.
   install directory was already gone, so the process could not start again.
   `~/.kimi-code` stays.
 - 2026-10-18: DSH started on spark at `spark.taildd337d.ts.net:3081`.
+- 2026-10-18: The daily update timer and the log cap were added. The first
+  run moved DSH from 0.2.1-rc.2 (`next`) to 0.2.0-rc.2 (`latest`).
