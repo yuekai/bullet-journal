@@ -490,3 +490,5 @@
   - 54 approvals landed within minutes of the fix. Issue #796 had never been judged (no workflow run since 05:03); re-dispatched it. The agent-modified manifest is kept at `status/pixi.toml.agent-modified-20261017`.
 - [**MacBook Air 15 M5 buying research**](macbook-air-15-m5-buying-research.md) (`DSH-session: session-75e056db-d462-42b7-b232-3c02e029fa05`)
   Best deal on a 15-inch MacBook Air 24GB/1TB as of 2026-10-17: Best Buy open box at ~$1,573–1,680, ahead of Amazon new at $1,799 and the $1,899 education price. No purchase made yet.
+- [**RoboLab 10k-scene generation plan**](robolab-10k-scene-generation-plan.md) (`DSH-session: session-f3867dd1-d0e3-4c3b-9d03-ac61639ca169`)
+  Plan: adapt TextWorld's logic layer and backward-chained quest generation to RoboLab — LLM parametrized templates instantiated by a seeded sampler, overgenerate-and-reject with batched Isaac settling, generated 3D assets (EmbodiedGen-class) validated by a policy-ranking preservation check. Goal: 10k scenes with solvable, partially-credit-scored tasks.
