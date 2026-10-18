@@ -9,7 +9,7 @@ admin.
 
 ## Policy file
 
-This section holds the policy snapshot from 2026-09-21. The admin console is
+This section holds the policy snapshot from 2026-10-18. The admin console is
 the authority. Fetch the current policy before each edit.
 
 ```json
@@ -109,6 +109,15 @@ the authority. Fetch the current policy before each edit.
 			]
 		},
 		{
+			// Members can reach the DSH web UI and its gate on spark.
+			"src":   "yuekai@gmail.com",
+			"proto": "tcp",
+			"accept": [
+				"100.91.181.87:3080",
+				"100.91.181.87:3081"
+			]
+		},
+		{
 			// Members can reach the llama service.
 			"src":   "yuekai@gmail.com",
 			"proto": "tcp",
@@ -182,9 +191,13 @@ the authority. Fetch the current policy before each edit.
   client tag and no client grant. The member grant holds tcp:8000, tcp:58627,
   tcp:3080, and tcp:3081. Port 3081 is the permanent bookmark port of the
   llama DSH gate.
-- The `tests` section guards SSH access to `dgx-spark` at
-  `100.91.181.87:22`. A member must keep this access. A gateway machine and a
-  client machine must never get it.
+- The `tests` section guards SSH access to `spark` at `100.91.181.87:22`. A
+  member must keep this access. A gateway machine and a client machine must
+  never get it.
+- `spark` has no service and no tag. Its own `tailscaled` serves the DSH web
+  UI on tcp:3080 and the DSH gate on tcp:3081. The member grant to `*` covers
+  both ports. A test pins `100.91.181.87:3080` and `100.91.181.87:3081` for a
+  member. See [dsh-on-spark.md](dsh-on-spark.md).
 - The `tests` section also guards each service. A client accepts its service
   and nothing else. A gateway cannot start a connection. A member accepts
   `svc:llama` on all four ports, and `svc:comet` on port 8000 and port 8088.
@@ -236,3 +249,7 @@ is in `~/.agents/skills/tailscale/references/access-control.md`.
   owner, and no vllm test remain.
 - 2026-09-21: `svc:llama` gained tcp:3081. `svc:comet` gained tcp:8088. This
   note now matches the policy from the API.
+- 2026-10-18: The API renamed the machine `dgx-spark` to `spark` and disabled
+  its key expiry. The policy gained a member test for `100.91.181.87:3080` and
+  `100.91.181.87:3081`, the spark DSH ports. The live policy has no comments.
+  The comments in the snapshot above exist only in this note.

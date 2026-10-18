@@ -179,9 +179,10 @@ return 401. Update each bookmark after the change.
 `pixi run llama status` gives the process ID, the launch ID, and the log path
 of each component. The same data is in `state/service.json`.
 
-The old m2 `kimi-serve` stack is not part of this stack. The `spark` machine
-also runs this UI under systemd outside this stack. See
-`~/llama/docs/kimi-code-web-ui.md` for both.
+The old m2 `kimi-serve` stack is not part of this stack. See
+`~/llama/docs/kimi-code-web-ui.md`. The `spark` copy of this UI was removed
+on 2026-10-18. spark now runs its own DSH web UI. See
+[dsh-on-spark.md](dsh-on-spark.md).
 
 ## DSH web UI
 
@@ -392,8 +393,8 @@ cancel the job by hand.
 ## Pointers
 
 - `~/llama/README.md` holds the full description of the stack.
-- `~/llama/docs/kimi-code-web-ui.md` holds the Kimi Code web UI, the `spark`
-  instance, and the general pattern for a Slurm cluster.
+- `~/llama/docs/kimi-code-web-ui.md` holds the Kimi Code web UI, a note on
+  the removed `spark` instance, and the general pattern for a Slurm cluster.
 - `~/llama/docs/dsh-web-ui.md` holds the DSH web UI.
 - `~/llama/docs/tailnet-config.md` holds the service and approval checks.
 - [tailnet-config.md](tailnet-config.md) holds the tailnet access rules.
