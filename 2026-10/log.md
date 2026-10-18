@@ -529,3 +529,5 @@
 - [x] **Move kimi-k3 pools to the iq Slurm account** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `c1675b4`)
   Follows the glm-5.3 account move: kimi-main pins account/qos iq, kimi-lowprio pins account iq with qos lowprio (partition lowprio only permits the lowprio QOS, and the pool keeps its scavenger scheduling semantics). The 12 engines rolled one at a time with no capacity dip; the lowprio roll waited out a fully-packed partition (first new engine pending ~4h behind ~560 jobs) before the remaining swaps landed quickly.
   - The rolling watcher was rebuilt as a restart-safe state machine: it resumes a half-finished step instead of normalizing, so a pended replacement job keeps its queue position rather than being cancelled and resubmitted to the back.
+- [x] **Add agent harness: map, lint, plans** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `095cb85`)
+  The repo had no agent harness: README doubled as the manual, whys lived only in commit bodies, and nothing checked docs or recipe refs. Adds an AGENTS.md map (CLAUDE.md defers), a decision-log design doc, plans and tech-debt tracking, and a lint in pixi run check plus opt-in hooks.
