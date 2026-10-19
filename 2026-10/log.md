@@ -611,4 +611,10 @@
   render_stage_frame imported omni.isaac.core and isaacsim.core.api, which are deprecated-only on IsaacSim 5.1 and 6.1, so every screenshot path failed. It now uses pxr, omni.usd and replicator, which no stack moved; relative paths also rendered blank frames.
   - Verified on isaac60 (gpu-038): smoke renders (scene, benchmark scene, object on ground) non-blank, `settle_scenes.py --screenshot` works again, and thumbnails of the 20 generated scenes are committed (`9a550b7`, LFS). 5.x rendering can't run on this R590 cluster.
   - Ruff, asked about alongside: 31 import-order (I001) errors, 28 inherited unchanged from upstream NVIDIA code and 3 from the isaac60 port. Nothing enforces it — no CI, ruff isn't a dependency of any extra (so `uv run ruff` can't work in the venvs), and the pre-commit hook skips it when ruff isn't on PATH.
+- [x] **Make manifest and source tex read-only for agents** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `526d38f`)
+  Agents renamed unit ids and tex files and edited labels mid-run, so the coordinator tracked duplicate units. PRs touching manifest.json or .tex/.bib now bounce before review with undo steps, and the prompt explains how target ids map to labels. Pushed to the UMich-FATML fork, as was the earlier repoprover work.
+  - Another session reset repoprover's main mid-edit and wiped an uncommitted change, so the work was redone in a separate worktree and fast-forwarded into main.
+- [x] **Stop truncating unit ids; normalize labels** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `2db65cb`)
+  Agents edited manifests to fix 40-character unit ids that looked like typos, and Grinstead target ids that contained newlines. Bundles now use full slugs and collapse label whitespace as TeX does (builder v3). Running projects keep their original ids.
+  - Beck's duplicate truncated chapters were removed from its run state and its open sketch PR moved to the new id. All 11 jobs were restarted as 2725471–2725481.
 
