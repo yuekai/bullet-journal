@@ -577,4 +577,8 @@
 - [x] **Raise kimi-main to ten engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `1e1db26`)
   Morning ramp left kimi-main at 2 engines on the iq account; this adds 8 more (target 10) so the pool carries the same shape as the lowprio one. The controller reloads the target within 60s and submits one engine per cooldown window; submit_cooldown was briefly lowered to 30s to land all eight submissions within ~8 minutes, then restored to 300s (same maneuver as the glm53 ramp in e19a87f).
   Two early submissions died on a bad node (fs-mbz-gpu-713 started containers with no NVIDIA driver visible) and were replaced automatically by the reconciler; all 8 new engines reached ready and registered, bringing the fleet to 36/36 healthy (16 glm-5.3 + 20 kimi-k3).
+- [x] **Add gap shortlist with RepoProver book bundles** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `e8f44a5`)
+  mathlib's undergrad gaps had no plan for which books to formalize. Now a pinned gap list, 11 open-LaTeX books with evidence-checked coverage claims, and reproducible RepoProver input bundles exist, so any book can be materialized and run.
+  - 167 of 566 undergrad topics are missing at mathlib 22c725c; the books cover 90 and partially cover 19 more (65%). Distribution calculus is mostly uncovered.
+  - `pixi run materialize <id>` creates the run directory outside the repo, since RepoProver needs its own git main.
 
