@@ -595,4 +595,7 @@
   - Smoke test (`23956bf`): 20 tasks from 21 attempts, 6 templates, 7 of 8 goal families. Physics settle moved all 102 objects < 2 cm (worst 1.89 cm), so zero settle rejections; verify_task_valid 20/20 and 3/3 empty episodes on isaac60 (gpu-038).
   - Grounding: the heightfield rest height matches physics-settled benchmark scenes to mm (wooden_bowl 0.0029 vs 0.0028). The runtime's mesh reader is now shared with the generator (`e30a031`); non-regression isaac60 227/227, isaac51 camera-less 216 + 3 skips.
   - No LLM calls per scene: LLMs would only author templates. Open: settle screenshots need render_utils ported off `omni.isaac.core`; reference plans are not yet executed with scripted IK.
+- [x] **Run formalize jobs on the main partition** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `9dfd5e9`)
+  cpuonly fits one 256G job per node and few were free, so 10 of 11 jobs pended. Jobs now go to main by default; a --partition flag keeps cpuonly available.
+  - Cancelled 2719930–2719940 and resubmitted as 2720070–2720080; all 11 started at once, and beck-complex already launched its 10 sketchers.
 
