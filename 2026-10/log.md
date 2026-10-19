@@ -605,4 +605,6 @@
   - `18ad1c0`: ripgrep added to the pixi env; the grep fallback no longer crashes when searching a single file.
   - `f271dce`: import-only merge conflicts (root-module import lists) are unioned automatically, and the build still gates the merge; progress PRs can now be revised.
   - `38d68de`: prompts tell scan/triage/maintain/progress agents that a chapter's Lean file belongs to its sketcher, after they had committed skeletons that every sketch then conflicted with.
+- [x] **Resolve import vs docstring header conflicts** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `44fa890`)
+  After the restart, root-module conflicts still bounced sketches whenever main had added a module docstring next to the import list, because the resolver required both sides to be imports. It now accepts a single import-only side, putting all imports first and the other side's lines after. Jobs restarted again as 2722974–2722984; no conflicts, grep failures or progress failures in their first 10 minutes.
 
