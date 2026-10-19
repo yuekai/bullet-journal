@@ -574,4 +574,7 @@
   RepoProver already gives tools to the model through its own loop, so it calls kimi-k3 directly instead of going through dsh. Pushed to the UMich-FATML fork's main, together with the 7 earlier local commits.
 - [x] **Sample kimi-k3 with max effort and top_p=1.0** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `4bc738f`)
   The comet defaults were high reasoning effort, 32k max tokens and temperature 0.7. They are now max effort, 64k max tokens and top_p=1.0 with no temperature sent, per the user. Sampling parameters are sent only when set, and other providers keep temperature 0.7. Pushed to the fork.
+- [x] **Raise kimi-main to ten engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `1e1db26`)
+  Morning ramp left kimi-main at 2 engines on the iq account; this adds 8 more (target 10) so the pool carries the same shape as the lowprio one. The controller reloads the target within 60s and submits one engine per cooldown window; submit_cooldown was briefly lowered to 30s to land all eight submissions within ~8 minutes, then restored to 300s (same maneuver as the glm53 ramp in e19a87f).
+  Two early submissions died on a bad node (fs-mbz-gpu-713 started containers with no NVIDIA driver visible) and were replaced automatically by the reconciler; all 8 new engines reached ready and registered, bringing the fleet to 36/36 healthy (16 glm-5.3 + 20 kimi-k3).
 
