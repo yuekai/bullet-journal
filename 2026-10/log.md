@@ -572,4 +572,6 @@
 - [x] **Default agents to kimi-k3 via comet gateway** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `72f880c`)
   `repoprover run` had no way to choose an LLM: agents fell back to an empty provider and failed with "No base URL". Agents now default to kimi-k3 on the comet gateway, with reasoning_effort=high and preserved thinking. The URL is read from the gateway state file because the gateway moves between nodes, and run checks at startup that the model is served. New --provider/--model/--base-url flags reach the workers and stool.
   RepoProver already gives tools to the model through its own loop, so it calls kimi-k3 directly instead of going through dsh. Pushed to the UMich-FATML fork's main, together with the 7 earlier local commits.
+- [x] **Sample kimi-k3 with max effort and top_p=1.0** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `4bc738f`)
+  The comet defaults were high reasoning effort, 32k max tokens and temperature 0.7. They are now max effort, 64k max tokens and top_p=1.0 with no temperature sent, per the user. Sampling parameters are sent only when set, and other providers keep temperature 0.7. Pushed to the fork.
 
