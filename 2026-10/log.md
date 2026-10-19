@@ -584,4 +584,9 @@
 - [x] **Ignore commented-out \input in flatten_tex** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `785e211`)
   flatten_tex substituted directives over raw text, so a disabled `% \include{ch2}` brought the chapter back (seen in undergrad-todo). Now only the code part of each line, before an unescaped %, is scanned; comments stay verbatim.
   - undergrad-todo tech-debt updated (`c6a7acb`): its local flatten remains only because upstream lacks main-dir name resolution.
+- [x] **Use upstream flatten_tex for bundles** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `638cd16`)
+  build_bundle kept its own flatten because repoprover inlined commented-out \include lines. That is fixed upstream (785e211), so bundles now reuse it. Only Hefferon's reference all.tex changes; units and manifests are identical.
+- [x] **Launch RepoProver SLURM runs for 11 books** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `d334869`)
+  Bundles had to be materialized and run by hand. `pixi run formalize` now submits one single-node cpuonly job per book (16 CPU, 256G, 6 REPLs) that does idempotent lake setup then `repoprover run`, so requeues resume; it refuses a second job per book.
+  - Submitted jobs 2719930–2719940 (`rp-<id>`); projects in `/mnt/weka/shrd/k2m/yuekai.sun/formalizations/`, logs in its `_logs/`.
 
