@@ -589,4 +589,10 @@
 - [x] **Launch RepoProver SLURM runs for 11 books** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `d334869`)
   Bundles had to be materialized and run by hand. `pixi run formalize` now submits one single-node cpuonly job per book (16 CPU, 256G, 6 REPLs) that does idempotent lake setup then `repoprover run`, so requeues resume; it refuses a second job per book.
   - Submitted jobs 2719930–2719940 (`rp-<id>`); projects in `/mnt/weka/shrd/k2m/yuekai.sun/formalizations/`, logs in its `_logs/`.
+- [x] **Add mesh-grounded batch scene/task generator** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/RoboLab` @ `7a0f895`)
+  Scenes were authored one at a time with bbox z (6.5 cm off for bottom-origin assets) and tasks written apart from their checks. Templates now feed a seeded heightfield placer over mesh stable poses, and tasks come from goal facts proven by backward chaining.
+  First slice of the [RoboLab 10k-scene plan](robolab-10k-scene-generation-plan.md), on branch `scene-gen-pipeline` (pushed; `e30a031..67dbf9e`). Run with `scripts/scenegen.py`; design in `docs/scene_gen_pipeline.md`, outcome in `docs/plans/2026-10-scene-gen-pipeline.md`.
+  - Smoke test (`23956bf`): 20 tasks from 21 attempts, 6 templates, 7 of 8 goal families. Physics settle moved all 102 objects < 2 cm (worst 1.89 cm), so zero settle rejections; verify_task_valid 20/20 and 3/3 empty episodes on isaac60 (gpu-038).
+  - Grounding: the heightfield rest height matches physics-settled benchmark scenes to mm (wooden_bowl 0.0029 vs 0.0028). The runtime's mesh reader is now shared with the generator (`e30a031`); non-regression isaac60 227/227, isaac51 camera-less 216 + 3 skips.
+  - No LLM calls per scene: LLMs would only author templates. Open: settle screenshots need render_utils ported off `omni.isaac.core`; reference plans are not yet executed with scripted IK.
 
