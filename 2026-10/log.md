@@ -627,4 +627,7 @@
   - `IFM/research-lean-formalization-rollouts`: arxivlean.jsonl (1,838 K3 prover trajectories, 540 MB) + repoprover.jsonl (14,332 rollouts, 1.7 GB)
   - `IFM/research-math-rollouts`: rethlas-gen.jsonl (27) + rethlas-ver.jsonl (287) + danus.jsonl (33,174, 12.6 GB)
   - The job, cards and verifier sit in `m2:~/hf-upload-research-datasets/` and are idempotent (size-match skip), so `sbatch upload.sbatch` resumes or re-verifies; rejects and auxiliary exports stay unuploaded.
+- [x] **Record archetype gap vs tb-science as debt** (`~/science-tasks` @ `31f5a71`)
+  Reviewers said approved proposals mostly perturb a published workflow with hidden seeded parameters. Comparing 994 approved proposals (60 sampled, ~30 read closely) with all 71 tb-science tasks confirmed it: the proposals are graded against the author's own seeded run, while tb-science also uses real labels, property checkers and proofs.
+  Seven tb-science archetypes are absent or rare in the proposals (proofs, open-ended design, closed-loop control, codebase repair, real-label reading, model-form discovery, open-method reproduction). `docs/tech-debt.md` now lists them and adds a fix that assigns each proposer an archetype; counts are rough hand classification.
 
