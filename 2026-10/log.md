@@ -620,4 +620,11 @@
   - Brin's coordinator then refused to start: an agent had replaced its target_theorems with objects. Its manifest was restored from the bundle (`2efc4d8` in the project) and the job resubmitted as 2725692.
 - [x] **Drop syk- prefix from tailnet machine names** (`~/bullet-journal` @ `b580a52`)
   Four machines were named with a syk- prefix, and their node keys would expire and need reauth. The API renamed syk-ipad, syk-iphone, syk-legionp, and syk-mbp to drop the prefix and disabled key expiry on each, matching spark. Every machine on the tailnet now has key expiry disabled, and this machine's note name is mbp.
+- [x] **Upload research math datasets to HF** (`m2:~/hf-upload-research-datasets`)
+  The math SFT exports catalogued in [math-sft-data-pipelines.md](math-sft-data-pipelines.md) lived only on m2, so nothing off-cluster could use or cite them. One main-partition Slurm job (2728122, 2 CPU, ~3 min at ~150 MB/s; never the login node) created four private IFM dataset repos, uploaded the seven main export files (15.0 GB) with Apache-2.0 cards written from the journal note, and verified privacy, file sets, byte sizes and license tags; row counts match the journal exactly.
+  - `IFM/research-math-tasks`: arxivmath.jsonl — 5,668 exact-answer questions (16 MB)
+  - `IFM/research-lean-formalization-tasks`: arxivlean.jsonl — 3,269 Lean 4 statements (26 MB)
+  - `IFM/research-lean-formalization-rollouts`: arxivlean.jsonl (1,838 K3 prover trajectories, 540 MB) + repoprover.jsonl (14,332 rollouts, 1.7 GB)
+  - `IFM/research-math-rollouts`: rethlas-gen.jsonl (27) + rethlas-ver.jsonl (287) + danus.jsonl (33,174, 12.6 GB)
+  - The job, cards and verifier sit in `m2:~/hf-upload-research-datasets/` and are idempotent (size-match skip), so `sbatch upload.sbatch` resumes or re-verifies; rejects and auxiliary exports stay unuploaded.
 
