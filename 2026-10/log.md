@@ -600,4 +600,9 @@
   - Cancelled 2719930–2719940 and resubmitted as 2720070–2720080; all 11 started at once, and beck-complex already launched its 10 sketchers.
 - [x] **Record system prompt, reasoning, tool ids** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `d6189c7`)
   Agent JSONL recordings omitted the system prompt, the model's reasoning_content, and tool-call ids, so a saved run could not be replayed faithfully. The tool loop now records all three (reasoning is saved even when preserve_thinking is off — that flag only governs the live history); the viewer renders a system badge and collapsible thinking blocks, and docs/recording.md documents the fields plus why post-compaction turns are reconstructible from the summary.
+- [x] **Fix RepoProver churn found in the book runs** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `38d68de`)
+  After 4 h the 11 book runs had merged 2 of 159 chapter sketches: about half the sketch rejections were merge conflicts, Mathlib search crashed, and progress PRs failed as an unknown agent type. Fixed in three commits, then all 11 jobs were restarted from their saved state (2722776–2722786).
+  - `18ad1c0`: ripgrep added to the pixi env; the grep fallback no longer crashes when searching a single file.
+  - `f271dce`: import-only merge conflicts (root-module import lists) are unioned automatically, and the build still gates the merge; progress PRs can now be revised.
+  - `38d68de`: prompts tell scan/triage/maintain/progress agents that a chapter's Lean file belongs to its sketcher, after they had committed skeletons that every sketch then conflicted with.
 
