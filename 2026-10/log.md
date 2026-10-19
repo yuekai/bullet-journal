@@ -598,4 +598,6 @@
 - [x] **Run formalize jobs on the main partition** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `9dfd5e9`)
   cpuonly fits one 256G job per node and few were free, so 10 of 11 jobs pended. Jobs now go to main by default; a --partition flag keeps cpuonly available.
   - Cancelled 2719930–2719940 and resubmitted as 2720070–2720080; all 11 started at once, and beck-complex already launched its 10 sketchers.
+- [x] **Record system prompt, reasoning, tool ids** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `d6189c7`)
+  Agent JSONL recordings omitted the system prompt, the model's reasoning_content, and tool-call ids, so a saved run could not be replayed faithfully. The tool loop now records all three (reasoning is saved even when preserve_thinking is off — that flag only governs the live history); the viewer renders a system badge and collapsible thinking blocks, and docs/recording.md documents the fields plus why post-compaction turns are reconstructible from the summary.
 
