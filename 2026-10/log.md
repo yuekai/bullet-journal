@@ -569,4 +569,7 @@
 - [x] **Draft research-lab passage and schematic** (`~/K2_V3_Tech_Report`)
   The AI-for-Science subsection had only a placeholder for the research-lab data pipeline. It now describes the multi-agent simulation (Concordia game master, OpenCode researcher agents, OASIS public, open-problems and autoresearch boards, coin economy, four win conditions, collaborative variant) with a TikZ figure, and frames the exported trajectories as mid-training data.
   The pipeline source on m2 is not readable to us, so the facts come from run artifacts (prompts, run configs, export/token inventories); numbers are from the 2026-08-20 re-export snapshot. This replaces an earlier COMSOL-based plan for the same placeholder, per the user.
+- [x] **Default agents to kimi-k3 via comet gateway** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `72f880c`)
+  `repoprover run` had no way to choose an LLM: agents fell back to an empty provider and failed with "No base URL". Agents now default to kimi-k3 on the comet gateway, with reasoning_effort=high and preserved thinking. The URL is read from the gateway state file because the gateway moves between nodes, and run checks at startup that the model is served. New --provider/--model/--base-url flags reach the workers and stool.
+  RepoProver already gives tools to the model through its own loop, so it calls kimi-k3 directly instead of going through dsh. Pushed to the UMich-FATML fork's main, together with the 7 earlier local commits.
 
