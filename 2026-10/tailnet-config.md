@@ -4,7 +4,7 @@ description: Tailnet policy and admin notes
 date: 2026-10-18
 ---
 
-Tailnet: `taildd337d.ts.net`. This machine (`syk-mbp`) is the tailnet owner and
+Tailnet: `taildd337d.ts.net`. This machine (`mbp`) is the tailnet owner and
 admin.
 
 ## Policy file
@@ -253,3 +253,7 @@ is in `~/.agents/skills/tailscale/references/access-control.md`.
   its key expiry. The policy gained a member test for `100.91.181.87:3080` and
   `100.91.181.87:3081`, the spark DSH ports. The live policy has no comments.
   The comments in the snapshot above exist only in this note.
+- 2026-10-19: The API renamed the machines `syk-ipad` to `ipad`, `syk-iphone`
+  to `iphone`, `syk-legionp` to `legionp`, and `syk-mbp` to `mbp`, and
+  disabled key expiry on each. Every machine on the tailnet now has key
+  expiry disabled.
