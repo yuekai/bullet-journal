@@ -607,4 +607,8 @@
   - `38d68de`: prompts tell scan/triage/maintain/progress agents that a chapter's Lean file belongs to its sketcher, after they had committed skeletons that every sketch then conflicted with.
 - [x] **Resolve import vs docstring header conflicts** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `44fa890`)
   After the restart, root-module conflicts still bounced sketches whenever main had added a module docstring next to the import list, because the resolver required both sides to be imports. It now accepts a single import-only side, putting all imports first and the other side's lines after. Jobs restarted again as 2722974–2722984; no conflicts, grep failures or progress failures in their first 10 minutes.
+- [x] **Port screenshot helper to version-stable APIs** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/RoboLab` @ `7b0a8e9`)
+  render_stage_frame imported omni.isaac.core and isaacsim.core.api, which are deprecated-only on IsaacSim 5.1 and 6.1, so every screenshot path failed. It now uses pxr, omni.usd and replicator, which no stack moved; relative paths also rendered blank frames.
+  - Verified on isaac60 (gpu-038): smoke renders (scene, benchmark scene, object on ground) non-blank, `settle_scenes.py --screenshot` works again, and thumbnails of the 20 generated scenes are committed (`9a550b7`, LFS). 5.x rendering can't run on this R590 cluster.
+  - Ruff, asked about alongside: 31 import-order (I001) errors, 28 inherited unchanged from upstream NVIDIA code and 3 from the isaac60 port. Nothing enforces it — no CI, ruff isn't a dependency of any extra (so `uv run ruff` can't work in the venvs), and the pre-commit hook skips it when ruff isn't on PATH.
 
