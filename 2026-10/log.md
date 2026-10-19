@@ -542,3 +542,6 @@
   - Also acquired all 13 benchmark datasets into data/ (GPQA awaits terms acceptance) and drew the fit/val/held-out splits (seed 20261018) with fit-set exclusion for the JBB held-out probes, since AdvBench and JBB share literal prompt texts.
 - [x] **Stop the deepseek-main engine pool** (`~/llama` @ `8d0c785`)
   DeepSeek V4.1 Flash served one replica on fs-mbz-gpu-008. Scaled deepseek-main to zero at the user's request: the controller cancelled job 2706568 within one 60s cycle and the gateway deregistered the worker. glm-main keeps serving; the recipe stays for a later scale-up.
+- [x] **Raise the glm-main pool to two replicas** (`~/llama` @ `e17456b`)
+  The pool served a single GLM-5.3 engine since it was introduced, so one node maintenance event or rank failure would drop glm-5.3 capacity to zero. Raised the replica target to 2 at the user's request: the running controller reconciled the new target within one 60s cycle and submitted a second 8xH200 allocation without touching the existing healthy engine.
+  The new engine (job 2716668 on fs-mbz-gpu-143) booted the proven recipe — fresh container import, 141 shards loaded — and registered healthy ~18 minutes after submission; both glm-5.3 workers now serve through the gateway (two smoke completions split reasoning_content correctly).
