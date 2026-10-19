@@ -540,3 +540,5 @@
   The paper released no code and module-name matching edits only 90 of the writers while reporting success. Structural enumeration over the safetensors index (stdlib header parsing) now asserts the paper's Table 1 exactly on the store mirror: 12,479 writers = 12,442 FP8 + 37 BF16, every group count matching.
   - Found en route: the MTP layer 45 is itself a sparse MoE layer, so the 43 sparse layers are 3..44 plus 45; the fused-3D expert story is a load-time artifact — on disk each expert has its own 2-D tensor.
   - Also acquired all 13 benchmark datasets into data/ (GPQA awaits terms acceptance) and drew the fit/val/held-out splits (seed 20261018) with fit-set exclusion for the JBB held-out probes, since AdvBench and JBB share literal prompt texts.
+- [x] **Stop the deepseek-main engine pool** (`~/llama` @ `8d0c785`)
+  DeepSeek V4.1 Flash served one replica on fs-mbz-gpu-008. Scaled deepseek-main to zero at the user's request: the controller cancelled job 2706568 within one 60s cycle and the gateway deregistered the worker. glm-main keeps serving; the recipe stays for a later scale-up.
