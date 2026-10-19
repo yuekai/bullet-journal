@@ -581,4 +581,7 @@
   mathlib's undergrad gaps had no plan for which books to formalize. Now a pinned gap list, 11 open-LaTeX books with evidence-checked coverage claims, and reproducible RepoProver input bundles exist, so any book can be materialized and run.
   - 167 of 566 undergrad topics are missing at mathlib 22c725c; the books cover 90 and partially cover 19 more (65%). Distribution calculus is mostly uncovered.
   - `pixi run materialize <id>` creates the run directory outside the repo, since RepoProver needs its own git main.
+- [x] **Ignore commented-out \input in flatten_tex** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `785e211`)
+  flatten_tex substituted directives over raw text, so a disabled `% \include{ch2}` brought the chapter back (seen in undergrad-todo). Now only the code part of each line, before an unescaped %, is scanned; comments stay verbatim.
+  - undergrad-todo tech-debt updated (`c6a7acb`): its local flatten remains only because upstream lacks main-dir name resolution.
 
