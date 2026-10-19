@@ -617,4 +617,6 @@
 - [x] **Stop truncating unit ids; normalize labels** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `2db65cb`)
   Agents edited manifests to fix 40-character unit ids that looked like typos, and Grinstead target ids that contained newlines. Bundles now use full slugs and collapse label whitespace as TeX does (builder v3). Running projects keep their original ids.
   - Beck's duplicate truncated chapters were removed from its run state and its open sketch PR moved to the new id. All 11 jobs were restarted as 2725471–2725481.
+- [x] **Drop syk- prefix from tailnet machine names** (`~/bullet-journal` @ `b580a52`)
+  Four machines were named with a syk- prefix, and their node keys would expire and need reauth. The API renamed syk-ipad, syk-iphone, syk-legionp, and syk-mbp to drop the prefix and disabled key expiry on each, matching spark. Every machine on the tailnet now has key expiry disabled, and this machine's note name is mbp.
 
