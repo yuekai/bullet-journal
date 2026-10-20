@@ -724,4 +724,9 @@
   - The checkout's local main still holds the unpushed GeneBench-Pro commit, so builders submitted from it run the old launcher (no key copy) until it is rebased onto origin/main.
 - [x] **Align science-tasks checkout with origin/main** (`~/shrd/science-tasks` @ `25ad6bd`)
   The "unpushed" GeneBench-Pro commit (`e662c7d`) was in fact already on origin/main: PR #9630 had been branched from a local main that held it, and its squash merge folded it in. A diff confirmed origin/main is `e662c7d` plus only the skill and key PRs. PR #9630's description now notes it, and the shared checkout's local main was reset to origin/main (no local work lost; the untracked skill copy matched), so builders submitted from it run the current launcher with the key copy.
+- [x] **Give pilot builders a hard deadline** (`~/shrd/science-tasks` @ `0d965c6`)
+  MAX_WAIT_SEC was only checked between turns, so a long turn could overrun it, and builder jobs had no Slurm time limit. Now a turn still running at the deadline is killed, and `pilot_archetypes.py submit --hours H` sets the deadline plus a Slurm --time backstop (H h + 15 min). Merged as PR #9633.
+- [x] **Start build pilot 3 (20 builders, 24 h each)** (`~/shrd/science-tasks` @ `0d965c6`)
+  Third archetype pilot: 10 R + 10 S approved proposals (seed 20261021, skipping issues with earlier builder runs), builder chooses the archetype within its family. Slurm jobs 2738062–2738081 on main (8 CPUs, 128 GB), submitted with `--hours 24`. First pilot whose builders have the scientific-data skill, data-API keys and R5/R6/S7.
+  - Manifest: `science-tasks-builders/pilot-2026-10-21/manifest.jsonl`.
 
