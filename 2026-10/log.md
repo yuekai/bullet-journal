@@ -655,4 +655,7 @@
   All 20 archetype-pilot builders shared one 96 GB cpuonly job, and two builders' local runs (a 43 GB tree screen and ten ESM workers) filled it, freezing every builder for about 3 hours. Each builder now gets its own main-partition job (8 CPUs, 128 GB), is told that budget, and can resume its run dir and dsh session.
   The 20 running builders were migrated in place (jobs 2731359–2731382), keeping their sessions; one resumed builder immediately scaled its MPI run to 8 ranks.
   - `scripts/build-one.sbatch` replaces `build-pilot.sbatch`; `pilot_archetypes.py submit` resumes unfinished runs and skips queued ones.
+- [x] **Raise kimi-main to sixteen engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `cf8c124`)
+  The 11 repoprover book campaigns hold ~890 kimi requests in flight against 13 serving engines (6-slot admission each), so queues run ~10 batches deep and completions crawl at ~4/min. Target goes 10 to 16; submit_cooldown briefly lowered to 30s to land all six submissions within minutes, then restored to 300s (same maneuver as 1e1db26).
+  All 6 new jobs (2731606–2731624) were submitted under iq/iq and pend on QOSGrpNodeLimit, starting as the account frees nodes; glm53-main's 16 engines share the account and glm had 0 in-flight at the gateway.
 
