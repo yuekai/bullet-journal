@@ -722,4 +722,6 @@
   Keyed databases were unusable for builders: `key()` read only `./.env`, and clones have none. The launcher now copies the checkout's data-key .env (23 data-API entries, nothing else) into each run dir at mode 600, outside the clone so it can't be committed, and `key()` reads the nearest .env above the working directory, still never `~/.env`.
   - Switching the shared checkout back to its local main (which lacks `skills/`) had deleted the skill's working files; they were restored untracked from origin/main, byte-identical, without touching local main's history. Later PR work used a separate worktree.
   - The checkout's local main still holds the unpushed GeneBench-Pro commit, so builders submitted from it run the old launcher (no key copy) until it is rebased onto origin/main.
+- [x] **Align science-tasks checkout with origin/main** (`~/shrd/science-tasks` @ `25ad6bd`)
+  The "unpushed" GeneBench-Pro commit (`e662c7d`) was in fact already on origin/main: PR #9630 had been branched from a local main that held it, and its squash merge folded it in. A diff confirmed origin/main is `e662c7d` plus only the skill and key PRs. PR #9630's description now notes it, and the shared checkout's local main was reset to origin/main (no local work lost; the untracked skill copy matched), so builders submitted from it run the current launcher with the key copy.
 
