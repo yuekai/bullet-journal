@@ -691,4 +691,6 @@
 - [x] **Start the builder-choice archetype pilot** (`~/science-tasks` @ `5f38668`)
   A second 20-proposal pilot (10 R, 10 S; seed 20261020) tests builders choosing their archetype within the family, alongside the first pilot, which keeps running. Jobs 2736700–2736719, one per builder on main (8 CPUs, 128 GB); manifest in `science-tasks-builders/pilot-2026-10-20/`.
   Two selection fixes went in first. Selection now skips proposals that already have a builder run, since a proposal closes into only one PR (`e49e7ac`). The family classifier now judges the field's workflow rather than the proposal's test data: it had put proposals in S whenever the author's own seeded generator replaced real data, so a draft manifest sent 5 of 10 real-data workflows (NCT-CRC pathology, iDRR dose-response, ChEMBL curation...) to family S.
+- [x] **Add a guide to accessing the collected data** (`~/genebench-max` @ `9ab6d0f`)
+  Agents that needed real rows had only collecting.md, which is written for collector authors; running a collector to get data rewrites committed files and caps at 370 rows. The guide (`docs/accessing-data.md`) covers the data tiers, live fetching with lib, keys, quotas and joins; pulled rows go in the gitignored `data/pulls/`.
 
