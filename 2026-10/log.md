@@ -706,4 +706,6 @@
   The renamed skill still introduced itself as genebench-max's satellite: its docs named the upstream repo, its lookup tool probed for a genebench-max clone to point at unbundled sample caches, and its fetch module carried the gbm_ prefix and a genebench-max User-Agent. All mentions are gone: SKILL.md describes the bundled catalog, the clone lookup ($GENEBENCH_MAX_DIR/~/genebench-max) is removed, gbm_fetch.py is renamed fetch.py, and the three collectors' caller/User-Agent strings now say scientific-data.
   - Verified after the edit: zero genebench/gbm mentions, table_info search/show/joins work, and the SKILL.md ChEMBL example fetches live through the renamed module, with key() still reading ./.env.
   - The upstream ~/genebench-max build script still emits the old name and mentions, so rebuilding the skill from it would reintroduce them; it needs the same edits before the next build.
+- [x] **Tighten ~/.env permissions to 600**
+  The fallback .env that the scientific-data skill reads (and other tools) held five LLM/infra API keys at mode 0644, readable by group and others, while the science-tasks repo's own .env was already owner-only. Now 0600; contents untouched.
 
