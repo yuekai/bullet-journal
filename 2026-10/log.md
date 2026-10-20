@@ -698,4 +698,8 @@
 - [x] **Make the genebench-data skill self-contained** (`~/genebench-max` @ `c32cdaf`)
   The skill read the catalog from a genebench-max clone and imported its lib, so it failed wherever the repo isn't, e.g. m2. Per the Agent Skills spec it now bundles a generated catalog, data dictionary, crosswalk, collectors and upstream API docs (`data/scripts/build_skill.py`, checked by `pixi run check`), and owns the fetch helpers that lib re-exports. Cached rows and stats stay out (size, licenses).
   - Copied to m2 at `~/shrd/science-tasks/skills/genebench-data/` (uncommitted there); lookups and a live ChEMBL fetch work with m2's system Python.
+- [x] **Rename genebench-data skill to scientific-data** (`~/shrd/science-tasks`)
+  The uploaded skill kept its upstream working name, which undersold its scope (108 scientific and economic databases). Renamed the directory and the SKILL.md name field; no other file referenced the old name. Verified every key-requiring service against the repo's .env through the skill's own key()/get() helpers: 20 of 21 pass, including BRENDA (SOAP via zeep) and AlphaGenome (its SDK), each run in a throwaway pixi exec env; the m2 copy still carries the old name.
+  - EPA AQS is the one failure: the API rejects the email/key pair ("Email and/or key are invalid"), matching the skill catalog's own 2026-10-07 gap note; it needs re-registration at aqs.epa.gov.
+  - The Semantic Scholar key works via the documented x-api-key header, though its collector is keyless; DisGeNET's raw env value works as the Authorization header exactly as the collector passes it.
 
