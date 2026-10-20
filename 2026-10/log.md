@@ -695,4 +695,7 @@
   Agents that needed real rows had only collecting.md, which is written for collector authors; running a collector to get data rewrites committed files and caps at 370 rows. The guide (`docs/accessing-data.md`) covers the data tiers, live fetching with lib, keys, quotas and joins; pulled rows go in the gitignored `data/pulls/`.
 - [x] **Package the data-access guide as a skill** (`~/genebench-max` @ `8832447`)
   The guide lived in docs/, so agents working in other repos (task generation, analysis) never saw it. As `skills/genebench-data/` it installs anywhere, finds the repo itself and adds a lookup script (`table_info.py`: search, show, joins). A Sonnet smoke test pulling EGFR activities from ChEMBL found no filtered or by-ID pull recipe; both were added. Link tests keep the skill self-contained.
+- [x] **Make the genebench-data skill self-contained** (`~/genebench-max` @ `c32cdaf`)
+  The skill read the catalog from a genebench-max clone and imported its lib, so it failed wherever the repo isn't, e.g. m2. Per the Agent Skills spec it now bundles a generated catalog, data dictionary, crosswalk, collectors and upstream API docs (`data/scripts/build_skill.py`, checked by `pixi run check`), and owns the fetch helpers that lib re-exports. Cached rows and stats stay out (size, licenses).
+  - Copied to m2 at `~/shrd/science-tasks/skills/genebench-data/` (uncommitted there); lookups and a live ChEMBL fetch work with m2's system Python.
 
