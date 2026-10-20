@@ -708,4 +708,7 @@
   - The upstream ~/genebench-max build script still emits the old name and mentions, so rebuilding the skill from it would reintroduce them; it needs the same edits before the next build.
 - [x] **Tighten ~/.env permissions to 600**
   The fallback .env that the scientific-data skill reads (and other tools) held five LLM/infra API keys at mode 0644, readable by group and others, while the science-tasks repo's own .env was already owner-only. Now 0600; contents untouched.
+- [x] **EPA AQS credentials valid; outage was transient** (`~/shrd/science-tasks`)
+  The Oct 20 evening key check read "Email and/or key are invalid" from every AQS data/list service and called the pair bad, matching the skill catalog's 2026-10-07 gap. A retry of the same .env pair succeeds: list/states returns 56 states, dailyData/byState 4,130 rows, under every User-Agent tried including the old genebench-max one - a transient AQS auth outage, not bad credentials. All 21 key-requiring services in the repo's .env now verify.
+  The skill's three aqs_* catalog gaps and the collector's gap note now record the transience, so a future reader retries instead of asking for new keys.
 
