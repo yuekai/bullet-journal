@@ -718,4 +718,8 @@
 - [x] **Give builders the scientific-data skill** (`~/shrd/science-tasks` @ `aa48b15`)
   R builders found real data and truth sources by hand. The scientific-data skill is now committed where it lives (`skills/`) and symlinked from `.agents/skills/`, so dsh discovers it in every builder clone, and the builder brief points at it (redistributable rows only). The archetype catalog's rule 4 now bars truth a solver could look up online, since the agent phase has network access. `key()` no longer reads `~/.env` (unrelated keys; agents run as the owner), only the environment and the working directory's `.env`.
   - The GeneBench-Pro commit (`e662c7d`) sits unpushed on the checkout's local main, diverged from origin/main after this merge; a probe merge shows no conflicts, but it was left for its session to rebase and submit.
+- [x] **Give builders the data-API keys** (`~/shrd/science-tasks` @ `25ad6bd`)
+  Keyed databases were unusable for builders: `key()` read only `./.env`, and clones have none. The launcher now copies the checkout's data-key .env (23 data-API entries, nothing else) into each run dir at mode 600, outside the clone so it can't be committed, and `key()` reads the nearest .env above the working directory, still never `~/.env`.
+  - Switching the shared checkout back to its local main (which lacks `skills/`) had deleted the skill's working files; they were restored untracked from origin/main, byte-identical, without touching local main's history. Later PR work used a separate worktree.
+  - The checkout's local main still holds the unpushed GeneBench-Pro commit, so builders submitted from it run the old launcher (no key copy) until it is rebased onto origin/main.
 
