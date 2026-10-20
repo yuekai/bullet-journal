@@ -711,4 +711,8 @@
 - [x] **EPA AQS credentials valid; outage was transient** (`~/shrd/science-tasks`)
   The Oct 20 evening key check read "Email and/or key are invalid" from every AQS data/list service and called the pair bad, matching the skill catalog's 2026-10-07 gap. A retry of the same .env pair succeeds: list/states returns 56 states, dailyData/byState 4,130 rows, under every User-Agent tried including the old genebench-max one - a transient AQS auth outage, not bad credentials. All 21 key-requiring services in the repo's .env now verify.
   The skill's three aqs_* catalog gaps and the collector's gap note now record the transience, so a future reader retries instead of asking for new keys.
+- [x] **Add GeneBench-Pro archetypes and ablation rules** (`~/shrd/science-tasks` @ `e662c7d`)
+  Builders had four real-data archetypes against six synthetic ones, and no guidance on staging messy multi-table releases or on calibrating tolerances. GeneBench-Pro's ten case studies supply R5 (truth fixed by the experimental design), R6 (causal estimand benchmarked by a trial), S7 (staged release with planted pitfalls) and three common rules: stage data as practitioners receive it, write an estimand contract, calibrate tolerances with an ablation suite.
+  - All ten GeneBench-Pro reports grade the reference estimator's output on the released data, which the catalog forbids as a reference run; S7 grades the generator's realized truth for the released units instead, so tolerances stay tight without covering sampling error.
+  - The package (MIT, HF `openai/genebench-pro-public-package`) is downloaded with extracted report text under `~/shrd/tmp/genebench-pro/`, with per-problem design summaries in `summaries/`; `docs/authoring/genebench-pro.md` condenses them.
 
