@@ -693,4 +693,6 @@
   Two selection fixes went in first. Selection now skips proposals that already have a builder run, since a proposal closes into only one PR (`e49e7ac`). The family classifier now judges the field's workflow rather than the proposal's test data: it had put proposals in S whenever the author's own seeded generator replaced real data, so a draft manifest sent 5 of 10 real-data workflows (NCT-CRC pathology, iDRR dose-response, ChEMBL curation...) to family S.
 - [x] **Add a guide to accessing the collected data** (`~/genebench-max` @ `9ab6d0f`)
   Agents that needed real rows had only collecting.md, which is written for collector authors; running a collector to get data rewrites committed files and caps at 370 rows. The guide (`docs/accessing-data.md`) covers the data tiers, live fetching with lib, keys, quotas and joins; pulled rows go in the gitignored `data/pulls/`.
+- [x] **Package the data-access guide as a skill** (`~/genebench-max` @ `8832447`)
+  The guide lived in docs/, so agents working in other repos (task generation, analysis) never saw it. As `skills/genebench-data/` it installs anywhere, finds the repo itself and adds a lookup script (`table_info.py`: search, show, joins). A Sonnet smoke test pulling EGFR activities from ChEMBL found no filtered or by-ID pull recipe; both were added. Link tests keep the skill self-contained.
 
