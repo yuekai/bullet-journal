@@ -659,3 +659,9 @@
   The 11 repoprover book campaigns hold ~890 kimi requests in flight against 13 serving engines (6-slot admission each), so queues run ~10 batches deep and completions crawl at ~4/min. Target goes 10 to 16; submit_cooldown briefly lowered to 30s to land all six submissions within minutes, then restored to 300s (same maneuver as 1e1db26).
   All 6 new jobs (2731606–2731624) were submitted under iq/iq and pend on QOSGrpNodeLimit, starting as the account frees nodes; glm53-main's 16 engines share the account and glm had 0 in-flight at the gateway.
 
+## Tue, Oct 20, 2026
+
+- [x] **Close removal gap via stream-mean refit** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/glm-5.3-abliteration` @ `f0aad00`)
+  D19's probe showed the paper's artifact direction is the plain 4-stream mean reading at layer 22 (cos 0.9955), while our shipped bake used the attn_hc pre-weighted collapse (0.9185) — and that reading choice alone left our bake removing ~57% of core-5 refusal where the artifact removes ~78% through the same harness. The follow-up refit r on the stream-mean reading (same 256+256 draw, mask-10 no-op, split-half 0.996), baked it as a new condition `streammean` with an identical footprint (24,921 of 76,108 tensors changed; rank-one mean |cos| 0.925; capability preserved), and reran the full benchmark suite.
+  Switched judging to comet-stack glm-5.3 per the deferred plan (validated: 10/10 gated spot checks; worst-file pilot 0/150 nulls vs DSV4.1's 12/150, agreement 0.935 with every divergence a glm-5.3 correction) and re-judged all conditions in one pass, keeping the DSV4.1 tables. Result: core-5 removal 56.8% → 76.6% vs 78.4% for the artifact; Track A sglang mean 0.164 vs 0.174; XSTest 0.012; GPQA 0.652 (McNemar vs base p=0.108). The reading choice was the removal gap — D20 recorded.
+
