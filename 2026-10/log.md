@@ -729,4 +729,6 @@
 - [x] **Start build pilot 3 (20 builders, 24 h each)** (`~/shrd/science-tasks` @ `0d965c6`)
   Third archetype pilot: 10 R + 10 S approved proposals (seed 20261021, skipping issues with earlier builder runs), builder chooses the archetype within its family. Slurm jobs 2738062–2738081 on main (8 CPUs, 128 GB), submitted with `--hours 24`. First pilot whose builders have the scientific-data skill, data-API keys and R5/R6/S7.
   - Manifest: `science-tasks-builders/pilot-2026-10-21/manifest.jsonl`.
+- [x] **Add kimi-k2m pool of eight engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `010c5a4`)
+  The six kimi-main engines raised in cf8c124 pended on the iq QOSGrpNodeLimit for a day — the quota is saturated by a multi-user campaign and glm53-main's mostly idle engines hold iq nodes — so no more kimi capacity could land under iq. The new kimi-k2m pool runs the same kimi-k3 recipe on main under the k2m account/QoS the user's own jobs already use; all eight jobs (2739034–2739069) started at once, sidestepping the limit. submit_cooldown briefly 30s to land the submissions, then restored to 300s.
 
