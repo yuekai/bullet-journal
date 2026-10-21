@@ -731,4 +731,6 @@
   - Manifest: `science-tasks-builders/pilot-2026-10-21/manifest.jsonl`.
 - [x] **Add kimi-k2m pool of eight engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `010c5a4`)
   The six kimi-main engines raised in cf8c124 pended on the iq QOSGrpNodeLimit for a day — the quota is saturated by a multi-user campaign and glm53-main's mostly idle engines hold iq nodes — so no more kimi capacity could land under iq. The new kimi-k2m pool runs the same kimi-k3 recipe on main under the k2m account/QoS the user's own jobs already use; all eight jobs (2739034–2739069) started at once, sidestepping the limit. submit_cooldown briefly 30s to land the submissions, then restored to 300s.
+- [x] **Raise kimi-k2m to ten engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `13ba182`)
+  The first eight k2m engines started at once where the iq-pending six could not, so two more (2739081, 2739084) went the same route while the kimi queue still ran deep; both started immediately.
 
