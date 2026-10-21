@@ -759,5 +759,10 @@
   The pool had been scaled to zero at the user's request on Oct 19. Scaled it back to one replica to serve DeepSeek-V4.1-Flash again: the recipe already points at the 1017 weight-only checkpoint, so only the replica target changes. Job 2747395 started on fs-mbz-gpu-527, loaded the 1017 shards, and registered ready with the gateway; a chat smoke test through the gateway passed.
 - [x] **Start deepseek 1017 engine on k2m account** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `4b6bbaa`)
   deepseek-main sat at zero on the original V4.1-Flash weights and iq is node-limited by the glm/kimi fleets, so the pool now runs one engine under the k2m account/QoS with the recipe swapped to the Oct 17 DeepSeek-V4.1-Flash-1017 checkpoint (config.json identical, so the cell args and the served name stayed). Job 2747430 came ready in ~16.5 min; warmup passed at the cell's 0.8/256 with 19.6 GB free per GPU, and a gateway smoke test passed (verification recorded in afd2bf5). The m2 llama fleet runs its own 1017 deepseek engine from the same hour (job 2747395), so both gateways now serve deepseek-v4.1-flash.
+- [x] **Run trials with deepseek-v4.1-flash, not kimi-k3** (`~/shrd/science-tasks` @ `485eddd`)
+  kimi-k3 on comet took minutes to answer and nearly every kimi trial timed out with no tokens, so the difficulty gate measured only glm-5.3, the builders' own model. deepseek-v4.1-flash, on the same gateway, now runs beside glm-5.3 in agent and cheat trials (PR #9658).
+  - Model block copied from the owner's dsh profile (1,048,576 context, 393,216 max output); the comet engine serves max_model_len 1,048,576 with a 23.4M-token KV pool, so no margin is needed.
+  - Verified: lint and 164 tests pass; a real trial box on #9651's task streamed tokens from deepseek through comet.
+  - Diagnosed why gate-passed task PRs #9588 and #9651 stay BLOCKED: a direct merge returns "2 of 3 required status checks are expected". execution-checks and merge-gate are posted with the Checks API, and GitHub files them in the oldest Actions check suite on the commit, a Static Checks run that a later run superseded. Fix not applied yet.
 
 
