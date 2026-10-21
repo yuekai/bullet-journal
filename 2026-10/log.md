@@ -764,5 +764,7 @@
   - Model block copied from the owner's dsh profile (1,048,576 context, 393,216 max output); the comet engine serves max_model_len 1,048,576 with a 23.4M-token KV pool, so no margin is needed.
   - Verified: lint and 164 tests pass; a real trial box on #9651's task streamed tokens from deepseek through comet.
   - Diagnosed why gate-passed task PRs #9588 and #9651 stay BLOCKED: a direct merge returns "2 of 3 required status checks are expected". execution-checks and merge-gate are posted with the Checks API, and GitHub files them in the oldest Actions check suite on the commit, a Static Checks run that a later run superseded. Fix not applied yet.
+- [x] **Raise kimi-lowprio to sixteen engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `04953d0`)
+  Overnight preemption took nine kimi-lowprio engines (one still serves; the nine resubmissions only begin at 17:05), so the pool went 10 to 1 serving while kimi still ran 85% of admission slots. Six more replicas (2747875–2747933) widen the pool for the evening return; all six pend on Priority, as lowprio always may. submit_cooldown briefly 30s, restored to 300s.
 
 
