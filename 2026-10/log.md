@@ -752,5 +752,8 @@
   The Kimi CLI and web UI outlived their use, and DSH and Kimi configs still said `llama` after the gateway moved to m2. DSH profiles on mbp, spark and m2 and the kept Kimi config now name the provider m2; CLI, extension, caches and web state are gone, config and sessions kept.
 - [x] **Enforce hard rules and lints instead of trusting** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/RoboLab` @ `4f9e7fc`)
   A harness audit found the pre-commit hook skipped ruff when absent (so 31 import-order errors piled up, fixed in `b0a2e61`), hard rules 1 and 4 had no check, and runtime.py probed the isaaclab version itself. Added check_rules.py, a compat capability helper, ruff via uvx, and committed the LFS hooks that core.hooksPath otherwise disables. isaac60 228/228, isaac51 camera-less 217 + 3 skips.
+- [x] **Write state.json atomically; survive failed saves** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `f9161a1`)
+  /mnt/weka briefly ran out of space on Oct 20. Beck's and Dolean's coordinators crashed in save_state and drained, and Hefferon's state.json was truncated to 0 bytes (write_text truncates first). State is now written to a temp file and renamed, and a failed save is logged and retried on the next save. Pushed to the UMich-FATML fork.
+  - Recovery: Beck and Dolean resumed from their saved state; petrunin-diffgeo had hung since 03:01 UTC with 14-hour Lean processes and resumed after scancel; Hefferon restarted with fresh run state (its main branch kept, no sketch had merged). New jobs 2747523–2747526; the other 7 runs keep the old save code until their next restart.
 
 
