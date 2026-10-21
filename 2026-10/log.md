@@ -755,5 +755,7 @@
 - [x] **Write state.json atomically; survive failed saves** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `f9161a1`)
   /mnt/weka briefly ran out of space on Oct 20. Beck's and Dolean's coordinators crashed in save_state and drained, and Hefferon's state.json was truncated to 0 bytes (write_text truncates first). State is now written to a temp file and renamed, and a failed save is logged and retried on the next save. Pushed to the UMich-FATML fork.
   - Recovery: Beck and Dolean resumed from their saved state; petrunin-diffgeo had hung since 03:01 UTC with 14-hour Lean processes and resumed after scancel; Hefferon restarted with fresh run state (its main branch kept, no sketch had merged). New jobs 2747523–2747526; the other 7 runs keep the old save code until their next restart.
+- [x] **Start the deepseek-main engine pool** (`~/llama` @ `613f12b`)
+  The pool had been scaled to zero at the user's request on Oct 19. Scaled it back to one replica to serve DeepSeek-V4.1-Flash again: the recipe already points at the 1017 weight-only checkpoint, so only the replica target changes. Job 2747395 started on fs-mbz-gpu-527, loaded the 1017 shards, and registered ready with the gateway; a chat smoke test through the gateway passed.
 
 
