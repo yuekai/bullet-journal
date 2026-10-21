@@ -1,19 +1,19 @@
 ---
 title: Llama serving stack
-description: The llama cluster service on m2 — model engines, gateway, both web UIs, and the tailnet endpoint
+description: The llama cluster service on m2 — model engines, gateway, the DSH web UI, and the tailnet endpoint
 date: 2026-10-18
 ---
 
 The llama stack serves two models on the m2 Slurm cluster. The models are
 `deepseek-v4.1-flash` and `kimi-k3`. The stack runs from `~/llama` on m2. The
-stack serves an OpenAI-compatible API on the tailnet. The stack also hosts two
-web UIs.
+stack serves an OpenAI-compatible API on the tailnet. The stack also hosts the
+DSH web UI and keeps that UI current with a daily update.
 
-One service job runs the gateway, the two web UIs, and the control loops. Each
+One service job runs the gateway, the web UI, and the control loops. Each
 model replica runs in a separate GPU allocation. The allocation can span two
 nodes.
 
-This note describes the stack on 2026-09-21. The documents in `~/llama/docs`
+This note describes the stack on 2026-10-21. The documents in `~/llama/docs`
 hold the mechanism detail.
 
 ## Layout
@@ -22,12 +22,12 @@ One CPU allocation owns all of these parts:
 
 - The SMG gateway. SMG supplies the HTTP routing, the authentication, and the
   stream support.
-- The Kimi Code web UI.
 - The DSH web UI.
 - The DSH redirect gate.
 - The userspace Tailscale client.
 - The worker registration loop.
 - The replica counter.
+- The daily DSH update loop.
 
 The engine jobs serve the models. A pool holds a group of engine jobs for one
 recipe. `llama.toml` gives the pools and the replica targets. This table gives
@@ -48,22 +48,21 @@ keeps the current fleet.
 
 ## Endpoints
 
-The Tailscale service `svc:llama` gives the four endpoints. The tailnet name is
-`llama.taildd337d.ts.net`. A tailnet move or a service restart does not change
+The Tailscale service `svc:m2` gives the three endpoints. The tailnet name is
+`m2.taildd337d.ts.net`. A tailnet move or a service restart does not change
 these names.
 
 | Port | Function | Authentication |
 |---|---|---|
 | 8000 | SMG gateway, `/v1` | Bearer key from `api-key.yaml` |
-| 58627 | Kimi Code web UI | Token from `~/.kimi-code/server.token` |
 | 3080 | DSH web UI | Rotating token, URL in `state/dsh-url.txt` |
 | 3081 | DSH redirect gate | Fixed token from `~/.dsh/web.token` |
 
 The gateway answers `/health` and `/v1/models` without a key. The gateway
 needs the engine key for `/workers`. The engine key is in `engine-key.yaml`.
 
-The member grant for `svc:llama` covers all four ports. A policy test covers
-the same four ports. See [tailnet-config.md](tailnet-config.md) for the access rules.
+The member grant for `svc:m2` covers all three ports. A policy test covers
+the same three ports. See [tailnet-config.md](tailnet-config.md) for the access rules.
 
 ## Model engines
 
@@ -103,9 +102,10 @@ SMG routes each request and authenticates each request. SMG also supplies the
 stream support. The client retries a request or a stream after an engine
 change.
 
-Python supervises the gateway, the two web UIs, and Tailscale. Python starts
-a dead process group again after 10 seconds. The gateway has a health deadline
-of 60 seconds at start. A gateway restart does not stop the web UIs.
+Python supervises the gateway, the web UI, Tailscale, and the update loop.
+Python starts a dead process group again after 10 seconds. The gateway has a
+health deadline of 60 seconds at start. A gateway restart does not stop the
+web UI.
 
 The registration loop reads the worker list from SMG every 10 seconds. The
 loop adds each ready worker. The loop also refreshes each entry that this
@@ -118,76 +118,37 @@ Use `/workers` on the gateway for the true worker list. The command is:
 
 ```bash
 curl -s -H "Authorization: Bearer <engine-key>" \
-  http://llama.taildd337d.ts.net:8000/workers
+  http://m2.taildd337d.ts.net:8000/workers
 ```
 
 The `registry` field in `pixi run llama status` can read `null` between two
 updates. Use `/workers` when the answer must be exact.
 
-## Kimi Code web UI
+## The Kimi Code web UI (removed)
 
-The Kimi Code web UI is the `kimi` component of the service job. The command
-is:
-
-```
-~/.kimi-code/bin/kimi web --no-open --port 58627 \
-  --allowed-host llama.taildd337d.ts.net
-```
-
-These rules apply to the UI process:
-
-- The UI binds to loopback only. Only the Tailscale service reaches it.
-- Python owns the process group. Python starts the UI again after 10 seconds
-  when the UI exits. There is no shell watchdog and no manual start step.
-- The UI refuses to start when port 58627 is already bound. This rule stops a
-  second copy. `kimi web` would otherwise try port 58628 and split the service.
-- A gateway restart leaves the UI process alone. Only a full service restart
-  replaces the UI.
-
-The environment has three parameters:
-
-- `KIMI_CODE_HOME` defaults to `~/.kimi-code`. Use `LLAMA_KIMI_CODE_HOME` to
-  change it.
-- `NODE_OPTIONS` becomes `--max-old-space-size=8192`. The stack removes each
-  inherited value of this option first.
-- The stack supplies one variable from `~/.env`, and only one:
-  `KIMI_MODEL_MAX_COMPLETION_TOKENS`. Do not source the whole file. The file
-  holds other API keys that the web process must not have.
-
-The 8 GiB heap limit is headroom. On 2026-08-21, a `kimi web` process died from
-a V8 heap fault at the default limit of about 4 GB. The same limit is the
-repair for that fault.
-
-The token and the sessions are in the shared home. The paths are
-`~/.kimi-code/server.token` and `~/.kimi-code/sessions`. A restart, a node
-move, and a shared terminal session all keep the same token.
-
-The browser address is `http://llama.taildd337d.ts.net:58627/#token=<token>`.
-The `#token=` part stays in the browser. The UI exchanges it for a session.
-
-Two checks apply:
-
-- `curl -s -o /dev/null -w '%{http_code}\n' http://llama.taildd337d.ts.net:58627/`
-  returns 200.
-- A connection that resets means that Tailscale sends the request to a dead
-  loopback port. With the supervisor in place, this state repairs itself in
-  about 10 seconds. A longer fault points to the service, not to the UI.
-
-Use `kimi web rotate-token` on a node to change the token. Old addresses then
-return 401. Update each bookmark after the change.
-
-`pixi run llama status` gives the process ID, the launch ID, and the log path
-of each component. The same data is in `state/service.json`.
-
-The old m2 `kimi-serve` stack is not part of this stack. See
-`~/llama/docs/kimi-code-web-ui.md`. The `spark` copy of this UI was removed
-on 2026-10-18. spark now runs its own DSH web UI. See
+The stack ran the Kimi Code web UI as the `kimi` component until 2026-10-21.
+The owner now uses DSH only. The component, port 58627, and the service
+advertisement of that port are gone. The shared home `~/.kimi-code` (token,
+sessions, `bin/kimi`) stays on disk, so a manual start is still possible.
+The full history, including the 8 GiB V8 heap repair and the port guard, is
+in `~/llama/docs/kimi-code-web-ui.md`. The `spark` copy was removed on
+2026-10-18. spark now runs its own DSH web UI. See
 [dsh-on-spark.md](dsh-on-spark.md).
 
 ## DSH web UI
 
 DSH runs as the `dsh` component of the service job. DSH rotates its browser
 token at each process start. `state/dsh-url.txt` holds the current address.
+
+The `dsh-update` loop keeps the vendored DSH on npm's `next` tag, like the
+timer on spark. Each day at 05:30 America/New_York it compares `vendor/dsh`
+with `npm view @deepseek-ai/dsh@next version`. A difference installs the new
+version, restarts only the `dsh` child, and waits up to 90 seconds for a new
+launch URL and an HTTP answer on port 3080. A failed install or check puts
+the old version back the same way. A missed run catches up at service start.
+`touch state/dsh-update.force` runs one update now. Each run adds one line to
+`logs/service/update.log` and a record to `state/dsh-update.json`. A hand
+`npm install` inside `vendor/dsh` lasts only until the next run.
 
 The gate in front of DSH holds a fixed token. The gate listens on port 3081
 and answers the fixed token with a redirect to the DSH address. The file
@@ -198,6 +159,13 @@ after a DSH restart.
 Use `rm ~/.dsh/web.token` to change the fixed token. The gate makes a new
 token at the next request. The file `state/dsh-gate-url.txt` changes in a few
 seconds. Old addresses return 401 at once. A live DSH session continues.
+
+The DSH session cookie belongs to the host that made it. After the 2026-10-21
+rename from `llama.taildd337d.ts.net`, each browser needs one visit of the
+permanent bookmark to make a cookie for `m2.taildd337d.ts.net`. While DSH
+restarts (the daily update, or a crash relaunch), the gate answers 503 for a
+few seconds and the page needs one reload after the new address appears. The
+cookie itself survives a restart.
 
 These results are correct:
 
@@ -220,7 +188,7 @@ this command on the machine with the browser:
 ```bash
 pixi exec --spec socat -- socat \
   TCP4-LISTEN:3080,bind=127.0.0.1,reuseaddr,fork \
-  TCP:llama.taildd337d.ts.net:3080
+  TCP:m2.taildd337d.ts.net:3080
 ```
 
 Open the address from `state/dsh-url.txt`. Replace the host name with
@@ -232,24 +200,26 @@ The stack starts a userspace `tailscaled` as a supervised child. The options
 are `--tun=userspace-networking` and `--state=mem:`. The machine joins the
 tailnet as `llama-gateway` with the tag `tag:llama-gateway`.
 
-The machine advertises the service `svc:llama` on ports 8000, 58627, 3080,
-and 3081. The `autoApprovers` rule approves the advertisement from the tag.
+The machine advertises the service `svc:m2` on ports 8000, 3080, and 3081.
+The service name is the first label of `public_host` in `llama.toml`. The
+`autoApprovers` rule approves the advertisement from the tag.
 
 The stack reads `TS_AUTH_KEY` from `~/llama/.env`. The stack moves the key
 through a private file and removes the file after the authentication.
 
-A tailnet fault does not stop the cluster-side service. The gateway, the two
-UIs, and the engines continue to run.
+A tailnet fault does not stop the cluster-side service. The gateway, the
+web UI, and the engines continue to run.
 
 `tailscale serve status` shows only the forwarding table. The command
-`tailscale status --json` must also show `svc:llama` under
+`tailscale status --json` must also show `svc:m2` under
 `Self.CapMap["service-host"]`.
 
 ## Files, state, and logs
 
 The important paths are:
 
-- `llama.toml` holds the pools and the service settings.
+- `llama.toml` holds the pools, the service settings, and the DSH update
+  schedule.
 - `recipes/*.toml` hold the model launches. The recipes are
   `deepseek-v4.1-flash.toml` and `kimi-k3.toml`.
 - `state/llama-gateway.json` holds `gateway_url`, the current address of the
@@ -261,9 +231,12 @@ The important paths are:
 - `state/registry.json` holds the worker entries that this stack owns.
 - `state/dsh-url.txt` holds the current DSH address.
 - `state/dsh-gate-url.txt` holds the permanent gate address.
+- `state/dsh-update.json` holds the last update run, and
+  `state/dsh-update.force` requests one now.
 - `logs/slurm/` holds the Slurm output.
 - `logs/service/` holds one log for each component start. The name has the
-  form `<job>_<component>_<launch>.log`.
+  form `<job>_<component>_<launch>.log`. `logs/service/update.log` holds the
+  update runs.
 - `logs/engine/` holds the engine logs, one for each rank.
 - `api-key.yaml` holds the client key.
 - `engine-key.yaml` holds the engine key.
@@ -280,13 +253,13 @@ git. A new clone must make these files again.
 
 1. Run `cd ~/llama && pixi run llama status`. This command gives the job
    state, the component state, and the replicas.
-2. Run `curl -s http://llama.taildd337d.ts.net:8000/health`. The answer must
+2. Run `curl -s http://m2.taildd337d.ts.net:8000/health`. The answer must
    be `OK`.
 3. Run the models command with the client key:
 
    ```bash
    curl -s -H "Authorization: Bearer <api-key>" \
-     http://llama.taildd337d.ts.net:8000/v1/models
+     http://m2.taildd337d.ts.net:8000/v1/models
    ```
 
 4. Use `/workers` with the engine key for the exact worker list.
@@ -298,8 +271,8 @@ git. A new clone must make these files again.
 1. Run `cd ~/llama && pixi install` after a new clone.
 2. Run `pixi run llama validate`. This command checks the configuration, the
    keys, and the local model files.
-3. Run `pixi run test`. The test suite has 35 tests and covers the recovery
-   behaviour.
+3. Run `pixi run test`. The test suite has 54 tests and covers the recovery
+   behaviour and the update loop.
 4. Run `pixi run llama submit`.
 5. Run `pixi run llama status` and wait for each engine.
 
@@ -393,8 +366,8 @@ cancel the job by hand.
 ## Pointers
 
 - `~/llama/README.md` holds the full description of the stack.
-- `~/llama/docs/kimi-code-web-ui.md` holds the Kimi Code web UI, a note on
-  the removed `spark` instance, and the general pattern for a Slurm cluster.
+- `~/llama/docs/kimi-code-web-ui.md` holds the removed Kimi Code web UI
+  instances and the general pattern for a Slurm cluster.
 - `~/llama/docs/dsh-web-ui.md` holds the DSH web UI.
 - `~/llama/docs/tailnet-config.md` holds the service and approval checks.
 - [tailnet-config.md](tailnet-config.md) holds the tailnet access rules.
@@ -407,3 +380,7 @@ cancel the job by hand.
 - 2026-09-21: The reservation `fs-cuda-13-upgrade` held all 973 GPU nodes for
   a driver upgrade. The reservation ended at 18:49:39 UTC. The stack started
   without help at 18:50:32 UTC.
+- 2026-10-21: The service name changed from `svc:llama` to `svc:m2`, so the
+  tailnet name matches the machine. The Kimi Code web UI left the stack, and
+  port 58627 left the service. The daily DSH update loop joined the control
+  loops. The clients' provider address changed to `m2.taildd337d.ts.net`.

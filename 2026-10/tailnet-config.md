@@ -9,7 +9,7 @@ admin.
 
 ## Policy file
 
-This section holds the policy snapshot from 2026-10-18. The admin console is
+This section holds the policy snapshot from 2026-10-21. The admin console is
 the authority. Fetch the current policy before each edit.
 
 ```json
@@ -50,11 +50,10 @@ the authority. Fetch the current policy before each edit.
 				"autogroup:member"
 			],
 			"dst": [
-				"svc:llama"
+				"svc:m2"
 			],
 			"ip": [
 				"8000",
-				"58627",
 				"3080",
 				"3081"
 			]
@@ -89,7 +88,7 @@ the authority. Fetch the current policy before each edit.
 
 	"autoApprovers": {
 		"services": {
-			"svc:llama": [
+			"svc:m2": [
 				"tag:llama-gateway"
 			],
 			"svc:comet": [
@@ -122,10 +121,9 @@ the authority. Fetch the current policy before each edit.
 			"src":   "yuekai@gmail.com",
 			"proto": "tcp",
 			"accept": [
-				"svc:llama:8000",
-				"svc:llama:58627",
-				"svc:llama:3080",
-				"svc:llama:3081"
+				"svc:m2:8000",
+				"svc:m2:3080",
+				"svc:m2:3081"
 			]
 		},
 		{
@@ -187,10 +185,10 @@ the authority. Fetch the current policy before each edit.
 - A `tag:comet-client` machine can reach `svc:comet` on port 8000 and port
   8088 only. The default denies each other connection. The default also
   denies SSH and peer-to-peer traffic.
-- `svc:llama` is for members only. The tailnet has one user, so there is no
-  client tag and no client grant. The member grant holds tcp:8000, tcp:58627,
-  tcp:3080, and tcp:3081. Port 3081 is the permanent bookmark port of the
-  llama DSH gate.
+- `svc:m2` is for members only. The tailnet has one user, so there is no
+  client tag and no client grant. The member grant holds tcp:8000, tcp:3080,
+  and tcp:3081. Port 3081 is the permanent bookmark port of the llama DSH
+  gate. The service is named for the m2 machine it fronts.
 - The `tests` section guards SSH access to `spark` at `100.91.181.87:22`. A
   member must keep this access. A gateway machine and a client machine must
   never get it.
@@ -200,7 +198,7 @@ the authority. Fetch the current policy before each edit.
   member. See [dsh-on-spark.md](dsh-on-spark.md).
 - The `tests` section also guards each service. A client accepts its service
   and nothing else. A gateway cannot start a connection. A member accepts
-  `svc:llama` on all four ports, and `svc:comet` on port 8000 and port 8088.
+  `svc:m2` on all three ports, and `svc:comet` on port 8000 and port 8088.
 
 ## Admin notes for agent use
 
@@ -257,3 +255,10 @@ is in `~/.agents/skills/tailscale/references/access-control.md`.
   to `iphone`, `syk-legionp` to `legionp`, and `syk-mbp` to `mbp`, and
   disabled key expiry on each. Every machine on the tailnet now has key
   expiry disabled.
+- 2026-10-21: The service name changed from `svc:llama` to `svc:m2` and lost
+  tcp:58627, the removed Kimi Code web UI. The new service was defined and
+  the policy updated before the service job requeued, so the new
+  advertisement was auto-approved. The API then deleted `svc:llama`, whose
+  VIPs were `100.86.243.193` and `fd7a:115c:a1e0::3d2f:f3c2`. `svc:m2` serves
+  `100.83.98.129` and `fd7a:115c:a1e0::82f:6282`. The machine name and the tag
+  stay `llama-gateway`.

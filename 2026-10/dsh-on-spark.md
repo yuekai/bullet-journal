@@ -59,9 +59,11 @@ The DSH home is `~/.dsh`. The provider settings are in
 change: the `llama` base URL.
 
 - The `llama` provider uses `openai-completions` at
-  `http://llama.taildd337d.ts.net:8000/v1` with `LLAMA_API_KEY`. The model
-  list holds `deepseek-v4.1-flash`, `kimi-k3`, and `glm-5.3`. New sessions use
-  `glm-5.3` with high effort.
+  `http://m2.taildd337d.ts.net:8000/v1` with `LLAMA_API_KEY`. The model list
+  holds `deepseek-v4.1-flash`, `kimi-k3`, and `glm-5.3`. New sessions use
+  `glm-5.3` with high effort. The host changed from `llama.taildd337d.ts.net`
+  on 2026-10-21, when the stack renamed its service to `svc:m2`; the service
+  was restarted to pick up the new patch.
 - The built-in DeepSeek API provider uses `DEEPSEEK_API_KEY`. The same key
   enables web search.
 
