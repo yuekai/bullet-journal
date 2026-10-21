@@ -757,5 +757,7 @@
   - Recovery: Beck and Dolean resumed from their saved state; petrunin-diffgeo had hung since 03:01 UTC with 14-hour Lean processes and resumed after scancel; Hefferon restarted with fresh run state (its main branch kept, no sketch had merged). New jobs 2747523–2747526; the other 7 runs keep the old save code until their next restart.
 - [x] **Start the deepseek-main engine pool** (`~/llama` @ `613f12b`)
   The pool had been scaled to zero at the user's request on Oct 19. Scaled it back to one replica to serve DeepSeek-V4.1-Flash again: the recipe already points at the 1017 weight-only checkpoint, so only the replica target changes. Job 2747395 started on fs-mbz-gpu-527, loaded the 1017 shards, and registered ready with the gateway; a chat smoke test through the gateway passed.
+- [x] **Start deepseek 1017 engine on k2m account** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `4b6bbaa`)
+  deepseek-main sat at zero on the original V4.1-Flash weights and iq is node-limited by the glm/kimi fleets, so the pool now runs one engine under the k2m account/QoS with the recipe swapped to the Oct 17 DeepSeek-V4.1-Flash-1017 checkpoint (config.json identical, so the cell args and the served name stayed). Job 2747430 came ready in ~16.5 min; warmup passed at the cell's 0.8/256 with 19.6 GB free per GPU, and a gateway smoke test passed (verification recorded in afd2bf5). The m2 llama fleet runs its own 1017 deepseek engine from the same hour (job 2747395), so both gateways now serve deepseek-v4.1-flash.
 
 
