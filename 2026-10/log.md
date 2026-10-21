@@ -736,3 +736,8 @@
 - [x] **Raise kimi-k2m to sixteen engines** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `8d4756d`)
   With 34 engines serving, per-engine queues had halved (~35 each), so six more kimi engines went to the k2m pool — the only route that starts at once while the iq QOSGrpNodeLimit still holds two kimi and two glm jobs. All six (2741245–2741278) started immediately; submit_cooldown briefly 30s, restored to 300s.
 
+## Wed, Oct 21, 2026
+
+- [x] **Reproduce flagship GLM-5.3 abliteration run** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/glm-5.3-abliteration` @ `5d2c242`)
+  The Flash reproduction validated the arXiv:2609.09793 pipeline; the flagship run applied it unchanged to GLM-5.3 (glm_moe_dsa, 78 layers, 19,616 writers): layer 35 selected from the sweep, 141 shards baked (2.4 h), diff gate exact (39,230/118,629), rank-one recovery 0.938 in family. Track A under the glm-5.3 judge: JBB 0.920→0.460, HB 0.947→0.433, SR 0.980→0.705 (mean 0.949→0.533) — the public method removes ~half the refusals, not ~97% (Anthropic: ~6% mean; on the Flash the same method reached 0.253 ours / 0.110–0.160 the paper's own artifact). XSTest 0.008→0.000, GPQA 0.515→0.515 unchanged, capability-4 intact (all McNemar p > 0.05). Findings: SR judge-vs-keyword 18.5pp divergence = soft refusals the keyword cannot see (judge kept primary, user decision); baked parity FAIL was an effort confound, not engines (same-effort probe passes, p=1.0). Report: results/comparison-glm53.md.
+
