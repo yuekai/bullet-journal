@@ -788,5 +788,11 @@
   The gateway node and its auth key carried tag:llama-gateway after the service became svc:m2. The tag is now tag:m2-gateway in the policy, the Service, the live node and a fresh auth key, so the names match. The machine name is unchanged.
   - Order: the policy held both tags first, then the API retagged the svc:m2 Service and the live node. The host stayed `approved:auto` and ports 8000/3080/3081 answered throughout, with no requeue.
   - The new key is in `~/llama/.env` on m2 and will take effect on the next restart. The old key was revoked, then the old tag left the policy. The tailnet notes are updated (`~/bullet-journal` @ `cf047b6`).
+- [x] **Stop builders once CI finds their task too easy** (`~/shrd/science-tasks` @ `e4fa958`)
+  Builders kept iterating for hours on tasks the gate rejects for difficulty (25 of 33 pilot tasks). Each tick the campaign driver reads the pipeline's run.json for every active builder's PR head; above gates.max_pass_rate it cancels the builder, marks the run too-easy (never resumed) and writes work/too-easy.md. The PR stays open, by the owner's choice (PR #9667).
+  - The restarted driver stopped 7 builders at once (#9649, #9631, #9621, #9623, #9648, #9613, #9590, all at 100%) and refilled their slots. It then caught #9617 live as its trials finished.
+  - Each stop waits up to 2 min for the cancelled job to leave squeue, so a tick with many stops is slow.
+- [x] **Accept backticked fields; retry blank classify** (`~/shrd/science-tasks` @ `af06186`)
+  The driver skipped proposals for good when their Scientific Domain line was wrapped in backticks (6 valid fields in the first hours, and the pilot selection silently dropped the same) or the classifier replied blank (2). Fields are now stripped of markdown, and a blank reply is retried (PR #9669). The 8 wrong rows were removed from the campaign's skipped.jsonl (backup kept), and the driver restarted as job 2754642.
 
 
