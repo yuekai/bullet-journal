@@ -807,5 +807,9 @@
   GLM-5.3 ran sixteen engines serving no requests; deepseek-v4.1-flash carried all live traffic on one replica. Cutting glm53-main to twelve and raising deepseek-main to eight moves capacity to the busy model.
   - The two pools sit in different QoS buckets (glm in `iq`, deepseek in `k2m`) and both were already over their node caps, so the freed GLM nodes could not fund the DeepSeek engines directly; the controller placed them anyway, one per five-minute submit cooldown, each ready after about eight minutes of loading.
   - GLM settled at twelve jobs within one reconcile, and no GLM traffic was lost because that pool had been idle.
+- [x] **Restart the Comet gateway killed by a full disk** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  The gateway had been down five hours because the service process died writing its own state file on a full filesystem: exit 1, and Slurm then terminated the allocation. Engines kept running but nothing could route to them, and `state/service.json` still said the gateway was healthy, so `comet status` looked fine. Resubmitted the service job; it re-registered all 53 ready workers and a smoke completion through the gateway returned.
+  - The first resubmission landed on a node where another user's vLLM already held the gateway port, so the new gateway refused to start as a duplicate. Excluded that node and resubmitted rather than changing any config, which also kept the resubmission on the documented `comet submit` path.
+  - The disk-full crash is still unguarded: a full state mount takes the front door down silently and nothing alerts on the stale `service.json`.
 
 
