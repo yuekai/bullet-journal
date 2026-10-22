@@ -803,5 +803,9 @@
   The 2026 "1,000 problems to challenge AI" story turned out to be an unpublished manuscript, so the problems were reassembled from what Sun does publish: nine problem lists on maths.nju.edu.cn/~zwsun, ten homepage prize conjectures and 281 papers. 294 PDFs (5,033 pages) are mirrored locally, pdftotext'ed, and split into one record per numbered conjecture, deduped at 80 % token containment to 1,511 unique statements (1,337 conjectures + 174 conjectural series), each keeping its source, page and bounty.
   - Series statements survive pdf-to-text badly (formulas); the page field is what makes them usable, so the PDFs stay alongside the dataset.
   - Not in it: the 400-page 2026 manuscript, and the 2021 book of 820 conjectures (ISBN 978-7-5603-4378-5) — neither is downloadable.
+- [x] **Rebalance four GLM engines into seven DeepSeek** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `a2037e1`)
+  GLM-5.3 ran sixteen engines serving no requests; deepseek-v4.1-flash carried all live traffic on one replica. Cutting glm53-main to twelve and raising deepseek-main to eight moves capacity to the busy model.
+  - The two pools sit in different QoS buckets (glm in `iq`, deepseek in `k2m`) and both were already over their node caps, so the freed GLM nodes could not fund the DeepSeek engines directly; the controller placed them anyway, one per five-minute submit cooldown, each ready after about eight minutes of loading.
+  - GLM settled at twelve jobs within one reconcile, and no GLM traffic was lost because that pool had been idle.
 
 
