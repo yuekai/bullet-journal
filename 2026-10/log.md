@@ -776,5 +776,13 @@
   API-posted check runs land in the commit's oldest Actions suite; a second Static Checks run supersedes it and branch protection ignores them, so gate-passed PRs hung BLOCKED (#9588, #9651). execution-checks and merge-gate are now commit statuses; the gate counts only github-actions[bot] statuses and carries an older green check run over (PR #9662).
   - #9662 swapped `checks: write` for `statuses: write`, which left checks at none, and `/gate` got HTTP 403 reading check runs; #9663 added `checks: read` 14 minutes later. No pipeline run failed in that window (runners were saturated).
   - Verified live: `/gate` on #9651 and #9588 posted both statuses as github-actions[bot] and each auto-merged within 4 s, so the Actions app pin accepts statuses.
+- [x] **Add a driver for the main build campaign** (`~/shrd/science-tasks` @ `cfa2ec6`)
+  Pilots were submitted by hand, 20 at a time, and a resumed builder's deadline counted from its run's birth. The driver keeps 60 builders running through all approved proposals, 24 h each from their own start, resumes unfinished pilot runs once, and guards weka (PR #9664).
+  - `pilot_archetypes.py drive`: tops up 10 per 10-minute tick; resumes first, then glm-classified new proposals in seeded order; pauses on `<campaign>/STOP` or under 50 TB free; prunes repo/ and work/ entries over 100 MB of runs finished a day ago.
+  - Verified: 188 tests pass (21 new); dry runs on a main node exercised both the resume and new-proposal paths.
+- [x] **Start the main build campaign** (`~/shrd/science-tasks` @ `cfa2ec6`)
+  Pilot results: 50 PRs from 60 builders, 4 merged, 25 of 33 with trial results too easy. Stopped the 24 pilot 1–2 builder jobs, then started the driver as job 2751649 (`campaign-driver`, main partition) over 9,511 approved proposals, target 60 builders, 24 h each.
+  - First two ticks resumed 20 pilot builders, all re-attached to their dsh sessions, and pruned 3 old not-viable/no-pr runs.
+  - State: `science-tasks-builders/campaign-2026-10-22/` (manifest.jsonl, skipped.jsonl, STOP to pause); log in `status/campaign-driver-2751649.out`.
 
 
