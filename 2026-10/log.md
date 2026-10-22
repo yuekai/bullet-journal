@@ -797,4 +797,11 @@
 - [x] **Run the v2 gated abliteration ladder** (`m2:/mnt/weka/shrd/k2m/yuekai.sun/glm-5.3-abliteration` @ `9aa103c`)
   v1 removed ~half the flagship's refusals (0.949→0.533) vs Anthropic's ~6%; the v2 plan ran every remaining lever behind gates: fine grid 16–47 (35 confirmed peak), guard-mask ablation (mask-10 optimal), rank-k (rank-2 +9.4pp at zero KL; k≥3 worse), paired diff-in-diffs and JBB-contrast fits (both weaker — the refusal circuit keys on the contrast itself), and an Anthropic-shape iterative refit (round-1 residual fully orthogonal but projecting it collapses bypass 0.531→0.219 at 3.5× KL — stopped). Winner: rank-2 @35 baked to glm-5.3-abliterated-v2 (diff gate exact 39,230/118,629, subspace cosine 0.955, leakage 0.045). Track A: mean 0.533→0.464 (JBB 0.400, HB 0.347 p=0.002, SR 0.647), every gate green (GPQA p=0.405, capability-4 all p>0.05, XSTest 0.004 at floor, matched-effort parity p=0.625). The residual 40-point gap is method-family-bound on this architecture. Ops: serve port race + two argparse gaps fixed at the driver level; the eval survived one 8 h serve death via auto-resume; quota freed by deleting the regenerable attn-collapse flash bake; comet gateway restarted after it died.
 
+## Thu, Oct 22, 2026
+
+- [x] **Collect 1,511 of Sun Zhiwei's open problems** (`~/sun-problems`)
+  The 2026 "1,000 problems to challenge AI" story turned out to be an unpublished manuscript, so the problems were reassembled from what Sun does publish: nine problem lists on maths.nju.edu.cn/~zwsun, ten homepage prize conjectures and 281 papers. 294 PDFs (5,033 pages) are mirrored locally, pdftotext'ed, and split into one record per numbered conjecture, deduped at 80 % token containment to 1,511 unique statements (1,337 conjectures + 174 conjectural series), each keeping its source, page and bounty.
+  - Series statements survive pdf-to-text badly (formulas); the page field is what makes them usable, so the PDFs stay alongside the dataset.
+  - Not in it: the 400-page 2026 manuscript, and the 2021 book of 820 conjectures (ISBN 978-7-5603-4378-5) — neither is downloadable.
+
 
