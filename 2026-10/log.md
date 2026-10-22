@@ -772,5 +772,9 @@
   Agents on spark reach m2 through Teleport credentials copied from the Mac, which expire every 24h, and they had no way to notice stale creds or ask for new ones. The new skill (installed in spark's ~/.agents/skills, linked into ~/.claude/skills; source in ~/tmp/teleport-m2) runs a check script that reports expiry, prints the exact Mac refresh command for the user, and can probe m2 end to end.
   - Verified on spark: expired, missing, and valid paths, plus a probe through `ssh m2`.
   - Corrections to the second-brain note: `tsh ssh` needs the node name (`m2-login-001`), not `m2`. With expired creds, `tsh ssh` starts a browser login that hangs. m2 connections are slow (10–20s) and sometimes hang, from the Mac too.
+- [x] **Post the required checks as commit statuses** (`~/shrd/science-tasks` @ `e7cd661`)
+  API-posted check runs land in the commit's oldest Actions suite; a second Static Checks run supersedes it and branch protection ignores them, so gate-passed PRs hung BLOCKED (#9588, #9651). execution-checks and merge-gate are now commit statuses; the gate counts only github-actions[bot] statuses and carries an older green check run over (PR #9662).
+  - #9662 swapped `checks: write` for `statuses: write`, which left checks at none, and `/gate` got HTTP 403 reading check runs; #9663 added `checks: read` 14 minutes later. No pipeline run failed in that window (runners were saturated).
+  - Verified live: `/gate` on #9651 and #9588 posted both statuses as github-actions[bot] and each auto-merged within 4 s, so the Actions app pin accepts statuses.
 
 
