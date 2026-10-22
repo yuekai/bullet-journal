@@ -811,5 +811,8 @@
   The gateway had been down five hours because the service process died writing its own state file on a full filesystem: exit 1, and Slurm then terminated the allocation. Engines kept running but nothing could route to them, and `state/service.json` still said the gateway was healthy, so `comet status` looked fine. Resubmitted the service job; it re-registered all 53 ready workers and a smoke completion through the gateway returned.
   - The first resubmission landed on a node where another user's vLLM already held the gateway port, so the new gateway refused to start as a duplicate. Excluded that node and resubmitted rather than changing any config, which also kept the resubmission on the documented `comet submit` path.
   - The disk-full crash is still unguarded: a full state mount takes the front door down silently and nothing alerts on the stale `service.json`.
+- [x] **Ride out comet outages in builders and the driver** (`~/shrd/science-tasks` @ `2751988`)
+  A full disk killed comet's gateway at 04:03 UTC for ~12 h. 24 builders died writing to the full disk, 37 spent all 20 resumes in seconds on connection errors, and the driver idled 8 h, then died (exit 120). Builders now wait out outages without spending resumes and rewrite patch.json for the gateway's new address. The driver pauses while comet doesn't serve glm-5.3, sets the gateway URL on every classify call (setdefault had pinned the dead one), and retries each cut-off run once ahead of new work (PR #9673).
+  - Restarted the driver as job 2764191. Its first tick retried 10 victims, all re-attached to their sessions on the new gateway; it marked 14 victims whose PR trials had finished too easy, and skipped #7505 and #1403, whose PRs merged during the outage.
 
 
