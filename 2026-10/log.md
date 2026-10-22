@@ -784,5 +784,9 @@
   Pilot results: 50 PRs from 60 builders, 4 merged, 25 of 33 with trial results too easy. Stopped the 24 pilot 1–2 builder jobs, then started the driver as job 2751649 (`campaign-driver`, main partition) over 9,511 approved proposals, target 60 builders, 24 h each.
   - First two ticks resumed 20 pilot builders, all re-attached to their dsh sessions, and pruned 3 old not-viable/no-pr runs.
   - State: `science-tasks-builders/campaign-2026-10-22/` (manifest.jsonl, skipped.jsonl, STOP to pause); log in `status/campaign-driver-2751649.out`.
+- [x] **Rename the gateway tag to tag:m2-gateway** (`~/llama` @ `702fd88`)
+  The gateway node and its auth key carried tag:llama-gateway after the service became svc:m2. The tag is now tag:m2-gateway in the policy, the Service, the live node and a fresh auth key, so the names match. The machine name is unchanged.
+  - Order: the policy held both tags first, then the API retagged the svc:m2 Service and the live node. The host stayed `approved:auto` and ports 8000/3080/3081 answered throughout, with no requeue.
+  - The new key is in `~/llama/.env` on m2 and will take effect on the next restart. The old key was revoked, then the old tag left the policy. The tailnet notes are updated (`~/bullet-journal` @ `cf047b6`).
 
 
