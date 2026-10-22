@@ -15,7 +15,7 @@ the authority. Fetch the current policy before each edit.
 ```json
 {
 	"tagOwners": {
-		"tag:llama-gateway": [
+		"tag:m2-gateway": [
 			"autogroup:admin"
 		],
 		"tag:comet-gateway": [
@@ -27,7 +27,7 @@ the authority. Fetch the current policy before each edit.
 	},
 
 	// Users keep full tailnet access. Tagged devices are not members, and no
-	// grant has tag:llama-gateway or tag:comet-gateway as src, so gateway
+	// grant has tag:m2-gateway or tag:comet-gateway as src, so gateway
 	// machines are inbound-only: they accept connections to their service
 	// (return traffic on allowed connections passes statefully) but cannot
 	// initiate connections to anything else on the tailnet.
@@ -89,7 +89,7 @@ the authority. Fetch the current policy before each edit.
 	"autoApprovers": {
 		"services": {
 			"svc:m2": [
-				"tag:llama-gateway"
+				"tag:m2-gateway"
 			],
 			"svc:comet": [
 				"tag:comet-gateway"
@@ -128,7 +128,7 @@ the authority. Fetch the current policy before each edit.
 		},
 		{
 			// The llama gateway must not initiate connections to other machines.
-			"src":   "tag:llama-gateway",
+			"src":   "tag:m2-gateway",
 			"proto": "tcp",
 			"deny": [
 				"100.91.181.87:22"
@@ -176,7 +176,7 @@ the authority. Fetch the current policy before each edit.
 
 - A member has full access to each machine on the tailnet. The rule is
   `autogroup:member` to `*`.
-- A gateway machine is inbound-only. The tag is `tag:llama-gateway` or
+- A gateway machine is inbound-only. The tag is `tag:m2-gateway` or
   `tag:comet-gateway`. The machine accepts connections to its service. The
   machine cannot start a connection to another machine. No grant has either
   tag as `src`, so the default denies the start.
@@ -262,3 +262,9 @@ is in `~/.agents/skills/tailscale/references/access-control.md`.
   VIPs were `100.86.243.193` and `fd7a:115c:a1e0::3d2f:f3c2`. `svc:m2` serves
   `100.83.98.129` and `fd7a:115c:a1e0::82f:6282`. The machine name and the tag
   stay `llama-gateway`.
+- 2026-10-21: The tag `tag:llama-gateway` became `tag:m2-gateway`. The
+  policy first held both tags. The API then retagged the `svc:m2` Service and
+  the live machine, and the host stayed `approved:auto` with no requeue. A
+  new auth key with `tag:m2-gateway` replaced `TS_AUTH_KEY` in
+  `~/llama/.env` on m2. The old key was revoked, and the old tag left the
+  policy. The machine name stays `llama-gateway`.

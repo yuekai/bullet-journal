@@ -198,7 +198,7 @@ Open the address from `state/dsh-url.txt`. Replace the host name with
 
 The stack starts a userspace `tailscaled` as a supervised child. The options
 are `--tun=userspace-networking` and `--state=mem:`. The machine joins the
-tailnet as `llama-gateway` with the tag `tag:llama-gateway`.
+tailnet as `llama-gateway` with the tag `tag:m2-gateway`.
 
 The machine advertises the service `svc:m2` on ports 8000, 3080, and 3081.
 The service name is the first label of `public_host` in `llama.toml`. The
