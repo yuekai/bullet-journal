@@ -876,3 +876,7 @@
   No code changed: repoprover landed only a state.json atomic-write fix, so the recorded toolsets remained accurate and the converter was re-run as-is. Updated the dataset card's per-role table and export date from the report; the 11,239 status:error segments are a gateway outage and a full filesystem, not model failures.
 - [x] **Export LLAMA_API_KEY into the shell env file**
   The gateway key lived only in the llama checkout's `api-key.yaml`, which `llama/service.py` reads to hand to the dsh it supervises, so any dsh launched from a plain shell had no key. `~/.env` now exports `LLAMA_API_KEY` beside the other provider keys, in the same `export` form and alphabetical spot, with the value copied verbatim from `api-key.yaml` rather than restated.
+- [x] **Add LLAMA_API_KEY to spark and local shell env**
+  The key was exported only where the gateway runs, so dsh sessions on the other two machines that call the llama gateway had nothing to authenticate with. `~/.env` on the spark remote and on this laptop now export `LLAMA_API_KEY`, appended in the existing `export KEY='value'` form.
+  - The value was pulled from `m2:~/llama/api-key.yaml` at write time and piped straight into each file rather than pasted, then compared by SHA-256 against the source on both targets: a copy that silently truncates or wraps would still look right in `tail`.
+  - Both files were backed up first as `~/.env.bak.<timestamp>`; neither had the variable, so no existing line was rewritten.
