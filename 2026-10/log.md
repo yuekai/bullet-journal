@@ -837,5 +837,7 @@
   10 of the 11 book runs had died over the previous day. /mnt/weka returned "No space left on device" at least six times between Oct 21 14:50 and Oct 22 02:23 UTC, each one crashing a coordinator outside the now-atomic state save. Crashed coordinators drained for hours before exiting, a comet gateway outage around 05:40 UTC hit them too, and petrunin-diffgeo lost its node. All were resumed from their saved state without code changes (user choice), as jobs 2771728–2771737; Hefferon kept running.
   - petrunin-euclidean-plane's base checkout had been left on an agent branch with uncommitted edits; they were stashed ("2026-10-23 recovery") and the checkout returned to main.
   - petrunin-diffgeo's Mathlib build artifacts were damaged ("Replaying Mathlib.Tactic: no such file"), so `lake exe cache get!` re-fetched them in a side job before it was resubmitted as 2771915; Beck is recompiling part of Mathlib from source after its restart.
+- [x] **Raise the build campaign to 64 builders** (`~/shrd/science-tasks`)
+  The user asked for 64 concurrent builders instead of 60. The target is a driver option, so the campaign driver was restarted with `--target 64` as job 2772109; its first tick submitted 4 new proposals and all 64 builder jobs run. The 2026-10-22 design row still records 60.
 
 
