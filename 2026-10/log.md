@@ -839,6 +839,9 @@
   - petrunin-diffgeo's Mathlib build artifacts were damaged ("Replaying Mathlib.Tactic: no such file"), so `lake exe cache get!` re-fetched them in a side job before it was resubmitted as 2771915; Beck is recompiling part of Mathlib from source after its restart.
 - [x] **Raise the build campaign to 64 builders** (`~/shrd/science-tasks`)
   The user asked for 64 concurrent builders instead of 60. The target is a driver option, so the campaign driver was restarted with `--target 64` as job 2772109; its first tick submitted 4 new proposals and all 64 builder jobs run. The 2026-10-22 design row still records 60.
+- [x] **Serve Kimi K3's native 1M context** (`~/llama` @ `4413155`)
+  Kimi K3 pinned --context-length 262144, a legacy guard against the model code's 4096 default, so the fleet served 256K of a 1M checkpoint. Pin 1048576 and raise mem-fraction 0.85 to 0.90: SGLang serves min(context, KV pool) and 0.85 sized only 793,728 tokens.
+  - The pool half is projected, not measured: at 0.85 the boot left 22.86 GiB outside the static pool and each token costs ~13.8 KiB per rank, so 0.90 should reach ~1.25M tokens; no canary was run (user's choice), so the next kimi-main launch is the gate. Both local dsh profiles now declare kimi-k3 at 1048576.
 
 ## Fri, Oct 23, 2026
 
