@@ -865,5 +865,9 @@
   - Editing `.env` alone does nothing: both stacks run `tailscaled` with `--state=mem:`, so the key is read only when the stack joins. Killing just the supervised `_tailnet` child re-joins it while the gateway and all engines keep running, which is why no service job was restarted.
   - The re-join registers a new device rather than reusing the old one, which left a duplicate `llama-gateway` and `comet-gateway` behind; those were deleted. `svc:m2` and `svc:comet` kept their VIPs throughout, so members saw no outage.
   - No policy edit was needed: `tagOwners` and `autoApprovers` already covered both tags. The stale `tcp:8088` comet grant was left alone, since the Service dropped that port long before.
+- [x] **Read Gate C: no writer group is a lever** (`~/shrd/k2m/yuekai.sun/glm-5.3-abliteration` @ `5e2e9ef`)
+  Phase C was the last targeting experiment in the v3 plan: the same writer-subset decomposition the Flash had, run on the flagship at layer 35 over the paper's 356-prompt probe set, plus a per-layer necessity sweep. All 231 sites drop refusal from 0.961 to 0.676, while the strongest single group carries 4% of that and every group sits within noise of base — the edit has to be the one v2 already makes.
+  - The anatomy is family-level, not checkpoint-level: the Flash read the same decomposition as 0.980 / 0.973 / 0.973 / 0.934 / 0.703 / 0.953 against the flagship's 0.961 / 0.969 / 0.957 / 0.961 / 0.949 / 0.676, including name-matching reaching 156 of 231 sites for 1.2pp.
+  - The gate needed a rule rather than an eyeball, so `scripts/gate_c_glm53.py` computes it from the stored generations (80% of the joint effect plus McNemar p < 0.01 for "sufficient", 20% for "inert") and merges the three concurrent part-file jobs. Answer: distributed — refusal is written redundantly at every site and every depth.
 
 
