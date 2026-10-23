@@ -850,5 +850,7 @@
   - Rollout is gated rather than done: a recipe edit restarts nothing, so the plan canaries one engine on kimi-k2m before the 48-engine roll, and the canary boot log — not the projection — decides whether the pool really clears 1M tokens.
 - [x] **Reduce deepseek-main to four engines** (`~/shrd/k2m/yuekai.sun/sglang-serve` @ `c2f767e`)
   All eight deepseek-v4.1-flash engines sat idle: zero queue depth and KV token usage at or below 0.05, so the pool held capacity nothing asked for. Cutting the target to four makes the controller cancel the four newest allocations on its next cycle and frees four 8xH200 nodes.
+- [x] **Add a one-shot comet load view** (`~/shrd/k2m/yuekai.sun/sglang-serve` @ `b21bd8c`)
+  Load was read through ad-hoc curls: nothing joined the gateway's Prometheus view with each engine's /metrics, so per-engine load and the gateway's opinion of that engine could only be compared by hand. `comet load` samples both and prints per-model and per-engine rows, and it scrapes the gateway at the host `state/comet-gateway.json` publishes rather than the loopback — port 29000 answered with 4 workers on the node the command ran from, while the real gateway listed 102, which is why the first version reported 0 of 66 records matched and read as an idle fleet.
 
 
