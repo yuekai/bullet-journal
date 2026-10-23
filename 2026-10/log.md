@@ -871,3 +871,6 @@
   - The gate needed a rule rather than an eyeball, so `scripts/gate_c_glm53.py` computes it from the stored generations (80% of the joint effect plus McNemar p < 0.01 for "sufficient", 20% for "inert") and merges the three concurrent part-file jobs. Answer: distributed — refusal is written redundantly at every site and every depth.
 
 
+- [x] **Re-export undergrad rollouts to the lean dataset** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `feeafc5`)
+  The 11 book runs have kept writing recordings since the first export, so the dataset file had to be rebuilt. Re-ran the existing exporter: 19,581 records / 803.5M tokens, up from 5,458 / 186.1M, and verified as a strict superset of the previous ids before replacing the file.
+  No code changed: repoprover landed only a state.json atomic-write fix, so the recorded toolsets remained accurate and the converter was re-run as-is. Updated the dataset card's per-role table and export date from the report; the 11,239 status:error segments are a gateway outage and a full filesystem, not model failures.
