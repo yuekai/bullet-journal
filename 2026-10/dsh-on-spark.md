@@ -54,23 +54,31 @@ ports. A policy test pins `100.91.181.87:3080` and `100.91.181.87:3081`. See
 
 ## Providers
 
-The DSH home is `~/.dsh`. The provider settings are in
-`~/.dsh/profiles/web/cordis.patch.yml`. The file is m2's patch with one
-change: the `llama` base URL.
+The DSH home is `~/.dsh`. The provider settings and the default model are in
+`~/.dsh/cordis.patch.yml`, the home patch layer that DSH applies over every
+profile after that profile's own patch. Web and headless therefore share one
+model list; a profile patch that named `llm-pi-ai` or `agent-default-model`
+would be overridden silently.
 
-- The `llama` provider uses `openai-completions` at
+- The `m2` provider uses `openai-completions` at
   `http://m2.taildd337d.ts.net:8000/v1` with `LLAMA_API_KEY`. The model list
-  holds `deepseek-v4.1-flash`, `kimi-k3`, and `glm-5.3`. New sessions use
-  `glm-5.3` with high effort. The host changed from `llama.taildd337d.ts.net`
-  on 2026-10-21, when the stack renamed its service to `svc:m2`; the service
-  was restarted to pick up the new patch.
+  holds `deepseek-v4.1-flash`, `kimi-k3`, and `glm-5.3`. New sessions in every
+  profile use `deepseek-v4.1-flash` with high effort. The host changed from
+  `llama.taildd337d.ts.net` on 2026-10-21, when the stack renamed its service
+  to `svc:m2`; the service was restarted to pick up the new patch.
+- The `anthropic` route lists three Claude models and resolves
+  `ANTHROPIC_API_KEY` from the credential store, which the web profile mounts;
+  the headless profile disables that store, so a headless session needs the key
+  in its environment.
 - The built-in DeepSeek API provider uses `DEEPSEEK_API_KEY`. The same key
   enables web search.
 
-`~/dsh-web/.env` holds both keys with mode 600. The keys came from m2
-`~/llama/api-key.yaml` and m2 `~/.env`.
+`~/dsh-web/.env` holds the two keys with mode 600, and the unit loads it
+through `EnvironmentFile`. A `dsh headless` run started from a shell has no
+keys unless `~/.env` is sourced first, so it cannot reach `m2` until then. The
+keys came from m2 `~/llama/api-key.yaml` and m2 `~/.env`.
 
-The llama provider depends on the llama stack. When the stack is down, use the
+The `m2` provider depends on the llama stack. When the stack is down, use the
 DeepSeek API provider.
 
 DSH disables its Settings page on a non-localhost host. Use `/model` or the
