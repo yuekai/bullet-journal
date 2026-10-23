@@ -845,5 +845,7 @@
 - [x] **Raise kimi-k3 to 1M context and grow its pool** (`~/shrd/k2m/yuekai.sun/sglang-serve` @ `32741ad`)
   The recipe pinned 262144 tokens, a quarter of Kimi-K3's native window, and the fp8 KV pool measured 766,720 tokens — less than the 1,048,576 one full-context request needs — so raising the bound alone would have advertised context the fleet could not serve. Mem-fraction 0.85 → 0.90 lifts the pool to ~1.28M tokens per rank, and the KDA state pool is pinned at 45 slots instead of a ratio, because the balanced ratio at an average length of 1M is ~0.010 and would clamp admission to a single request.
   - Rollout is gated rather than done: a recipe edit restarts nothing, so the plan canaries one engine on kimi-k2m before the 48-engine roll, and the canary boot log — not the projection — decides whether the pool really clears 1M tokens.
+- [x] **Reduce deepseek-main to four engines** (`~/shrd/k2m/yuekai.sun/sglang-serve` @ `c2f767e`)
+  All eight deepseek-v4.1-flash engines sat idle: zero queue depth and KV token usage at or below 0.05, so the pool held capacity nothing asked for. Cutting the target to four makes the controller cancel the four newest allocations on its next cycle and frees four 8xH200 nodes.
 
 
