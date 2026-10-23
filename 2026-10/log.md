@@ -840,4 +840,10 @@
 - [x] **Raise the build campaign to 64 builders** (`~/shrd/science-tasks`)
   The user asked for 64 concurrent builders instead of 60. The target is a driver option, so the campaign driver was restarted with `--target 64` as job 2772109; its first tick submitted 4 new proposals and all 64 builder jobs run. The 2026-10-22 design row still records 60.
 
+## Fri, Oct 23, 2026
+
+- [x] **Raise kimi-k3 to 1M context and grow its pool** (`~/shrd/k2m/yuekai.sun/sglang-serve` @ `32741ad`)
+  The recipe pinned 262144 tokens, a quarter of Kimi-K3's native window, and the fp8 KV pool measured 766,720 tokens — less than the 1,048,576 one full-context request needs — so raising the bound alone would have advertised context the fleet could not serve. Mem-fraction 0.85 → 0.90 lifts the pool to ~1.28M tokens per rank, and the KDA state pool is pinned at 45 slots instead of a ratio, because the balanced ratio at an average length of 1M is ~0.010 and would clamp admission to a single request.
+  - Rollout is gated rather than done: a recipe edit restarts nothing, so the plan canaries one engine on kimi-k2m before the 48-engine roll, and the canary boot log — not the projection — decides whether the pool really clears 1M tokens.
+
 
