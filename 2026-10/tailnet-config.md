@@ -268,3 +268,16 @@ is in `~/.agents/skills/tailscale/references/access-control.md`.
   new auth key with `tag:m2-gateway` replaced `TS_AUTH_KEY` in
   `~/llama/.env` on m2. The old key was revoked, and the old tag left the
   policy. The machine name stays `llama-gateway`.
+- 2026-10-23: Both gateway auth keys were rotated. New keys
+  `kmbtZCfYMc11CNTRL` (`tag:m2-gateway`) and `kRuF4eQ6Wh11CNTRL`
+  (`tag:comet-gateway`) expire 2027-01-21. The old `kADyhbfZBo11CNTRL` and
+  `kTEoCG1NdJ11CNTRL` were revoked. Only `TS_AUTH_KEY` changed; no policy
+  edit was needed. Because each stack runs `tailscaled` with `--state=mem:`,
+  editing `.env` alone does nothing: the supervised `_tailnet` child must be
+  killed so it re-joins. Re-joining mints a **new device** rather than
+  re-authenticating the old one, so the superseded `llama-gateway` and
+  `comet-gateway` devices were deleted afterwards. `svc:m2` and `svc:comet`
+  kept their VIPs throughout, so members saw no outage. The gateway Slurm
+  jobs (2605661, 2763376) were never restarted and the engines kept serving.
+  The comet grant and tests still list `tcp:8088`, but the comet Service
+  dropped that port earlier; the grant is stale and left in place.

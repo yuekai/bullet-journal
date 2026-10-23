@@ -207,6 +207,15 @@ The service name is the first label of `public_host` in `llama.toml`. The
 The stack reads `TS_AUTH_KEY` from `~/llama/.env`. The stack moves the key
 through a private file and removes the file after the authentication.
 
+To rotate the key, replace the value in `.env` and then kill the `_tailnet`
+child process. A restart is not enough on its own: `tailscaled` runs with
+`--state=mem:`, so the stack reads the key only when it joins. The supervisor
+starts the child again within `retry_seconds`, and the child joins with the
+new key. The gateway, the web UI, and the engines do not restart. The new
+join creates a new tailnet device, so delete the old `llama-gateway` device
+afterwards. `svc:m2` keeps its VIPs, so members see no outage. The comet
+stack rotates the same way.
+
 A tailnet fault does not stop the cluster-side service. The gateway, the
 web UI, and the engines continue to run.
 
