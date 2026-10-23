@@ -874,3 +874,5 @@
 - [x] **Re-export undergrad rollouts to the lean dataset** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `feeafc5`)
   The 11 book runs have kept writing recordings since the first export, so the dataset file had to be rebuilt. Re-ran the existing exporter: 19,581 records / 803.5M tokens, up from 5,458 / 186.1M, and verified as a strict superset of the previous ids before replacing the file.
   No code changed: repoprover landed only a state.json atomic-write fix, so the recorded toolsets remained accurate and the converter was re-run as-is. Updated the dataset card's per-role table and export date from the report; the 11,239 status:error segments are a gateway outage and a full filesystem, not model failures.
+- [x] **Export LLAMA_API_KEY into the shell env file**
+  The gateway key lived only in the llama checkout's `api-key.yaml`, which `llama/service.py` reads to hand to the dsh it supervises, so any dsh launched from a plain shell had no key. `~/.env` now exports `LLAMA_API_KEY` beside the other provider keys, in the same `export` form and alphabetical spot, with the value copied verbatim from `api-key.yaml` rather than restated.
