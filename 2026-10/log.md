@@ -978,3 +978,6 @@
 
 - [x] **Add the Modal CLI to the repo env** (`~/shrd/k2m/yuekai.sun/science-tasks`)
   Modal was not installed anywhere this repo runs from, and conda-forge's `modal` is an unrelated scikit-learn helper, so the cloud CLI went in as a `pypi-dependency` of the existing pixi env rather than a new one. The `mbzuai-ifm` profile in `~/.modal.toml` already resolves as the active profile — `modal profile list` marks it, and an authenticated `modal environment list` returned the workspace's six environments — so no `MODAL_PROFILE` export is needed.
+- [x] **Install the Modal agent skill for all three CLIs**
+  The Modal CLI ships an agent skill — `SKILL.md` plus 219 downloaded documentation pages under `references/` — but nothing had installed it, so no agent knew Modal's conventions. It now lives once in `~/.agents/skills/modal`, the shared root dsh scans natively, and `~/.claude/skills/modal` and `~/.kimi-code/skills/modal` are relative symlinks to it, so the three CLIs share one copy and a single `modal skills update -g` keeps all of them current.
+  - Both subcommands write into the current directory's `.agents/` unless given `-g`: an early `modal skills update` dropped a second 1.8 MB copy into the science-tasks skill root, which ranks above the user root and would have shadowed the global skill. Removed after checking the resolved path against the repo.
