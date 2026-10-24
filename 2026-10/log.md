@@ -941,3 +941,8 @@
   The new harness docs called `kimi` the base branch while `AGENTS.md` and the `initialize` skill still said to branch off `main`, which is the public repo's released Claude-Code line, so a fresh run could fill `OPERATOR.md` directly on the base and trip the new H009 check. The model is now stated once in the engineering map and the other files point at it; `AGENTS.md`'s Git section no longer repeats a branch name.
   - This supersedes the previous entry's "AGENTS.md untouched": the operator approved the edit, and the file gained a pointer rather than a second copy of the model.
   - `initialize` now branches off `kimi` as well as `main`, which is what makes H009 satisfiable in the flow it guards.
+- [x] **Rename the base branch from kimi to main** (`~/Danus` @ `1f48b69`)
+  The base branch was named after the runtime (`kimi`) while `AGENTS.md`, `README.md` and the CI push filter all called the base `main`, so the repo contradicted its own docs. The operator hard-reset the branch to `b6fd307`, dropping the doc-only fix above, and renamed `kimi` → `main`; the harness then retargeted to the new name, so the older wording became correct rather than stale.
+  - Renaming alone disarmed the blank-profile invariant: H009 guarded on the literal `kimi`, so it passed silently on every run. Its guard now names `main` and is proven to fire again by filling a bullet in `OPERATOR.md` and watching it fail.
+  - No local `main` or `claude` ref existed, so the paired request to rename `main` → `claude` had no target; the operator dropped it. The local `codex` branch is the Codex runtime line, not the Claude Code one.
+  - The dropped commit `c7a0234` is still reachable through the reflog, and nothing was pushed.
