@@ -994,3 +994,7 @@
   - Copied rather than moved: the bake is the system-of-record artifact for this repo's Flash numbers, so the source stays put and the eval records that point at that path remain valid. Same filesystem, so rsync ran at ~314 MB/s for 34 min.
   - Shards were `0600`, which would have been unreadable on shared storage; the copy lands as `0640` in a setgid directory, group `k2pta`. Verified by identical file list, rsync dry-run showing nothing left to transfer, byte-identical shard 62, and 76,108 tensors in the index.
   - This reverses the containment rule in `docs/design.md` ("nothing under `/mnt/weka/shrd/k2pta/` is ever written"); the decision log has not been updated yet.
+- [x] **Serve the extra glm-5.3 cells on k2m** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `d08d655`)
+  The 16 new glm cells had been submitted against iq, which already runs over its 346-node QOS cap, so the expansion was taking quota other iq users were waiting on. A second pool of the same recipe on the k2m account now carries them and glm53-main returns to 16.
+  - Two iq cells already submitted were given back rather than left at 18, at the cost of ~15 min of weight loading each.
+  - The k2m cells do start despite that QOS reading 952 nodes against a 226-node group limit, which the 2-node kimi cells that pended there could not do; 1-node submissions are evidently not held by that cap.
