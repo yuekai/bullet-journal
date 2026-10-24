@@ -946,3 +946,8 @@
   - Renaming alone disarmed the blank-profile invariant: H009 guarded on the literal `kimi`, so it passed silently on every run. Its guard now names `main` and is proven to fire again by filling a bullet in `OPERATOR.md` and watching it fail.
   - No local `main` or `claude` ref existed, so the paired request to rename `main` → `claude` had no target; the operator dropped it. The local `codex` branch is the Codex runtime line, not the Claude Code one.
   - The dropped commit `c7a0234` is still reachable through the reflog, and nothing was pushed.
+- [x] **Rename the upstream main branch to claude** (`~/Danus`)
+  The `UMich-FATML/Danus` default branch was `main`, a name that collided both with the local base branch of that name (an unrelated history) and with the public release repo's Claude Code line; the operator wanted the upstream line called `claude`. It is renamed in place at `1a2cb99`, with `claude` now the repository default and `codex` the only other branch.
+  - A git-level rename could not do this: `git push --delete main` is rejected while `main` is the default branch, so `claude` was created and then the GitHub branch-rename endpoint moved the default (and would have retargeted open PRs, of which there are none).
+  - `gh` is what authenticates this checkout's pushes but was off `PATH`; it lives in the `eval360-scheduler` conda env.
+  - Local tracking follows the rename: the stale `origin/main` ref is dropped and `origin/claude` added. The fetch refspec is narrowed to `codex` only, so `claude` does not auto-fetch unless the refspec is widened.
