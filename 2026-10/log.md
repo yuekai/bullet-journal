@@ -937,3 +937,7 @@
   - Enforced rather than documented: paths named in docs resolve, skills keep conforming frontmatter and cite no gated tool, `danus/core` stays stdlib-only, layer edges are pinned, no secret or generated state is committed, the port table matches the code, and `OPERATOR.md` stays blank on `kimi`.
   - `AGENTS.md` was left untouched because it is the deployed swarm's prompt; a `CLAUDE.md` router and `CONTRIBUTING.md` send repo work to the new engineering map, invariants reference, plan directory and debt list instead.
   - The first end-to-end run caught a real trap: sourcing `scripts/env.sh` exports the operator's live keys and flips a strategy config test, so the check command resolves its interpreter without it and the trap is written down.
+- [x] **Point the docs at one base branch** (`~/Danus` @ `c7a0234`)
+  The new harness docs called `kimi` the base branch while `AGENTS.md` and the `initialize` skill still said to branch off `main`, which is the public repo's released Claude-Code line, so a fresh run could fill `OPERATOR.md` directly on the base and trip the new H009 check. The model is now stated once in the engineering map and the other files point at it; `AGENTS.md`'s Git section no longer repeats a branch name.
+  - This supersedes the previous entry's "AGENTS.md untouched": the operator approved the edit, and the file gained a pointer rather than a second copy of the model.
+  - `initialize` now branches off `kimi` as well as `main`, which is what makes H009 satisfiable in the flow it guards.
