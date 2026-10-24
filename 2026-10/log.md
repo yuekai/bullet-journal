@@ -976,6 +976,9 @@
 
 ## Sat, Oct 24, 2026
 
+- [x] **Settle four OPG problems in one evening** (`~/Danus` @ `9bc13c6`)
+  The Open Problem Garden campaign (12 live projects, 84 verifier-gated workers) settled four problems in ~2.3 hours, all four resolving claimed-2026 preprints with fully independent in-graph re-proofs: the Beneš conjecture (true exactly n=2, false n≥3), 3-accessibility of Fibonacci (doa(F)=2), Rota's unimodality + the folklore log-concavity conjecture for flat counts (both false, explicit q-lift counterexamples down to a 79-element matroid), and the long-rainbow threshold T_k (the conjectured Θ(k²) is false — true order Θ(k² log k), the entire Geneson lower-bound chain re-derived in-text). The shuffle-exchange refutation (d(k,3)≥6 ∀k≥3) is accepted and settling. The pattern that paid everywhere: when the verifier rejects a monolithic submission, decompose into small facts — corrected resubmissions then pass in minutes.
+
 - [x] **Add the Modal CLI to the repo env** (`~/shrd/k2m/yuekai.sun/science-tasks`)
   Modal was not installed anywhere this repo runs from, and conda-forge's `modal` is an unrelated scikit-learn helper, so the cloud CLI went in as a `pypi-dependency` of the existing pixi env rather than a new one. The `mbzuai-ifm` profile in `~/.modal.toml` already resolves as the active profile — `modal profile list` marks it, and an authenticated `modal environment list` returned the workspace's six environments — so no `MODAL_PROFILE` export is needed.
 - [x] **Install the Modal agent skill for all three CLIs**
