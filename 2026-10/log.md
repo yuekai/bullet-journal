@@ -951,3 +951,8 @@
   - A git-level rename could not do this: `git push --delete main` is rejected while `main` is the default branch, so `claude` was created and then the GitHub branch-rename endpoint moved the default (and would have retargeted open PRs, of which there are none).
   - `gh` is what authenticates this checkout's pushes but was off `PATH`; it lives in the `eval360-scheduler` conda env.
   - Local tracking follows the rename: the stale `origin/main` ref is dropped and `origin/claude` added. The fetch refspec is narrowed to `codex` only, so `claude` does not auto-fetch unless the refspec is widened.
+- [x] **Push the local main upstream** (`~/Danus` @ `d9cdca3`)
+  The local `main` — the engine-plus-harness line — had no upstream at all, so the organisation repo carried only the renamed deployment lines. It is now published as `main` on `UMich-FATML/Danus`, which leaves that repo with three branches: `main` (this line, `d9cdca3`), `claude` (the line renamed off `main`, `1a2cb99`) and `codex`.
+  - The clone's fetch refspec was narrowed to `codex` alone — an artifact of a single-branch clone — so `origin/main` never existed and the upstream set by `push -u` could not resolve. Widened it to the standard `+refs/heads/*:refs/remotes/origin/*` glob.
+  - The first CI run failed on a fresh clone for a reason local checks cannot see: H001 flagged a doc path into `danus/verify/agent`, a directory that only exists where the verify service has provisioned it, and its gitignore rule names a directory, so it matches only when queried with a trailing slash. H001 now probes both forms, with a regression test; CI is green on 3.10 and 3.13.
+  - The repository default is still `claude`, not the freshly pushed `main`.
