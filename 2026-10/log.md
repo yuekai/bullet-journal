@@ -1035,3 +1035,8 @@
   - Resumed builders validate with their own branch's copy of sandbox/, so they would have kept calling EC2. The launcher now tells a resumed builder to merge origin/main when main's sandbox tooling differs from its branch (#9745). docs/design.md records the 64-builder target and this re-window.
   - Per the owner, all 64 builders live at the pause got one more 24 h window (manifest kind rewindow): 39 had been cancelled at the pause, and 25 spent their whole window on dead EC2. Two failed preflight on a webql proxy startup race and were resubmitted. The driver restarted at 64 (job 2803670).
   - Within minutes, 61 of 64 had merged main and Modal sandboxes were running their validations.
+- [x] **Drive the :8092 main agent from the lead session** (`~/Danus` @ `9bb012c`)
+  The Danus main agent sat idle for hours: a dsh web session acts only on a message, and none was ever sent, so the 12-project fleet ran with nobody steering after round 1. `opg/drive_main.py` now speaks the browser's HTTP API (launch-token cookie, `/api/session/*`), so the lead session can create the main agent's session, send it messages and read its progress without a browser.
+  - The kickoff (kept as `opg/main_agent_kickoff.md`) adapts the single-project contract to 12 projects: one campaign goal, a light pass over every project each 30-minute beat, and a rotating deep pass so each project is steered at least every ~2 h.
+  - First beat verified against the filesystem: goal and both reminders created, round-2 assignments written for the four longest-running projects, campaign file committed.
+  - The lead keeps an hourly oversight reminder to read the beat reports, spot-check them, and relay forks to the operator.
