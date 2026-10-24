@@ -989,3 +989,8 @@
   The fleet was pointed the wrong way round: kimi-k3 held 366 admission slots for 60 active requests while glm-5.3 queued 241 requests across 16 cells at 117s average. kimi-k2m drops to 0 so its 56 nodes stop carrying idle kimi capacity, and glm53-main goes to 32 to meet the demand that exists.
   - kimi-k3 then ran 76 active on the remaining 28 cells (41% of 186 slots) at 71s average, so the drain cost kimi real headroom; the 1M rollout for that pool is frozen and the active plan's status records it.
   - glm53-main is capped by the iq QOS, which sits at 346 of its 346 nodes: new glm cells start only as iq usage dips, so the pool fills gradually rather than at the submit cooldown's pace.
+- [x] **Promote the Flash abliteration to the shared store** (`~/shrd/k2m/yuekai.sun/glm-5.3-abliteration`)
+  The Flash bake (`checkpoints/glm-5.3-flash-abliterated-streammean`, 62 shards / 306 GB) lived only under the project's gitignored `checkpoints/`, so nobody else could load it. It now also sits at `/mnt/weka/shrd/k2pta/models/GLM-5.3-Flash-abliterated` for the group to use.
+  - Copied rather than moved: the bake is the system-of-record artifact for this repo's Flash numbers, so the source stays put and the eval records that point at that path remain valid. Same filesystem, so rsync ran at ~314 MB/s for 34 min.
+  - Shards were `0600`, which would have been unreadable on shared storage; the copy lands as `0640` in a setgid directory, group `k2pta`. Verified by identical file list, rsync dry-run showing nothing left to transfer, byte-identical shard 62, and 76,108 tensors in the index.
+  - This reverses the containment rule in `docs/design.md` ("nothing under `/mnt/weka/shrd/k2pta/` is ever written"); the decision log has not been updated yet.
