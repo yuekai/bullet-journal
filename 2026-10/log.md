@@ -956,3 +956,7 @@
   - The clone's fetch refspec was narrowed to `codex` alone — an artifact of a single-branch clone — so `origin/main` never existed and the upstream set by `push -u` could not resolve. Widened it to the standard `+refs/heads/*:refs/remotes/origin/*` glob.
   - The first CI run failed on a fresh clone for a reason local checks cannot see: H001 flagged a doc path into `danus/verify/agent`, a directory that only exists where the verify service has provisioned it, and its gitignore rule names a directory, so it matches only when queried with a trailing slash. H001 now probes both forms, with a regression test; CI is green on 3.10 and 3.13.
   - The repository default is still `claude`, not the freshly pushed `main`.
+- [x] **Set the upstream default branch to main** (`~/Danus`)
+  After the push, `UMich-FATML/Danus` still defaulted to `claude`, so a fresh clone, and the base of every new pull request, landed on the older line. The default is now `main` (`d9cdca3`), which is what the repo's own branch model calls the base; `claude` and `codex` remain as ordinary branches.
+  - The local remote-tracking HEAD follows, so `origin/HEAD` no longer points at a branch that the model calls non-base.
+  - Neither branch carries protection rules or rulesets, so the switch needed no coordinating change; nothing gates pushes to the new default.
