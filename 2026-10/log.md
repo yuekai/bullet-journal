@@ -973,3 +973,8 @@
   - `dsh --patch` must precede the app flags: the launcher hands every token after the first unknown one to the booted app, so a `--patch` after `--no-open` is rejected as an unknown option.
   - That a host-mounted `mcp-client` row reaches the agent under dsh's preset realm was confirmed from the running deployment's own `mcp__keenable__*` tools rather than assumed.
   - The lint rules were re-derived for this branch, not copied: no `strategy` layer, `codex` as the shared launcher leaf, `.agents/skills` as a real tree, and `dsh` as H009's base branch.
+
+## Sat, Oct 24, 2026
+
+- [x] **Add the Modal CLI to the repo env** (`~/shrd/k2m/yuekai.sun/science-tasks`)
+  Modal was not installed anywhere this repo runs from, and conda-forge's `modal` is an unrelated scikit-learn helper, so the cloud CLI went in as a `pypi-dependency` of the existing pixi env rather than a new one. The `mbzuai-ifm` profile in `~/.modal.toml` already resolves as the active profile — `modal profile list` marks it, and an authenticated `modal environment list` returned the workspace's six environments — so no `MODAL_PROFILE` export is needed.
