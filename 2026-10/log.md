@@ -998,3 +998,8 @@
   The 16 new glm cells had been submitted against iq, which already runs over its 346-node QOS cap, so the expansion was taking quota other iq users were waiting on. A second pool of the same recipe on the k2m account now carries them and glm53-main returns to 16.
   - Two iq cells already submitted were given back rather than left at 18, at the cost of ~15 min of weight loading each.
   - The k2m cells do start despite that QOS reading 952 nodes against a 226-node group limit, which the 2-node kimi cells that pended there could not do; 1-node submissions are evidently not held by that cap.
+- [x] **Retry failed coordinator loop iterations** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `e0b6163`)
+  Every book run crashed within a day of each restart, mostly on transient ENOSPC from /mnt/weka and once on a state dict mutated mid-save by a review thread, and each crash drained for hours before exiting. Failed loop iterations now retry with backoff (only 20 failures in a row crash the coordinator), the base checkout is returned to main after a failure, and the save snapshot retries. Pushed to the UMich-FATML fork.
+- [x] **Supervise repoprover run in the Slurm job** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `a56dea4`)
+  When a coordinator exited, its job ended with it. The job script now restarts the coordinator after a 2-minute backoff, puts the base checkout back on main first, stops after three sub-10-minute exits in a row, and re-fetches Mathlib once if lake build fails.
+  - All 11 runs were cancelled (3 had been draining since their crashes) and resumed from saved state as jobs 2802119–2802129. Before the restart: 103/135 chapters sketched, 1,764 theorems proved.
