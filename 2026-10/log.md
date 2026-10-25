@@ -1064,3 +1064,6 @@
   kimi-k3 was queueing 757 requests at 297s average while kimi-lowprio contributed only 2 of its 16 allocations, so the extra 16 cells went to the kimi pool that schedules on the main partition rather than to the preemptible one.
   - Every new cell so far pends with QOSGrpNodeLimit: the k2m group runs 905 nodes against a 226-node cap, so this is a queue position, not capacity. The submit cooldown still lands all 16 within ~75 minutes.
   - The lowprio half of the same model remains 14 cells pending on Priority, so kimi's shortfall is now mostly a scheduling question rather than a fleet-size one.
+- [x] **Draft the AI Datasets proposal note** (`~/bullet-journal` @ `34a86fa`)
+  The note was an empty skeleton. It now holds the three-aim draft for NSF 26-512 (due Nov 4): the RFP's criteria and required sections, each aim named by the existing dataset it enhances (public databases and Mathlib for Aim 2; the 722-paper OpenAI release and one empirical dataset for Aim 3), agent-scale research with verification gates as the method shared by Aims 2–3, UMich partner candidates, risks and open questions.
+  - Draft: [ai-datasets-proposal.md](ai-datasets-proposal.md)
