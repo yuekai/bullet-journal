@@ -1057,3 +1057,6 @@
   - The 2026 preprint claim (Chojecki, arXiv:2607.15296) that the fleet was sent to verify is confirmed, with a complete independent proof from first principles rather than a citation of the preprint.
   - The refutation affects only the general conjecture: the Shuffle-Exchange central case is a separate live project, since the bottleneck family is not a shuffle-exchange instance.
   - The project's 7 workers were stopped gracefully and its array slot passes to the next queued problem (equality in a matroidal circumference bound), whose round-1 lanes were checked before launch.
+- [x] **Run 32 self-hosted runners in three Slurm jobs** (`~/science-tasks` @ `9a2914a`)
+  Sixteen runners could not keep up with 64 builders: after the restart all were busy and 23 pipeline runs waited up to 4 h. On Modal a runner mostly waits on sandboxes, so a third 16-CPU job (Slurm 2806031) hosts runners 17-32 without restarting the running ones.
+  - All 32 came online busy at once; within minutes the queue fell to 8. Live sandboxes rose to 114 of the 128 cap, which is the next limit.
