@@ -1060,3 +1060,7 @@
 - [x] **Run 32 self-hosted runners in three Slurm jobs** (`~/science-tasks` @ `9a2914a`)
   Sixteen runners could not keep up with 64 builders: after the restart all were busy and 23 pipeline runs waited up to 4 h. On Modal a runner mostly waits on sandboxes, so a third 16-CPU job (Slurm 2806031) hosts runners 17-32 without restarting the running ones.
   - All 32 came online busy at once; within minutes the queue fell to 8. Live sandboxes rose to 114 of the 128 cap, which is the next limit.
+- [x] **Raise kimi-k2m to 32 engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `732e867`)
+  kimi-k3 was queueing 757 requests at 297s average while kimi-lowprio contributed only 2 of its 16 allocations, so the extra 16 cells went to the kimi pool that schedules on the main partition rather than to the preemptible one.
+  - Every new cell so far pends with QOSGrpNodeLimit: the k2m group runs 905 nodes against a 226-node cap, so this is a queue position, not capacity. The submit cooldown still lands all 16 within ~75 minutes.
+  - The lowprio half of the same model remains 14 cells pending on Priority, so kimi's shortfall is now mostly a scheduling question rather than a fleet-size one.
