@@ -1071,3 +1071,10 @@
   The gate that validates every rollout materializes whole conversations, so the export outgrew the 48G a login-node session gets and was killed partway through this corpus. The exporter now streams recordings and writes accepted records in bounded batches, and `pixi run -e export export-slurm` hands the work to a compute node instead.
   Re-exported 24,375 records / 1.09B tokens (up from 19,581 / 803.5M), verified as a strict superset of the previous ids before replacing the dataset file and refreshing its per-role table. A new status:max_iterations skip class (11 segments) is dropped like the error ones.
 
+## Sun, Oct 25, 2026
+
+- [x] **Run each book across four nodes** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `72291b0`)
+  Single-node runs put 100+ agents' Lean work on 16 CPUs: ~10k REPL timeouts a day per book, OOM kills, and file errors on nodes holding three books; theorems proved moved only 1,764 → 1,782 in a day. Each book now runs RepoProver's distributed mode on 4 nodes (16 CPU, 256G, 6 REPLs each; user choice), and agent tasks spread evenly over the four workers.
+  - Setup now also preflights every node (`--exclude` for bad ones), recovers a corrupted shared ~/.cache/mathlib (0-byte leantar), and restores agent edits to the shared Mathlib checkout (one book had 125 files deleted, another 14 tactic files truncated), each of which had broken a restart. Commits `01acc51`, `1c7e464`, `b109db8`, `72291b0`.
+  - Beck's and petrunin-euclidean-plane's old jobs hung in COMPLETING holding Lake file locks, so their stale `lakefile.olean.lock` files were removed and both submitted directly (2814211, 2814212). The other jobs: 2813763, 2813847–2813850, 2813853, 2813854, 2814013, 2814105.
+
