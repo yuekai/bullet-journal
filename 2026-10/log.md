@@ -1067,3 +1067,7 @@
 - [x] **Draft the AI Datasets proposal note** (`~/bullet-journal` @ `34a86fa`)
   The note was an empty skeleton. It now holds the three-aim draft for NSF 26-512 (due Nov 4): the RFP's criteria and required sections, each aim named by the existing dataset it enhances (public databases and Mathlib for Aim 2; the 722-paper OpenAI release and one empirical dataset for Aim 3), agent-scale research with verification gates as the method shared by Aims 2–3, UMich partner candidates, risks and open questions.
   - Draft: [ai-datasets-proposal.md](ai-datasets-proposal.md)
+- [x] **Export rollouts from a SLURM job** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `618b9a6`)
+  The gate that validates every rollout materializes whole conversations, so the export outgrew the 48G a login-node session gets and was killed partway through this corpus. The exporter now streams recordings and writes accepted records in bounded batches, and `pixi run -e export export-slurm` hands the work to a compute node instead.
+  Re-exported 24,375 records / 1.09B tokens (up from 19,581 / 803.5M), verified as a strict superset of the previous ids before replacing the dataset file and refreshing its per-role table. A new status:max_iterations skip class (11 segments) is dropped like the error ones.
+
