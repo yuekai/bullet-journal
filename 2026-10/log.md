@@ -1088,3 +1088,10 @@
   - The 64 are snapshotted in campaign-2026-10-22/paused-20261026.json for a fresh 24 h window once the limit is raised.
   - Launchers that died on the error left dead `launching` ledger entries, each holding a sandbox slot until its deadline. I cleared 78 of them; builder build-630 had been clearing such entries by itself.
 
+## Mon, Oct 26, 2026
+
+- [x] **Kill orphaned export workers in the gateway job** (`~/llama`)
+  dsh web, the gate and the model gateway froze around 04:07 UTC. They were not down: the gateway job sat at its 48G memory cap, thrashing. Most of that memory belonged to undergrad-todo export_rollouts.py processes that a dsh agent had started inside the job on Oct 25, then abandoned when it moved the export to its own Slurm job. Killing those processes freed the memory, and all three services answer again.
+  - Agent tools run inside the gateway job, so heavy agent work can starve the service again.
+  - Separate open issue: the daily dsh update has failed since Oct 23 with npm EALLOWSCRIPTS, because npm now rejects --allow-scripts in project installs.
+
