@@ -1087,6 +1087,11 @@
   Since about 18:00 UTC on Oct 25, Modal has refused every new sandbox: environment en-uPNQ78uIv6fQrQOoSTDO4G exceeded its spend limit. Running sandboxes were lost as it hit, so 71 agent reviews errored, and no task merged after 13:49. Per the owner, the driver is stopped (STOP set) and all 64 builders are cancelled.
   - The 64 are snapshotted in campaign-2026-10-22/paused-20261026.json for a fresh 24 h window once the limit is raised.
   - Launchers that died on the error left dead `launching` ledger entries, each holding a sandbox slot until its deadline. I cleared 78 of them; builder build-630 had been clearing such entries by itself.
+- [**Lean undergrad-gap formalization env plan**](lean-undergrad-trajectory-env-plan.md) (`DSH-session: session-49e8262f-0d93-45a8-bdec-b5190786457f`)
+  Headline is a repo-level Lean RL environment plus open-model trajectories, not a model; the undergrad library is the by-product.
+  - Fork TauCeti (all three repos), add a sorry-allowed `Blueprint/` library, Choir-style gate with kernel-level statement freeze
+  - No existing orchestrator fits; compose a thin one from the repoprover fork, TauCeti review, LeanMarathon contracts
+  - Open: ATLAS overlap with target clusters; textbook licensing (tech debt)
 
 ## Mon, Oct 26, 2026
 
