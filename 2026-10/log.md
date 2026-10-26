@@ -1123,4 +1123,9 @@
   - Judge: elaborated-statement equality, transitive axioms and kernel replay in a separate verifier; 15/15 exploit controls behave.
   - All 3,269 statements compile in the image; 1,835 of 2,341 K3 "correct" proofs survive strict re-judging and became solutions (oracle 1,835/1,835).
   - Claude Code (Opus 4.8, 30 min) solved 2/3 smoke tasks; sandboxes use a 0.125 CPU / 2 GB floor in a new Modal env `leanbench`.
+- [x] **Switch verified-code plan to VeriBench shape** (`~/bullet-journal`)
+  The plan compiled solutions through Algo2Lean's typed Python subset, which restricted the Python in scope, produced PC-stepping proofs, and added the compiler as a trusted component. The LLM now writes the Lean artifact directly in VeriBench's file order (functional impl, tests, Pre, `_prop`/`_thm` pairs, Post, imperative `Id.run do` twin, equivalence), and what the compiler gave for free is rebuilt as construction rules: termination by `termination_by` or a fuel-adequacy theorem, invariants over a factored step function, running time as fuel adequacy or a cost twin.
+  - Facts verified from the `veribench@1.0` dataset (884 tasks, `brando90/harbor-datasets`): fuelled aux with `fuel = length+1`, `forIn` over fuel tokens with a `ForInStep` step, Lean 4.22.0 + Mathlib
+  - Plan: [verified-code-synthetic-data-plan.md](verified-code-synthetic-data-plan.md); the `lower_bound` example and gate table rewritten in the new shape; one toolchain now (arxivlean's)
+  - Open: fidelity rests on the differential test, so adversarial edge-case generators per type are needed
 
