@@ -1094,4 +1094,7 @@
   dsh web, the gate and the model gateway froze around 04:07 UTC. They were not down: the gateway job sat at its 48G memory cap, thrashing. Most of that memory belonged to undergrad-todo export_rollouts.py processes that a dsh agent had started inside the job on Oct 25, then abandoned when it moved the export to its own Slurm job. Killing those processes freed the memory, and all three services answer again.
   - Agent tools run inside the gateway job, so heavy agent work can starve the service again.
   - Separate open issue: the daily dsh update has failed since Oct 23 with npm EALLOWSCRIPTS, because npm now rejects --allow-scripts in project installs.
+- [x] **Approve dsh install scripts in package.json** (`~/llama` @ `5644bc3`)
+  npm 11 rejects --allow-scripts in project installs, so every daily dsh update and its rollback failed from Oct 23. The updater now approves the native modules' scripts by name in vendor/dsh/package.json, which npm reads, and keeps any explicit denial.
+  - The running gateway service loaded the old updater at startup, so the fix applies only after the service restarts.
 
