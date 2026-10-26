@@ -1141,4 +1141,7 @@
 - [x] **Write JSONL records in one locked append** (`~/Danus` @ `be3eaac`)
   Concurrent workers' large gm appends interleaved mid-line (roller-coaster, rainbow), and a split UTF-8 byte made reads raise, breaking gm_search for a whole project. Appends are now one O_APPEND write under flock; reads replace bad bytes and skip the torn line.
   - The opg main agent had hand-spliced the roller-coaster store, which global memory rules forbid; it was steered to report corruption instead, and the corrupt original is kept in `opg/run_logs/`.
+- [x] **Pause the opg fleet with a graceful drain** (`~/Danus` @ `466e019`)
+  The operator paused the fleet. Killing jobs outright would lose in-flight rounds, so workers get .stop and drain_fleet.sh releases each Slurm job only once nothing it serves is live; OPERATOR.md records the resume steps.
+  - At pause: 14 live projects, ~5,900 accepted facts, 6/35 settled, 2 papers delivered; the queue (tasks 19–29) is held.
 
