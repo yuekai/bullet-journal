@@ -1092,6 +1092,11 @@
   - Fork TauCeti (all three repos), add a sorry-allowed `Blueprint/` library, Choir-style gate with kernel-level statement freeze
   - No existing orchestrator fits; compose a thin one from the repoprover fork, TauCeti review, LeanMarathon contracts
   - Open: ATLAS overlap with target clusters; textbook licensing (tech debt)
+- [x] **Plan verified-code synthetic data pipeline** (`~/bullet-journal`)
+  The idea of extending `code_prompts`/`code_solutions` with Lean formalization and proofs existed only as a conversation. The plan is now a note: Algo2Lean (public, Apache 2.0, headless CLI, Lean 4.33.1) compiles canonicalized solutions so output, intermediate-state and running-time theorems come from the compiler's semantics; differential testing gates the Lean definition, mutation checks gate the spec, and termination is a required theorem because `f.Returns` is vacuous for diverging runs.
+  - Plan: [verified-code-synthetic-data-plan.md](verified-code-synthetic-data-plan.md); five record types (spec, autoformalize, prove, end-to-end, patch-then-prove) with one worked `lower_bound` example
+  - Pilot table left blank: 3 concepts × 1k problems, yield per gate and per tier
+  - Open: `.algo` canonicalization rejection rate; whether loop invariants come from the prover or a separate stage
 
 ## Mon, Oct 26, 2026
 
