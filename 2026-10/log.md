@@ -1083,4 +1083,8 @@
   - Open: that merge has no build script or manifest, so it cannot be regenerated from the repo
 - [x] **Record the glm-5.3 maxTokens ruling** (`~/Danus` @ `08cee67`)
   The opg paper writer kept dying at the 128k output cap and raising it was proposed. The operator ruled it must stay: the endpoint's ~457k KV pool caps context at 400k. Recorded so no agent edits the cap; the fix must work within it.
+- [x] **Pause the build campaign at Modal's spend limit** (`~/science-tasks`)
+  Since about 18:00 UTC on Oct 25, Modal has refused every new sandbox: environment en-uPNQ78uIv6fQrQOoSTDO4G exceeded its spend limit. Running sandboxes were lost as it hit, so 71 agent reviews errored, and no task merged after 13:49. Per the owner, the driver is stopped (STOP set) and all 64 builders are cancelled.
+  - The 64 are snapshotted in campaign-2026-10-22/paused-20261026.json for a fresh 24 h window once the limit is raised.
+  - Launchers that died on the error left dead `launching` ledger entries, each holding a sandbox slot until its deadline. I cleared 78 of them; builder build-630 had been clearing such entries by itself.
 
