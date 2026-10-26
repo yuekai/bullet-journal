@@ -1077,4 +1077,8 @@
   Single-node runs put 100+ agents' Lean work on 16 CPUs: ~10k REPL timeouts a day per book, OOM kills, and file errors on nodes holding three books; theorems proved moved only 1,764 → 1,782 in a day. Each book now runs RepoProver's distributed mode on 4 nodes (16 CPU, 256G, 6 REPLs each; user choice), and agent tasks spread evenly over the four workers.
   - Setup now also preflights every node (`--exclude` for bad ones), recovers a corrupted shared ~/.cache/mathlib (0-byte leantar), and restores agent edits to the shared Mathlib checkout (one book had 125 files deleted, another 14 tactic files truncated), each of which had broken a restart. Commits `01acc51`, `1c7e464`, `b109db8`, `72291b0`.
   - Beck's and petrunin-euclidean-plane's old jobs hung in COMPLETING holding Lake file locks, so their stale `lakefile.olean.lock` files were removed and both submitted directly (2814211, 2814212). The other jobs: 2813763, 2813847–2813850, 2813853, 2813854, 2814013, 2814105.
+- [**Synthetic code-prompts data pipeline**](synthetic-code-prompts-pipeline.md) (`DSH-session: session-9a46e08e-cd81-4977-a78f-d0a4510d40b2`)
+  `code_prompts` in LLM360/synthetic-data-bbq is a two-stage problem factory: a snippet plus a concept file becomes a meta-prompt, gpt-oss-120b turns it into a programming problem, and the filter keeps 27.8M of 29.9M rows as seed-plus-generation text.
+  - The 1,304-file concepts seed merges TheAlgorithms/Python and keon/algorithms, minus Project Euler, tests and `__init__` files
+  - Open: that merge has no build script or manifest, so it cannot be regenerated from the repo
 
