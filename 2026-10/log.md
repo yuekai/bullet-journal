@@ -1128,4 +1128,5 @@
   - Facts verified from the `veribench@1.0` dataset (884 tasks, `brando90/harbor-datasets`): fuelled aux with `fuel = length+1`, `forIn` over fuel tokens with a `ForInStep` step, Lean 4.22.0 + Mathlib
   - Plan: [verified-code-synthetic-data-plan.md](verified-code-synthetic-data-plan.md); the `lower_bound` example and gate table rewritten in the new shape; one toolchain now (arxivlean's)
   - Open: fidelity rests on the differential test, so adversarial edge-case generators per type are needed
+- [**How Danus builds its fact graph**](how-danus-builds-its-fact-graph.md) (`session-16046b2a-f0de-4f8b-ad74-7f45d5149e69`)
 
