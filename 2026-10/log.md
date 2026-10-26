@@ -1097,4 +1097,9 @@
 - [x] **Approve dsh install scripts in package.json** (`~/llama` @ `5644bc3`)
   npm 11 rejects --allow-scripts in project installs, so every daily dsh update and its rollback failed from Oct 23. The updater now approves the native modules' scripts by name in vendor/dsh/package.json, which npm reads, and keeps any explicit denial.
   - The running gateway service loaded the old updater at startup, so the fix applies only after the service restarts.
+- [x] **Run Modal sandboxes in our own environment** (`~/science-tasks` @ `87e5777`)
+  Every Modal lookup used the profile default env, main, shared across the workspace. The campaign exhausted main's spend limit and Modal refused all new sandboxes. Lookups now name sandbox.modal.environment (science-tasks, created today), whose own spend limit caps our use; unset is an error and lint rejects main (#9802).
+  - The image is published there; a smoke validate passed (oracle 1/1, nop 0). Records from before the switch stay in main's volume.
+  - The campaign resumed: the 64 paused builders got a fresh 24 h window, each told to merge origin/main first, and the driver restarted at 64 (job 2819727). One builder's job was held by a Slurm user-env failure and was released.
+  - The owner is to set a spend limit on science-tasks in the Modal dashboard; the CLI can neither set nor show one.
 
