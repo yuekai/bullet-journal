@@ -1138,4 +1138,7 @@
   deepseek-v4.1-flash had been serving 4 engines under k2m since the pool was repopulated, and four more were wanted. Only the pool's replica target moves; the recipe keeps the H200 flash high-throughput cell that already passed warmup at 0.8/256, so every new engine boots the same verified shape and the four serving engines are never disturbed.
   - The target is live and the controller submitted job 2827521 (node fs-mbz-gpu-127), but only that one: qos k2m caps the account at 226 nodes and ~982 running jobs exceed it, so the next submit pends with `QOSGrpNodeLimit`. The shortfall is an account ceiling, recorded in `docs/tech-debt.md`, not a config error.
   - `pixi run check` green (55 tests); the pool fills as other k2m jobs drain.
+- [x] **Write JSONL records in one locked append** (`~/Danus` @ `be3eaac`)
+  Concurrent workers' large gm appends interleaved mid-line (roller-coaster, rainbow), and a split UTF-8 byte made reads raise, breaking gm_search for a whole project. Appends are now one O_APPEND write under flock; reads replace bad bytes and skip the torn line.
+  - The opg main agent had hand-spliced the roller-coaster store, which global memory rules forbid; it was steered to report corruption instead, and the corrupt original is kept in `opg/run_logs/`.
 
