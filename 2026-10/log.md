@@ -1116,4 +1116,6 @@
   42 open PRs had an agent review that errored on their head commit when main's spend limit cut off running sandboxes. 32 were already too easy (head pass rate 75-100%), so their reviewers would reject them on difficulty. I posted the owner command /reviewers on the other 10.
   - Merged: #9746, #9739, #9710. Real change requests on #9740, #9717, #9714, #9711; none of those has a running builder to answer them.
   - The domain review errored again on #9734 and #9652 (the reviewer agent hit its 3600 s timeout) and on #9725 (no check_report.json). #9652's technical review approved, so its domain review is all that blocks it.
+- [x] **Host revived opg workers in one hub job** (`~/Danus` @ `eb74d83`)
+  Each trip got its own 2-CPU revive job that held while any target lived; twelve filled gpu-078 and new revives pended a day. One persistent hub now starts queued targets by node-local liveness, and a reaper releases emptied old jobs.
 
