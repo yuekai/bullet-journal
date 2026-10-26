@@ -1112,4 +1112,8 @@
   - The image is published there; a smoke validate passed (oracle 1/1, nop 0). Records from before the switch stay in main's volume.
   - The campaign resumed: the 64 paused builders got a fresh 24 h window, each told to merge origin/main first, and the driver restarted at 64 (job 2819727). One builder's job was held by a Slurm user-env failure and was released.
   - The owner is to set a spend limit on science-tasks in the Modal dashboard; the CLI can neither set nor show one.
+- [x] **Re-run reviewers on PRs hit by the Modal outage** (`~/science-tasks`)
+  42 open PRs had an agent review that errored on their head commit when main's spend limit cut off running sandboxes. 32 were already too easy (head pass rate 75-100%), so their reviewers would reject them on difficulty. I posted the owner command /reviewers on the other 10.
+  - Merged: #9746, #9739, #9710. Real change requests on #9740, #9717, #9714, #9711; none of those has a running builder to answer them.
+  - The domain review errored again on #9734 and #9652 (the reviewer agent hit its 3600 s timeout) and on #9725 (no check_report.json). #9652's technical review approved, so its domain review is all that blocks it.
 
