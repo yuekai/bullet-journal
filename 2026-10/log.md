@@ -1081,4 +1081,6 @@
   `code_prompts` in LLM360/synthetic-data-bbq is a two-stage problem factory: a snippet plus a concept file becomes a meta-prompt, gpt-oss-120b turns it into a programming problem, and the filter keeps 27.8M of 29.9M rows as seed-plus-generation text.
   - The 1,304-file concepts seed merges TheAlgorithms/Python and keon/algorithms, minus Project Euler, tests and `__init__` files
   - Open: that merge has no build script or manifest, so it cannot be regenerated from the repo
+- [x] **Record the glm-5.3 maxTokens ruling** (`~/Danus` @ `08cee67`)
+  The opg paper writer kept dying at the 128k output cap and raising it was proposed. The operator ruled it must stay: the endpoint's ~457k KV pool caps context at 400k. Recorded so no agent edits the cap; the fix must work within it.
 
