@@ -1118,4 +1118,9 @@
   - The domain review errored again on #9734 and #9652 (the reviewer agent hit its 3600 s timeout) and on #9725 (no check_report.json). #9652's technical review approved, so its domain review is all that blocks it.
 - [x] **Host revived opg workers in one hub job** (`~/Danus` @ `eb74d83`)
   Each trip got its own 2-CPU revive job that held while any target lived; twelve filled gpu-078 and new revives pended a day. One persistent hub now starts queued targets by node-local liveness, and a reaper releases emptied old jobs.
+- [x] **Build LeanBench: arxivlean as Harbor tasks** (`~/shrd/LeanBench` @ `2958f05`)
+  The 3,269 arxivlean statements existed only as a JSONL export, with a grader that accepted `sorry`. They are now Harbor tasks on Modal whose agent environment matches EdgeBench's Formal Math tasks, plus the ported generation pipeline and an agent-first harness (AGENTS.md map, design docs, lints, hooks).
+  - Judge: elaborated-statement equality, transitive axioms and kernel replay in a separate verifier; 15/15 exploit controls behave.
+  - All 3,269 statements compile in the image; 1,835 of 2,341 K3 "correct" proofs survive strict re-judging and became solutions (oracle 1,835/1,835).
+  - Claude Code (Opus 4.8, 30 min) solved 2/3 smoke tasks; sandboxes use a 0.125 CPU / 2 GB floor in a new Modal env `leanbench`.
 
