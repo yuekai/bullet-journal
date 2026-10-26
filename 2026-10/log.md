@@ -1134,4 +1134,8 @@
 - [x] **Raise the sandbox cap from 128 to 160** (`~/science-tasks` @ `3fec4d5`)
   With 64 builders and 32 runners, all 128 sandboxes stayed busy, so builder validations and CI trials queued for a free slot. Owner decision to allow 160 at once in our own Modal environment (#9829). Live sandboxes passed 128 within minutes.
   - Each launcher reads the cap from its own checkout: CI uses 160 from its next run, while running builders keep 128 until a fresh clone, so for now the extra slots go to CI.
+- [x] **Raise deepseek-main from 4 to 8 engines** (`~/sglang-serve` @ `6322ad3`)
+  deepseek-v4.1-flash had been serving 4 engines under k2m since the pool was repopulated, and four more were wanted. Only the pool's replica target moves; the recipe keeps the H200 flash high-throughput cell that already passed warmup at 0.8/256, so every new engine boots the same verified shape and the four serving engines are never disturbed.
+  - The target is live and the controller submitted job 2827521 (node fs-mbz-gpu-127), but only that one: qos k2m caps the account at 226 nodes and ~982 running jobs exceed it, so the next submit pends with `QOSGrpNodeLimit`. The shortfall is an account ceiling, recorded in `docs/tech-debt.md`, not a config error.
+  - `pixi run check` green (55 tests); the pool fills as other k2m jobs drain.
 
