@@ -1129,4 +1129,6 @@
   - Plan: [verified-code-synthetic-data-plan.md](verified-code-synthetic-data-plan.md); the `lower_bound` example and gate table rewritten in the new shape; one toolchain now (arxivlean's)
   - Open: fidelity rests on the differential test, so adversarial edge-case generators per type are needed
 - [**How Danus builds its fact graph**](how-danus-builds-its-fact-graph.md) (`session-16046b2a-f0de-4f8b-ad74-7f45d5149e69`)
+- [x] **Pause papers and raise the opg cap to 14** (`~/Danus` @ `b3d5074`)
+  The operator paused paper writing and, with fibonacci and shuffle-exchange resolved, asked for 2 new problems. The cap is now 14 projects; the permanent and Aharoni-Berger tasks were started, sized down to fit gpu-078.
 
