@@ -1131,4 +1131,7 @@
 - [**How Danus builds its fact graph**](how-danus-builds-its-fact-graph.md) (`session-16046b2a-f0de-4f8b-ad74-7f45d5149e69`)
 - [x] **Pause papers and raise the opg cap to 14** (`~/Danus` @ `b3d5074`)
   The operator paused paper writing and, with fibonacci and shuffle-exchange resolved, asked for 2 new problems. The cap is now 14 projects; the permanent and Aharoni-Berger tasks were started, sized down to fit gpu-078.
+- [x] **Raise the sandbox cap from 128 to 160** (`~/science-tasks` @ `3fec4d5`)
+  With 64 builders and 32 runners, all 128 sandboxes stayed busy, so builder validations and CI trials queued for a free slot. Owner decision to allow 160 at once in our own Modal environment (#9829). Live sandboxes passed 128 within minutes.
+  - Each launcher reads the cap from its own checkout: CI uses 160 from its next run, while running builders keep 128 until a fresh clone, so for now the extra slots go to CI.
 
