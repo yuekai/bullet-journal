@@ -1,10 +1,12 @@
 ---
 title: Verified code synthetic data plan
-description: Plan to extend the code_prompts/code_solutions pipeline with Lean formalization and proofs of outputs, intermediate states and running time, via Algo2Lean
+description: Plan to extend the code_prompts/code_solutions pipeline with VeriBench-style Lean artifacts — shallow-embedded implementations, specs, and proofs of outputs, loop invariants and running time
 date: 2026-10-25
 ---
 
-A plan to extend the [`code_prompts` pipeline](synthetic-code-prompts-pipeline.md) in LLM360/synthetic-data-bbq with a formalization and verification stage: generate Lean definitions of each `code_solutions` solution, then prove properties of its outputs, intermediate states and running time, in the spirit of [Algo2Lean](https://www.algo2lean.com/current/) and [Anthropic's formal verification work](https://www.anthropic.com/research/formal-verification). Every artifact the new stage keeps is checked by Lean, so the design goal is yield per proof token, not rows.
+A plan to extend the [`code_prompts` pipeline](synthetic-code-prompts-pipeline.md) in LLM360/synthetic-data-bbq with a formalization and verification stage: for each `code_solutions` solution, produce a Lean 4 artifact in the [VeriBench](https://cs.stanford.edu/people/brando9/veribench/blog/veribench-launch) shape (implementation, tests, pre/post, property theorems, imperative twin, equivalence), then prove properties of its outputs, intermediate states and running time, in the spirit of [Anthropic's formal verification work](https://www.anthropic.com/research/formal-verification). Every artifact the new stage keeps is checked by Lean, so the design goal is yield per proof token, not rows.
+
+Revised Oct 26: the first draft compiled solutions through [Algo2Lean](https://github.com/lunjiah/algo2lean)'s typed Python-like subset. That tied the pipeline to a subset and to low-level PC-stepping proofs; the plan now follows VeriBench's shallow embedding (the LLM writes the Lean `def` directly), and what the compiler used to give for free — termination, intermediate states, cost counters — is recovered by construction rules below.
 
 ## What exists today
 
@@ -12,43 +14,49 @@ A plan to extend the [`code_prompts` pipeline](synthetic-code-prompts-pipeline.m
 - The `all_knobs` variant can emit explicit constraints, starter code and tests with the problem; the base variant pins everything to vague.
 - Lean infrastructure from arxivlean (see [math-sft-data-pipelines.md](math-sft-data-pipelines.md)): a prover agent (K3) with `verify_lean`, `loogle` and `leanfinder`, Lean/Mathlib via lean-lsp-mcp, a gated construction pipeline where every gate requires an explicit keep from every earlier gate, and the rollouts record format with an SFT gate.
 
-## Design choice: compiler-defined semantics, differential testing as the gate
+## Design choice: VeriBench's shallow embedding, with gates in place of the human curator
 
 Three design points were considered:
 
-| | Who defines semantics | What the LLM writes | What comes for free |
+| | Who defines semantics | What the LLM writes | Cost |
 |---|---|---|---|
-| Algo2Lean | a compiler from a typed Python-like subset (`.algo`) | only proofs | output relations, named-line intermediate states, explicit cost counters (running time) |
-| Anthropic/Theorem | ISA + OS semantics | proofs, and patches to the code when a proof fails | a generic spec ("the test suite always passes"), proof reuse across programs |
-| VeriBench / Verina | the LLM (shallow embedding, Lean `def`) | impl + tests + pre/post + theorems + proofs | nothing — "compiles but `sorry`" and trivial specs dominate (theorem coverage ≤ 0.16 for Codex and Claude Code) |
+| Algo2Lean | a compiler from a typed Python-like subset (`.algo`) | only proofs | subset restriction; proofs step through generated PCs; a second trusted component (the compiler) |
+| Anthropic/Theorem | ISA + OS semantics | proofs, and patches to the code when a proof fails | binary-level; not applicable to Python |
+| **VeriBench / Verina** | the LLM (shallow embedding, Lean `def` over `List`/`Array`/`Int`) | impl + tests + pre/post + theorems + imperative twin + proofs | nothing is free: termination, invariants and cost must be built in; "compiles but `sorry`" and trivial specs dominate (theorem coverage ≤ 0.16 for Codex and Claude Code) |
 
-Decision: **Algo2Lean where the solution fits its subset, shallow embedding as the fallback, and in both cases gate the Lean definition by differential testing against the original Python.** The compiler route is what makes intermediate-state and running-time theorems tractable; without cost counters, running time means a hand-rolled cost monad per problem.
+Decision: **VeriBench's artifact shape, no language subset, differential testing as the gate on the implementation, and mechanical gates (mutation, no-`sorry`, no `partial`) in place of VeriBench's human curator.** What's gained: any Python the model can express in Lean is in scope; proofs are high-level (`simp`, `omega`, induction on lists) and reuse Mathlib's `List.Sorted`/`List.Perm` library; one Lean toolchain (arxivlean's). What's lost and must be rebuilt: a compiler no longer defines what the Lean means, so fidelity to the Python rests on the differential test; termination, intermediate states and running time become construction rules rather than compiler outputs.
 
-Algo2Lean facts ([lunjiah/algo2lean](https://github.com/lunjiah/algo2lean), Apache 2.0):
+VeriBench facts (verified from the `veribench@1.0` dataset in `brando90/harbor-datasets`, 884 tasks, Lean 4.22.0 + Mathlib):
 
-- Headless CLI: `python3 -m algo2lean compile x.algo -o XGenerated.lean --check`; Python ≥ 3.9; Lean 4.33.1 pinned. Integer-only programs need no Mathlib; exact reals and randomized programs have optional Mathlib companions.
-- Subset: Int, infinite mutable `Seq` (`Int → Int`, so `len(a)` becomes an explicit `n`), tuples, finite sets/dicts, classes, `randint`, `fork_join`, imports, `while`/`range` loops, recursion. Programs may diverge.
-- `tick("clock", amount)` charges a named clock; `# @name` above a statement names the state before it and generates `f.At.name`, `f.Local.x` accessors in a separate `…Points.lean` file.
-- Interface: `f.Returns input output` (a completed execution exists), `f.ReturnsWithCost input output costs`, `f.CallFrom state heap output` (local contracts from a named line).
-- Caveats: proofs are low-level (the `sum_loop` example walks `Step.sum_to_pc4 → pc3 → …` by hand; the docs say "automatic invariant proofs are not provided"), so even trivial programs need long proofs. The compiler, not the kernel, is the trusted base for "this Lean means that `.algo`".
-- **Divergence:** `f.Returns` is a relation; a nonterminating run satisfies it for no output. So `(run : f.Returns input r) → Post input r` and any `ReturnsWithCost` bound are vacuously true for an infinite loop. Termination (`∃ r, f.Returns input r`) must be a required theorem, as in the repo's merge-sort analysis (`terminates` + `every_output_correct`).
+- The task prompt mandates a file order: `import Mathlib`, docstring, namespace, functional implementation, `example : … := by native_decide` tests plus `#eval`, `def Pre`, property `def <name>_prop` / `theorem <name>_thm` pairs, `def Post_prop` as a conjunction of the props, `theorem main_correctness_thm : Pre → Post_prop`, imperative implementation with `Id.run do` and mutable state, imperative tests, equivalence theorem functional = imperative.
+- Loops are **fuelled**: `binarySearchAux arr target fuel left right` with `fuel := arr.length.succ`, returning `none` when fuel runs out; the completeness lemma carries an explicit fuel-adequacy hypothesis (`right + 1 - left ≤ fuel`).
+- The imperative twin is `forIn` over `List.replicate fuel 0` tokens with a factored-out step function `binarySearchStep : state → Id (ForInStep state)` on an explicit state tuple (`Nat × Nat × Option Nat`); the equivalence proof is induction on fuel relating the loop to the functional aux.
+- Construction was o3 draft → human curator against a rubric → kernel; the human sign-off is what this plan replaces.
+- Types: VeriBench's gold uses `List Nat` for Python `List[int]`; for our purposes Python `int` maps to `Int`, and the semantic judge must check the mapping (see gates).
+
+## Construction rules (what the compiler used to provide)
+
+- **Termination.** Two admissible forms: well-founded recursion (`termination_by` / `decreasing_by`, checked by the kernel at definition time — termination is then free), or VeriBench-style fuel with a required **fuel-adequacy theorem** (`∀ f ≥ F(n), impl_fuel f = impl_fuel (F n)`, i.e. the result stabilizes). `partial def`, `unsafe`, and `Classical.choice`-based escapes are rejected by the gate. Without this rule a fuelled definition hides non-termination as `none`, the same vacuity the compiler-based design had.
+- **Intermediate states.** The imperative twin must factor its loop body into a named step function on an explicit state tuple (as VeriBench's gold does). A loop invariant is then three theorems: `inv_init : Inv init`, `step_preserves : Pre → Inv s → Inv (step s)`, `inv_exit : Inv s → ¬ guard s → Post s`. These are what "proofs about intermediate states" mean in a shallow embedding.
+- **Running time.** No clocks exist, so one of: (a) a cost-instrumented twin returning `(result, cost)` with `cost_result : (implCost x).1 = impl x` and `running_time : (implCost x).2 ≤ f(n)`; (b) for fuelled definitions, the fuel-adequacy theorem at `F(n) = f(n)` *is* the running-time bound in iterations and costs nothing extra; (c) a `StateT Nat Id` twin with `modify (· + 1)` per charged operation when the cost model needs per-operation ticks. Default: (b) where the loop is fuelled, (a) otherwise.
+- **Type mapping**, fixed in the prompt and checked by the judge: `int → Int`, `List[int] → List Int` (or `Array Int` for index-heavy code), `Optional[T] → Option T`, `str → String`, `dict → Std.HashMap` or association list, exceptions → `Except String α` or `Option`, classes → `structure`. Floats, I/O and reflection are out of scope; the rejection reason is recorded.
 
 ## Stages
 
 Fits the existing slice/SLURM/vLLM shape: one job per slice, skip slices whose output exists.
 
 1. **Select or steer for formalizability.** Filter on `behavior`: `sorts`, `searches`, `data_structures`, `dynamic_programming`, `graphs`, `maths`, `strings` are the core; skip `web_programming`, `computer_vision` and the like. Add one diversity profile to `synthetic_problem_generator.py` ("verifiable": pure function, typed signature over ints/lists/strings, no I/O or floats, the problem states 2–3 properties the output must satisfy). It's one more config, not a new generator.
-2. **Specs from the problem, not the solution.** A spec derived from the solution is circular. Pre/Post come from the problem statement and its tests; the `all_knobs` tests are themselves a spec ("every test passes"), and "terminates and never throws" is a generic property provable for every problem.
-3. **Lean definition of the solution.** (a) Canonicalize the `code_solutions` output into `.algo` (explicit `n`, named loop heads, one `tick` per iteration or call) and compile with `--check`; (b) else an LLM-written shallow-embedded Lean `def` with fuelled recursion. Gate for both: differential testing, Python vs Lean (`#eval` or compiled) on generated inputs plus edge cases. It is the only check that the Lean thing *is* the solution.
-4. **Tiered properties**, so yield can be measured and the budget cut where it stops paying: T0 unit tests as `decide`/`native_decide`; T1 output properties (Post) **plus termination**; T2 intermediate state (loop invariants at `@name` lines, stated as local contracts `f.CallFrom`); T3 running time (`costs "clock" ≤ f(n)` via `ReturnsWithCost`).
+2. **Specs from the problem, not the solution.** A spec derived from the solution is circular. `Pre`, the `_prop`s and `Post_prop` come from the problem statement and its tests, written against the signature only; the `all_knobs` tests are themselves a spec ("every test passes"), and "terminates and never throws" is a generic property provable for every problem.
+3. **Lean implementation of the solution.** The LLM writes the functional implementation and the imperative twin from the Python, under the construction rules. Gate: compiles, no `partial`/`unsafe`, and **differential testing** — Python vs Lean (`#eval`, or compiled; Lean compiles to native) on generated inputs plus adversarial edge cases (empty, negatives, duplicates, boundaries). It is the only check that the Lean thing *is* the solution.
+4. **Tiered properties**, so yield can be measured and the budget cut where it stops paying: T0 unit tests as `native_decide` examples; T1 property theorems + `Pre → Post_prop` **plus termination** (well-founded, or fuel adequacy); T2 the imperative twin's equivalence theorem and loop invariant (`inv_init`, `step_preserves`, `inv_exit`); T3 running time.
 5. **Prove** with the arxivlean prover agent and tooling; the trajectory is the record.
-6. **Patch loop.** When a proof fails on a real bug, the model patches the solution, the Lean is regenerated, and proving resumes (Anthropic's loop). Rejected and patched solutions are both kept: rejects go to pre-training with the rejection reason as a label.
+6. **Patch loop.** When a proof fails on a real bug, the model patches the Python solution, the Lean is regenerated, and proving resumes (Anthropic's loop). Rejected and patched solutions are both kept: rejects go to pre-training with the rejection reason as a label.
 
-**Gates**, each requiring an explicit keep from every earlier gate: `compile --check`; differential test; compiles with no `sorry`; `#print axioms` shows only the standard axioms; `terminates` present; spec non-triviality by mutation (a buggy variant of the solution must be rejected by the spec: tests fail or the theorem is unprovable); semantic-faithfulness judge in the `semantic_judge.md` pattern ("Lean states the same property, neither weaker nor stronger; if unsure, discard").
+**Gates**, each requiring an explicit keep from every earlier gate: compiles against the pinned toolchain; no `partial`/`unsafe`; differential test; no `sorry`; `#print axioms` shows only `propext`, `Quot.sound`, `Classical.choice`; termination theorem present (or `termination_by` in the definition); **spec non-triviality by mutation** — a buggy variant of the solution must be rejected by the spec, checked mechanically as a concrete counterexample `example : ¬ <prop> mutant input := by native_decide`; semantic-faithfulness judge in the `semantic_judge.md` pattern ("Lean states the same property, neither weaker nor stronger; the type mapping preserves the Python semantics; if unsure, discard"). The mutation gate targets VeriBench's failure mode where artifacts compile but say nothing.
 
 ## The concept taxonomy as a proof library
 
-Every problem is grounded in one of 1,304 reference implementations. Prove the references first (1,304 Algo2Lean compilations plus T1–T3 proofs, a one-time bounded cost), then problem-level proofs import those lemmas. Anthropic measured 17% fewer tokens with a shared proof workspace and agents succeeding after solo failures; the taxonomy supplies that sharing structure, and Algo2Lean's low-level proofs make it necessary. It also gives a curriculum: problem proofs within a concept should get cheaper as the concept's library fills in. Measure that in the pilot.
+Every problem is grounded in one of 1,304 reference implementations. Formalize the references first (1,304 VeriBench-shape artifacts with T1–T3 proofs, a one-time bounded cost) as a Lake package, then problem-level proofs import those definitions and lemmas (`Sorted`, `Perm`, interval lemmas, invariant templates per algorithm family) alongside Mathlib. Anthropic measured 17% fewer tokens with a shared proof workspace and agents succeeding after solo failures; the taxonomy supplies that sharing structure. It also gives a curriculum: problem proofs within a concept should get cheaper as the concept's library fills in. Measure that in the pilot.
 
 ## Records
 
@@ -56,63 +64,79 @@ All five are kept. A, B and E are single-turn pairs (the `{"text", "token_count"
 
 | record | teaches | shape | admitting gate |
 |---|---|---|---|
-| A: problem → Lean spec | specification writing | pair | compiles · semantic judge · mutation check |
-| B: Python solution → `.algo` + generated Lean | code autoformalization | pair | `compile --check` · differential test |
-| C: (definition, spec) → proof trajectory | proving | trajectory | no `sorry` · axioms · `terminates` |
-| D: problem → impl + spec + proofs | end-to-end verified code generation | trajectory | all of the above |
+| A: problem → `Pre`/`_prop`s/`Post_prop` | specification writing | pair | compiles · semantic judge · mutation check |
+| B: Python solution → functional impl + imperative twin | code autoformalization | pair | compiles · no `partial` · differential test |
+| C: (impl, spec) → proof trajectory | proving | trajectory | no `sorry` · axioms · termination |
+| D: problem → full VeriBench artifact | end-to-end verified code generation | trajectory | all of the above |
 | E: failed proof → patched solution → proof | verification-guided debugging | pair or short trajectory | patched solution passes C's gates and the original tests |
 
-Running example (Lean is schematic, written against Algo2Lean's interface names, not compiled). Concept `searches/binary_search.py`; problem: *given a non-decreasing sequence `a` of `n` integers and an integer `t`, return the smallest index `i` in `[0, n)` with `a[i] ≥ t`, or `n` if none.*
+Running example (Lean is schematic in VeriBench's file order, not compiled). Concept `searches/binary_search.py`; problem: *given a non-decreasing list `a` of integers and an integer `t`, return the smallest index `i` with `a[i] ≥ t`, or `len(a)` if none.*
 
-- **A.** Prompt: problem + the `.algo` signature `lower_bound(a: Seq, n: Int, t: Int) -> Int`; the solution is not shown. Response:
-
-  ```lean
-  def Sorted (a : Seq) (n : Int) : Prop := ∀ i j, 0 ≤ i → i ≤ j → j < n → a i ≤ a j
-  def Pre  (a : Seq) (n t : Int)   : Prop := 0 ≤ n ∧ Sorted a n
-  def Post (a : Seq) (n t r : Int) : Prop :=
-    0 ≤ r ∧ r ≤ n ∧ (∀ i, 0 ≤ i → i < r → a i < t) ∧ (r < n → t ≤ a r)
-  ```
-
-  Mutation check: Post rejects the "upper bound" mutant (`a=[5], n=1, t=5` returns 1, fails `a 0 < 5`).
-- **B.** Prompt: problem + the Python solution (`lo, hi = 0, len(a); while lo < hi: mid = (lo+hi)//2; if a[mid] < t: lo = mid+1 else: hi = mid; return lo`). Response:
-
-  ```text
-  def lower_bound(a: Seq, n: Int, t: Int) -> Int:
-      lo: Int = 0
-      hi: Int = n
-      # @loop
-      while lo < hi:
-          tick("lower_bound")
-          mid: Int = lo + (hi - lo) // 2
-          if a[mid] < t:
-              lo = mid + 1
-          else:
-              hi = mid
-      return lo
-  ```
-
-  Metadata: `compile --check` ok; differential test on 2,000 random sorted inputs plus edge cases, Python == Lean.
-- **C.** Statements, one file per problem so the T2 lemma is visibly reused:
+- **A.** Prompt: problem + the signature `lowerBound : List Int → Int → Nat`; the solution is not shown. Response:
 
   ```lean
-  theorem every_output_correct (a : Seq) (n t r : Int) (h : Pre a n t)
-      (run : lower_bound.Returns (a, n, t) r) : Post a n t r
-  theorem terminates (a : Seq) (n t : Int) (h : Pre a n t) :
-      ∃ r, lower_bound.Returns (a, n, t) r
-  theorem loop_contract (s : Configuration) (a : Seq) (n t lo hi : Int)
-      (at_loop : lower_bound.At.loop s)
-      (hlo : lower_bound.Local.lo s = some lo) (hhi : lower_bound.Local.hi s = some hi)
-      (inv : 0 ≤ lo ∧ lo ≤ hi ∧ hi ≤ n ∧ (∀ i, 0 ≤ i → i < lo → a i < t)
-               ∧ (∀ i, hi ≤ i → i < n → t ≤ a i)) :
-      ∃ r, lower_bound.CallFrom s s.heap r ∧ Post a n t r
-  theorem running_time (a : Seq) (n t r : Int) (costs : Clocks) (h : Pre a n t)
-      (run : lower_bound.ReturnsWithCost (a, n, t) r costs) :
-      costs "lower_bound" ≤ Nat.log 2 n.toNat + 1
+  def Pre (a : List Int) (_t : Int) : Prop :=
+    ∀ i j (hi : i < a.length) (hj : j < a.length), i ≤ j → a[i] ≤ a[j]
+  def below_prop (a : List Int) (t : Int) : Prop :=
+    ∀ i (h : i < a.length), i < lowerBound a t → a[i] < t
+  def at_or_above_prop (a : List Int) (t : Int) : Prop :=
+    ∀ h : lowerBound a t < a.length, t ≤ a[lowerBound a t]
+  def in_range_prop (a : List Int) (t : Int) : Prop := lowerBound a t ≤ a.length
+  def Post_prop (a : List Int) (t : Int) : Prop :=
+    in_range_prop a t ∧ below_prop a t ∧ at_or_above_prop a t
+  ```
+
+  Mutation check: `below_prop` rejects the "upper bound" mutant — `example : ¬ below_prop' [5] 5 := by native_decide` where the mutant returns 1.
+- **B.** Prompt: problem + the Python solution (`lo, hi = 0, len(a); while lo < hi: mid = (lo+hi)//2; if a[mid] < t: lo = mid+1 else: hi = mid; return lo`). Response, functional implementation by well-founded recursion and the imperative twin with a factored step:
+
+  ```lean
+  def lowerBoundAux (a : List Int) (t : Int) (lo hi : Nat) : Nat :=
+    if h : lo < hi then
+      let mid := lo + (hi - lo) / 2
+      if a[mid]! < t then lowerBoundAux a t (mid + 1) hi else lowerBoundAux a t lo mid
+    else lo
+  termination_by hi - lo
+  def lowerBound (a : List Int) (t : Int) : Nat := lowerBoundAux a t 0 a.length
+
+  abbrev SearchState := Nat × Nat   -- (lo, hi)
+  def step (a : List Int) (t : Int) (_ : Nat) (s : SearchState) : Id (ForInStep SearchState) :=
+    if s.1 < s.2 then
+      let mid := s.1 + (s.2 - s.1) / 2
+      pure (.yield (if a[mid]! < t then (mid + 1, s.2) else (s.1, mid)))
+    else pure (.done s)
+  def lowerBoundImp (a : List Int) (t : Int) : Nat := Id.run do
+    let s ← forIn (List.replicate (a.length + 1) 0) (0, a.length) (step a t)
+    return s.1
+  ```
+
+  Metadata: compiles; differential test on 2,000 random sorted inputs plus edge cases (empty list, all-equal, `t` below/above every element, negatives), Python == Lean.
+- **C.** Statements, one file per problem so the invariant is visibly reused:
+
+  ```lean
+  -- T1
+  theorem main_correctness_thm (a : List Int) (t : Int) (hPre : Pre a t) : Post_prop a t
+  -- termination is discharged by `termination_by` in the definition
+
+  -- T2: equivalence and loop invariant over the factored step
+  def Inv (a : List Int) (t : Int) (s : SearchState) : Prop :=
+    s.1 ≤ s.2 ∧ s.2 ≤ a.length ∧ (∀ i (h : i < a.length), i < s.1 → a[i] < t)
+      ∧ (∀ i (h : i < a.length), s.2 ≤ i → t ≤ a[i])
+  theorem inv_init (a : List Int) (t : Int) : Inv a t (0, a.length)
+  theorem step_preserves (a : List Int) (t : Int) (s : SearchState) (hPre : Pre a t)
+      (h : Inv a t s) : ∀ s', step a t 0 s = pure (.yield s') → Inv a t s'
+  theorem inv_exit (a : List Int) (t : Int) (s : SearchState) (h : Inv a t s)
+      (hstop : ¬ s.1 < s.2) : Post_prop_at a t s.1
+  theorem equivalence_thm (a : List Int) (t : Int) : lowerBound a t = lowerBoundImp a t
+
+  -- T3: running time as fuel adequacy (the loop stabilizes after ⌈log₂ n⌉ + 1 iterations)
+  theorem running_time (a : List Int) (t : Int) (f : Nat) (hf : Nat.log 2 a.length + 1 ≤ f) :
+      (Id.run do let s ← forIn (List.replicate f 0) (0, a.length) (step a t); return s.1)
+        = lowerBound a t
   ```
 
   The record is the prover's full trajectory: `verify_lean` attempts, `loogle`/`leanfinder` lookups, imports from the concept library, ending in a compiled file with no `sorry`.
 - **D.** Same content as A + B + C in one trajectory, starting from the problem alone; the model also writes the code. The Lean artifact may diverge from the `code_solutions` output; the differential test is then against the problem's tests.
-- **E.** Suppose the sampled solution had `if a[mid] <= t:`. Tests without an exact hit pass and the differential test passes (Python and Lean agree, both wrong), but the prover gets stuck at `⊢ a i < t` with `a i ≤ t`. Prompt: problem + spec + `.algo` + the stuck goal. Response: diagnosis (advances past elements equal to `t`, computes the upper bound; counterexample `a=[5], n=1, t=5 → 1`, expected 0), patch `<`, re-run closes `every_output_correct`. Metadata: `bug_class = off-by-one on equality`, `found_by = proof failure`.
+- **E.** Suppose the sampled solution had `if a[mid] <= t:`. Tests without an exact hit pass and the differential test passes (Python and Lean agree, both wrong), but the prover gets stuck at `⊢ a[i] < t` with `a[i] ≤ t` in hand. Prompt: problem + spec + implementation + the stuck goal. Response: diagnosis (advances past elements equal to `t`, computes the upper bound; counterexample `a=[5], t=5 → 1`, expected 0), patch `<`, re-run closes `main_correctness_thm`. Metadata: `bug_class = off-by-one on equality`, `found_by = proof failure`.
 
 ## Pilot
 
@@ -121,28 +145,30 @@ Details to be decided. Shape: 3 concepts × 1k problems (`sorts`, `searches`, `d
 | gate | in | kept | drop reason breakdown |
 |---|---|---|---|
 | formalizable (`behavior` filter / verifiable profile) | | | |
-| `.algo` canonicalization + `compile --check` | | | |
+| implementation compiles, no `partial`/`unsafe` | | | |
 | differential test | | | |
 | spec: compiles · judge · mutation | | | |
 | T0 tests | | | |
-| T1 Post + `terminates` | | | |
-| T2 loop contract | | | |
+| T1 `Pre → Post_prop` + termination | | | |
+| T2 equivalence + invariant | | | |
 | T3 running time | | | |
 | patch loop (E rows produced) | | | |
 
 ## Risks and open questions
 
-- **Subset mismatch:** `code_solutions` outputs are arbitrary Python; the canonicalization rejection rate is unknown. Acceptable — rejects stay in pre-training — but the rejection reason should be recorded.
-- **Proof cost:** 27.8M problems × 10⁵–10⁸ proof tokens is not a plan; the pilot sets the budget, and the library effect decides how far it stretches.
-- **Trusted base:** the Algo2Lean compiler (its semantics for the `.algo` subset) and the LLM judges on spec faithfulness. Mutation checks and differential tests bound the second; nothing bounds the first except the compiler's own tests.
-- **T2/T3 yield:** likely low at first; Algo2Lean's named-line proofs are step-by-step. Decide after the pilot whether T2 is generated by the prover or by a separate invariant-proposal stage (a new, trainable task on its own).
-- **Toolchains:** Algo2Lean pins Lean 4.33.1; arxivlean runs Mathlib v4.29.0. Two toolchains on the cluster is acceptable.
+- **Fidelity rests on the differential test.** With no compiler, the Lean implementation can diverge from the Python in corner cases the random inputs miss (`Nat` vs `Int`, floor division of negatives, exceptions vs `Option`). Mitigations: fixed type mapping in the prompt, adversarial edge-case generators per type, and the judge's type-mapping check. Measure the residual by seeding known-divergent translations.
+- **Type-mapping rejection rate** is unknown; acceptable, since rejects stay in pre-training, but the reason should be recorded.
+- **Proof cost:** 27.8M problems × 10⁵–10⁸ proof tokens is not a plan; the pilot sets the budget, and the library effect decides how far it stretches. VeriBench's numbers (no-`sorry` rate ≤ 0.28 for frontier agents) say T1 yield will be low at first.
+- **Trusted base:** the Lean kernel, the pinned Mathlib, and the LLM judge on spec faithfulness. Mutation checks and differential tests bound the judge; nothing else is trusted.
+- **T2/T3 shape:** the factored-step rule and fuel-adequacy rule are conventions the generator must follow; decide after the pilot whether invariants are proposed by the prover or by a separate invariant stage (a new, trainable task on its own).
+- **Toolchain:** pin to arxivlean's Lean/Mathlib (v4.29.0) rather than VeriBench's 4.22.0; `import Mathlib` in full is slow to elaborate, so the concept library should re-export a narrow import set.
 
 ## Related work
 
-- [Verina](https://github.com/sunblaze-ucb/verina) — 189 hand-curated Lean tasks (description, code, pre/post, proof, tests); best model 3.6% proof success single-shot. Defines the artifact schema.
-- [VeriBench](https://cs.stanford.edu/people/brando9/veribench/blog/veribench-launch) — 884 Python-to-Lean tasks, agentic with verifier feedback; shows frontier agents compile everything but capture the right theorems ≤ 16% of the time. Defines the failure modes the gates target.
+- [VeriBench](https://cs.stanford.edu/people/brando9/veribench/blog/veribench-launch) — 884 Python-to-Lean tasks (dataset in `brando90/harbor-datasets`), agentic with verifier feedback; defines the artifact shape this plan adopts and the failure modes the gates target (frontier agents compile everything but capture the right theorems ≤ 16% of the time).
+- [Verina](https://github.com/sunblaze-ucb/verina) — 189 hand-curated Lean tasks (description, code, pre/post, proof, tests); best model 3.6% proof success single-shot.
 - FVAPPS — thousands of machine-generated Lean problems from APPS with `sorry`'d theorems; scale without checked proofs.
 - [BRIDGE](https://arxiv.org/abs/2511.21104) — code-first prompting across code/spec/theorem; SFT on its traces gives ~1.5× Lean pass rate over code-only SFT, evidence that records A–D are learnable.
 - Anthropic/Theorem OSS-Fuzz proofs — tests-as-specs, patch-then-prove, and proof reuse; the three ideas this plan borrows.
-- The gap: nobody pairs a concept-grounded problem generator with compiler-defined semantics, running-time theorems and a patch loop at pipeline scale.
+- [Algo2Lean](https://github.com/lunjiah/algo2lean) — the alternative considered: compiler-defined semantics for a typed Python-like subset with named lines and cost clocks. Rejected for the subset restriction; its `tick`/`@name` ideas survive as the cost-twin and factored-step rules.
+- The gap: nobody pairs a concept-grounded problem generator with VeriBench-shape artifacts, required termination and running-time theorems, and a patch loop at pipeline scale.
