@@ -1177,4 +1177,9 @@
   - Refusal removal replicates on the authors' engine in thinking mode: JBB 0.030 / HB 0.013 / SR 0.033 vs base 0.930/0.973/0.973 (McNemar p <= 1e-27); GPQA parity holds in thinking (0.763 vs 0.778) and chat mode (0.626 vs 0.566, matching sglang's 0.606/0.566).
   - Parity gate passes on clean data: 100 prompts, refusal agreement 0.990, McNemar p=1.0. The 16k thinking GPQA pass was infeasible (~0.75 s/step at 17k context, ~44 GPU-h/condition); sglang 16k stays canonical, refimpl cross-checks run at 4096.
   - Judge/aggregate/parity steps now run as slurm CPU jobs (jobs/finish_evals.sh), not on the login node.
+- [x] **Move sandbox records to a v2 Modal volume** (`~/science-tasks` @ `bde195d`)
+  From about 03:30 UTC no sandbox finished: the v1 volume science-tasks-records had hit its file-count cap about 23 h after creation, so every record write inside a sandbox failed with ENOSPC and each run ended lost. Records now go to science-tasks-records-v2, created as v2 (no file cap); old record URLs still name their volumes (#9854). A smoke validate passed on it.
+  - Builders read the volume from their own clone, so I cancelled the 55 still on the old volume and re-windowed them with the merge-main note. I also terminated the 68 sandboxes still writing to it (50 CI, 18 builder), which would only have failed at upload. Driver restarted (job 2832086); 26 builders wait on the k2m group node limit.
+  - The shared checkout has an unpushed local commit plus uncommitted pixi edits from session cc869e9b (records rate-limit fix), so it was not fast-forwarded; that commit conflicts with #9854 in modal.py and test_backends.py.
+  - 13 PRs whose CI sandboxes were terminated have no builder to re-trigger CI.
 
