@@ -1144,6 +1144,11 @@
 - [x] **Pause the opg fleet with a graceful drain** (`~/Danus` @ `466e019`)
   The operator paused the fleet. Killing jobs outright would lose in-flight rounds, so workers get .stop and drain_fleet.sh releases each Slurm job only once nothing it serves is live; OPERATOR.md records the resume steps.
   - At pause: 14 live projects, ~5,900 accepted facts, 6/35 settled, 2 papers delivered; the queue (tasks 19–29) is held.
+- [x] **Separate DSH model configs per profile**
+  The `llm-pi-ai` and `agent-default-model` rows (plus `llm-deepseek` on this laptop) lived in `~/.dsh/cordis.patch.yml`, the home layer applied after every profile's own patch. Settings -> Models writes only the profile layer, so it refused every edit as "overridden by a home patch". Each used profile now owns its copy: desktop and headless on this laptop (the local `web` profile is unused and left alone), and web and headless on m2 and spark; the home layer keeps only the two MCP servers.
+  - Copies start identical to the previous effective values, so behavior is unchanged; every composed model section matches its pre-split dump. The two copies on a machine are independent and must be edited separately.
+  - The local desktop's DeepSeek route is a differently named plugin (`dsh-llm-deepseek-api-key`), so no `llm-deepseek` row was added there; the bundle's own route stays.
+  - Spark's `dsh-web` was restarted; m2 hot-reloads; the desktop app needs a quit/reopen before its model list reflects the new rows. Headless one-shots answered on local and spark (`m2`/`deepseek-v4.1-flash`) and on m2 (`comet`/`glm-5.3`, where a placeholder `COMET_API_KEY` suffices because the endpoint ignores auth). Previous files are kept as `*.pre-separate.bak`.
 
 ## Tue, Oct 27, 2026
 
