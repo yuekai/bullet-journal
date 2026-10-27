@@ -1210,4 +1210,6 @@
 - [x] **Drain kimi-k2m and halve kimi-main** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `8636224`)
   kimi-k3's overnight backlog of ~1,200 requests has drained: 61 healthy cells now hold 16 in flight at 0.1 req/s. kimi-k2m drops 32 -> 0 and kimi-main 16 -> 8, keeping 8 iq cells plus kimi-lowprio as headroom and returning the k2m nodes to the account's quota.
   - Verified after reconcile: kimi-main 8 running; all kimi-k2m and the 8 surplus kimi-main jobs cancelled (16 still completing at check).
+- [x] **Keep 8 kimi-k3 engines on kimi-k2m** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `37b6502`)
+  Draining kimi-k2m to 0 left kimi-k3 with only 8 guaranteed iq cells plus preemptible lowprio. kimi-k2m returns to 8 so the model keeps a k2m-owned base alongside kimi-main; the drained cells were already cancelled, so these 8 boot fresh at one per 300s cooldown.
 
