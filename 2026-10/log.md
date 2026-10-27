@@ -1152,4 +1152,8 @@
   - Restarting job 2605661 by requeue gave up its k2m slot and reset its queue position; with k2m at its 226-node cap it waited about 1h40m. Cancelling two comet kimi-k2m engines did not help, since earlier jobs took the freed nodes. Moving the pending job to account and QOS iq started it at once on fs-mbz-gpu-187.
   - The live job got 128G but still 14 CPUs: Slurm kept the old CPUs-per-task. Reaching 20 needs another restart.
   - Lesson: a requeue of a job under a saturated group QOS loses its place; check the QOS headroom first.
+- [x] **Add AGENTS.md map and design doc** (`~/llama` @ `570ecfa`)
+  Agents started cold from a 297-line README that restated recipe headers and stale model lists. AGENTS.md is now a short map shared by every harness, docs/design.md holds the why, plans and tech debt are tracked, and the README points to the recipes instead of restating them.
+- [x] **Lint docs against fleet config** (`~/llama` @ `7ca020c`)
+  The README resource table and module list drifted from llama.toml and llama/ with nothing to catch it. scripts/lint.py now checks them, recipe headers, doc paths and plan status, with fix-it errors, and a pre-commit hook runs lint and tests via pixi run check.
 
