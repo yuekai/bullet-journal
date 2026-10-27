@@ -54,11 +54,13 @@ ports. A policy test pins `100.91.181.87:3080` and `100.91.181.87:3081`. See
 
 ## Providers
 
-The DSH home is `~/.dsh`. The provider settings and the default model are in
-`~/.dsh/cordis.patch.yml`, the home patch layer that DSH applies over every
-profile after that profile's own patch. Web and headless therefore share one
-model list; a profile patch that named `llm-pi-ai` or `agent-default-model`
-would be overridden silently.
+The DSH home is `~/.dsh`. Each profile owns its model catalog in its own
+`~/.dsh/profiles/<profile>/cordis.patch.yml`: the `web` and `headless` patches
+each carry an `llm-pi-ai` and an `agent-default-model` row. The home patch
+`~/.dsh/cordis.patch.yml` holds only the machine-wide MCP servers; a model row
+there is applied after the profile layer, shadows it, and makes the web
+Settings -> Models page refuse to save. The two profile copies are independent,
+so edit both when a model change should apply to both.
 
 - The `m2` provider uses `openai-completions` at
   `http://m2.taildd337d.ts.net:8000/v1` with `LLAMA_API_KEY`. The model list
@@ -147,3 +149,6 @@ A manual install of another version lasts only until the next run.
   run moved DSH from 0.2.1-rc.2 (`next`) to 0.2.0-rc.2 (`latest`).
 - 2026-10-18: The update switched from the `latest` tag to the `next` tag,
   which moved DSH back to 0.2.1-rc.2.
+- 2026-10-26: The model catalog moved out of the home patch into the `web` and
+  `headless` profile patches, so the Settings -> Models page can edit each
+  profile again. The home patch keeps only the MCP servers.
