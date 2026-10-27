@@ -1215,4 +1215,7 @@
 - [x] **Keep operator instructions in SFT export** (`~/Danus` @ `d08ea05`)
   Stripping the ~/.dsh/AGENTS.md block left about a third of trajectories reasoning about instructions no longer in their context. The block is now kept by default for a consistent prompt; --strip-operator-instructions opts back in.
   - Re-export (Slurm 2835622, mid-run snapshot 15:49Z, fleet running again): 11,673 kept, 2.09B tokens, mean 179,101 tokens; workers 830 kept (mean 476,771 tokens). Sessions that wrote to the bullet journal are still dropped (129).
+- [x] **Drop the submit cooldown to 60s** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `0c57604`)
+  kimi-k2m is refilling 0 -> 8 from scratch at one allocation per pool per 300s, about 35 minutes just to submit. At 60s, the reconcile interval, each pool submits once per cycle. The cost is that a crash-looping pool also replaces itself five times faster.
+  - Verified: kimi-k2m went 2 -> 4 running jobs in the first two minutes. Still at 60s; previous ramps restored 300 afterwards (e6b6f91).
 
