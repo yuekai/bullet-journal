@@ -1151,6 +1151,10 @@
   - Spark's `dsh-web` was restarted; m2 hot-reloads; the desktop app needs a quit/reopen before its model list reflects the new rows. Headless one-shots answered on local and spark (`m2`/`deepseek-v4.1-flash`) and on m2 (`comet`/`glm-5.3`, where a placeholder `COMET_API_KEY` suffices because the endpoint ignores auth). Previous files are kept as `*.pre-separate.bak`.
 - [x] **Drop llm-deepseek from local headless**
   The headless profile no longer declares its own DeepSeek catalog, so the bundle's `llm-deepseek` row applies again. This removes the only local per-profile copy of that row; the default model and the desktop profile are unchanged.
+- [x] **Add mid-run dsh SFT exporter and Slurm job** (`~/Danus` @ `ee306d2`)
+  The SFT exporter only read kimi wire logs, but the opg fleet runs on dsh, so its trajectories could not be exported. The new exporter replays dsh v4 logs into unrolled glm-5.3 samples, exports only settled sessions so it is safe mid-run, and runs with the process_entry.py validator as one cpuonly Slurm job.
+  - First mid-run export (snapshot 2026-10-26T23:57Z, job 2829949): 11,806 of 12,550 candidates kept (94.1%); 2.20B tokens, mean 185,984 and median 152,556 tokens per trajectory.
+  - Output in `~/Danus/runtime/exports/dsh-20261026T235538Z/`; its `manifest.jsonl` drives later delta exports via `--exclude-manifest`.
 
 ## Tue, Oct 27, 2026
 
