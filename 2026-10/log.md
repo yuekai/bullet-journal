@@ -1145,3 +1145,11 @@
   The operator paused the fleet. Killing jobs outright would lose in-flight rounds, so workers get .stop and drain_fleet.sh releases each Slurm job only once nothing it serves is live; OPERATOR.md records the resume steps.
   - At pause: 14 live projects, ~5,900 accepted facts, 6/35 settled, 2 papers delivered; the queue (tasks 19–29) is held.
 
+## Tue, Oct 27, 2026
+
+- [x] **Give the service 20 CPUs and 128G** (`~/llama` @ `bcb5957`)
+  The service job had 14 CPUs and 48G, and agent work started inside it by dsh sessions filled that memory and froze the gateway on Oct 26. New service submissions now request 20 CPUs and 128G for more headroom.
+  - Restarting job 2605661 by requeue gave up its k2m slot and reset its queue position; with k2m at its 226-node cap it waited about 1h40m. Cancelling two comet kimi-k2m engines did not help, since earlier jobs took the freed nodes. Moving the pending job to account and QOS iq started it at once on fs-mbz-gpu-187.
+  - The live job got 128G but still 14 CPUs: Slurm kept the old CPUs-per-task. Reaching 20 needs another restart.
+  - Lesson: a requeue of a job under a saturated group QOS loses its place; check the QOS headroom first.
+
