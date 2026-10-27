@@ -1191,4 +1191,7 @@
   The dsh exporter kept every settled session; the opg trajectory audit found half of them had no completed action, many were hand enumeration, some carried wrong facts, and all leaked the operator's AGENTS.md. Now audit-driven filters drop those, truncate killed rounds, and strip the block.
   - Re-export (Slurm 2831956, mid-run snapshot 06:53Z): 10,838 kept, 1.93B tokens, mean 177,889 tokens; workers 774 kept of ~2,400 settled (mean 480k tokens). 2,102 sessions filtered, mostly no accepted fact (747), finite lane (573) and unfinished verifier runs (532).
   - Open issue: 37% of verifier and 21% of worker trajectories reason about the stripped bullet-journal instruction, so the context no longer explains that reasoning.
+- [x] **Halve glm-5.3 to 8 engines per pool** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `01b39a0`)
+  glm-5.3 held 32 cells for ~15 active requests while kimi-k3 queued ~1,200 at 239s average. Each glm pool drops 16 -> 8 so the freed nodes split across both QOS caps: iq runs over its cap and blocks other iq users, and k2m's cap is what holds deepseek-main's pending engines.
+  - Verified after reconcile: 8 running jobs per glm pool; the cancelled k2m jobs were still completing.
 
