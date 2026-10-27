@@ -1224,4 +1224,8 @@
 - [**Mathematicians' ownership of LLMs**](mathematicians-ownership-of-llms.md) (`DSH-session: session-796d11d4-96b8-4129-b087-89a6d3141ab2`)
 - [x] **Restore the 300s submit cooldown** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `2cdbc89`)
   Every pool is at target with all engines ready, kimi-k2m's 0 -> 8 refill included, so the short cooldown has done its job. At 60s a crash-looping pool would replace itself five times as fast as the controller was designed to allow.
+- [x] **Run the build campaign at 128 builders** (`~/science-tasks` @ `7d96dc1`)
+  Per the owner, the campaign driver now runs with --target 128 (job 2836805, was 64); it adds 10 builders per tick. The builders stay under the k2m QOS on main, recorded in a design row (#9889).
+  - Tradeoff: the k2m group's 226-node cap is nearly full (our builders, comet engines and runners hold ~159 nodes; 43 jobs waited on it), so the extra builders queue beside colleagues' jobs and comet's pending engines. main rejects the uncapped lowprio QOS, and cpuonly has 16 nodes.
+  - The restart hit a cluster-wide Slurm prolog stall (70 jobs stuck in Prolog). The first new driver hung on fs-mbz-gpu-458 and was cancelled; the resubmitted one runs despite squeue showing Prolog.
 
