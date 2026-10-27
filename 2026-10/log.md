@@ -1224,6 +1224,9 @@
 - [**Mathematicians' ownership of LLMs**](mathematicians-ownership-of-llms.md) (`DSH-session: session-796d11d4-96b8-4129-b087-89a6d3141ab2`)
 - [x] **Restore the 300s submit cooldown** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `2cdbc89`)
   Every pool is at target with all engines ready, kimi-k2m's 0 -> 8 refill included, so the short cooldown has done its job. At 60s a crash-looping pool would replace itself five times as fast as the controller was designed to allow.
+- [x] **Raise both glm-5.3 pools to 16 engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `a3d455e`)
+  glm-5.3 was the only loaded model: 107 requests in flight over 24 cells, 46 queued at 31s average, while kimi-k3 held 14 requests on 32 cells. Each pool gains 4 cells, returning both to the 16 they ran before today's cut.
+  - glm53-k2m reached 16 serving. glm53-main sits at 15 with job 2837095 PENDING on QOSGrpNodeLimit: the iq cap of 346 nodes is full, so that cell waits for iq usage to drop. The submit cooldown stayed at 300s since all 8 were already submitted.
 - [x] **Run the build campaign at 128 builders** (`~/science-tasks` @ `7d96dc1`)
   Per the owner, the campaign driver now runs with --target 128 (job 2836805, was 64); it adds 10 builders per tick. The builders stay under the k2m QOS on main, recorded in a design row (#9889).
   - Tradeoff: the k2m group's 226-node cap is nearly full (our builders, comet engines and runners hold ~159 nodes; 43 jobs waited on it), so the extra builders queue beside colleagues' jobs and comet's pending engines. main rejects the uncapped lowprio QOS, and cpuonly has 16 nodes.
