@@ -1150,7 +1150,7 @@
 - [x] **Give the service 20 CPUs and 128G** (`~/llama` @ `bcb5957`)
   The service job had 14 CPUs and 48G, and agent work started inside it by dsh sessions filled that memory and froze the gateway on Oct 26. New service submissions now request 20 CPUs and 128G for more headroom.
   - Restarting job 2605661 by requeue gave up its k2m slot and reset its queue position; with k2m at its 226-node cap it waited about 1h40m. Cancelling two comet kimi-k2m engines did not help, since earlier jobs took the freed nodes. Moving the pending job to account and QOS iq started it at once on fs-mbz-gpu-187.
-  - The live job got 128G but still 14 CPUs: Slurm kept the old CPUs-per-task. Reaching 20 needs another restart.
+  - The first start got 128G but 14 CPUs, because Slurm kept the old CPUs-per-task. A second requeue under iq with CPUsPerTask=20 gave the full 20 CPUs and 128G.
   - Lesson: a requeue of a job under a saturated group QOS loses its place; check the QOS headroom first.
 - [x] **Add AGENTS.md map and design doc** (`~/llama` @ `570ecfa`)
   Agents started cold from a 297-line README that restated recipe headers and stale model lists. AGENTS.md is now a short map shared by every harness, docs/design.md holds the why, plans and tech debt are tracked, and the README points to the recipes instead of restating them.
