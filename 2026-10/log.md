@@ -1172,4 +1172,9 @@
 - [x] **Resume the opg fleet on fresh jobs** (`~/Danus` @ `fd9d1ff`)
   The operator restarted the fleet. All 14 projects were resubmitted at measured memory sizes; gpu-078 lost memory to another user during the pause, so 9 pend until it frees. drain_fleet.sh now finds the hub by name.
   - The main agent's dsh web had exited during the pause (its re-armed goal spun ~300 idle rounds); it was restarted with its goal left disarmed, on reminders only.
+- [x] **Finish the V4.1-Flash abliteration evals** (`~/deepseek-v4.1-flash-abliteration` @ `0f63148`)
+  The refimpl cross-check had been corrupted by an engine bug: generate() re-sliced completions the authors' code had already sliced, so answers shorter than their prompt came back empty. After fixing it, all four conditions were regenerated through 8-h slurm resume chains and re-judged.
+  - Refusal removal replicates on the authors' engine in thinking mode: JBB 0.030 / HB 0.013 / SR 0.033 vs base 0.930/0.973/0.973 (McNemar p <= 1e-27); GPQA parity holds in thinking (0.763 vs 0.778) and chat mode (0.626 vs 0.566, matching sglang's 0.606/0.566).
+  - Parity gate passes on clean data: 100 prompts, refusal agreement 0.990, McNemar p=1.0. The 16k thinking GPQA pass was infeasible (~0.75 s/step at 17k context, ~44 GPU-h/condition); sglang 16k stays canonical, refimpl cross-checks run at 4096.
+  - Judge/aggregate/parity steps now run as slurm CPU jobs (jobs/finish_evals.sh), not on the login node.
 
