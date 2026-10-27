@@ -1182,4 +1182,9 @@
   - Builders read the volume from their own clone, so I cancelled the 55 still on the old volume and re-windowed them with the merge-main note. I also terminated the 68 sandboxes still writing to it (50 CI, 18 builder), which would only have failed at upload. Driver restarted (job 2832086); 26 builders wait on the k2m group node limit.
   - The shared checkout has an unpushed local commit plus uncommitted pixi edits from session cc869e9b (records rate-limit fix), so it was not fast-forwarded; that commit conflicts with #9854 in modal.py and test_backends.py.
   - 13 PRs whose CI sandboxes were terminated have no builder to re-trigger CI.
+- [x] **Stop losing fetched records to volume rate limits** (`~/science-tasks` @ `601cb11`)
+  Ported session cc869e9b's unpushed fix from the shared checkout onto main after #9854 (#9862). Polling a finished record tripped VolumeListFiles' rate limit, which was read as "no record", so 88 of 2157 CI rollouts were fetched empty. Volume calls now retry, polls are jittered, and a fetch without upload.json fails.
+  - Its stray pixi dependency additions (pytorch-cpu, scikit-image, pillow, gdown, scikit-learn) were left out; they look like builders' `pixi add` landing in the shared checkout's manifest.
+  - The shared checkout is back on main. The original commit is kept as branch backup/cc869e9b-records-ratelimit, and an uncommitted pypdf edit is in a named stash.
+  - /pipeline posted on 11 of the 13 PRs whose CI sandboxes were terminated; #9792 had merged and #9824 already had a run going.
 
