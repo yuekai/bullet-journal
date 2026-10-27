@@ -1187,4 +1187,8 @@
   - Its stray pixi dependency additions (pytorch-cpu, scikit-image, pillow, gdown, scikit-learn) were left out; they look like builders' `pixi add` landing in the shared checkout's manifest.
   - The shared checkout is back on main. The original commit is kept as branch backup/cc869e9b-records-ratelimit, and an uncommitted pypdf edit is in a named stash.
   - /pipeline posted on 11 of the 13 PRs whose CI sandboxes were terminated; #9792 had merged and #9824 already had a run going.
+- [x] **Filter low-quality trajectories in the SFT export** (`~/Danus` @ `91d5735`)
+  The dsh exporter kept every settled session; the opg trajectory audit found half of them had no completed action, many were hand enumeration, some carried wrong facts, and all leaked the operator's AGENTS.md. Now audit-driven filters drop those, truncate killed rounds, and strip the block.
+  - Re-export (Slurm 2831956, mid-run snapshot 06:53Z): 10,838 kept, 1.93B tokens, mean 177,889 tokens; workers 774 kept of ~2,400 settled (mean 480k tokens). 2,102 sessions filtered, mostly no accepted fact (747), finite lane (573) and unfinished verifier runs (532).
+  - Open issue: 37% of verifier and 21% of worker trajectories reason about the stripped bullet-journal instruction, so the context no longer explains that reasoning.
 
