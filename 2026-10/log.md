@@ -1212,4 +1212,7 @@
   - Verified after reconcile: kimi-main 8 running; all kimi-k2m and the 8 surplus kimi-main jobs cancelled (16 still completing at check).
 - [x] **Keep 8 kimi-k3 engines on kimi-k2m** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `37b6502`)
   Draining kimi-k2m to 0 left kimi-k3 with only 8 guaranteed iq cells plus preemptible lowprio. kimi-k2m returns to 8 so the model keeps a k2m-owned base alongside kimi-main; the drained cells were already cancelled, so these 8 boot fresh at one per 300s cooldown.
+- [x] **Keep operator instructions in SFT export** (`~/Danus` @ `d08ea05`)
+  Stripping the ~/.dsh/AGENTS.md block left about a third of trajectories reasoning about instructions no longer in their context. The block is now kept by default for a consistent prompt; --strip-operator-instructions opts back in.
+  - Re-export (Slurm 2835622, mid-run snapshot 15:49Z, fleet running again): 11,673 kept, 2.09B tokens, mean 179,101 tokens; workers 830 kept (mean 476,771 tokens). Sessions that wrote to the bullet journal are still dropped (129).
 
