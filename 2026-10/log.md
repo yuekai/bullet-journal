@@ -1207,4 +1207,7 @@
 - [x] **Pause the 11 RepoProver book runs** (`/mnt/weka/shrd/k2m/yuekai.sun/formalizations`)
   Paused at the user's request: all rp-* jobs were cancelled. Hefferon had already stopped at 12:51Z when a supervisor restart's Mathlib re-download raced on the shared ~/.cache/mathlib (curl.cfg vanished). At pause: 115/135 chapters sketched, 2,431 theorems proved, all state.json files valid.
   - Left resumable: interrupted merges in agent worktrees aborted, and lebl-basic-analysis's base checkout returned to main from an agent branch (its edits stashed as "2026-10-27 pause"). Resume with `pixi run formalize` in undergrad-todo, which defaults to 4 nodes per book.
+- [x] **Drain kimi-k2m and halve kimi-main** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `8636224`)
+  kimi-k3's overnight backlog of ~1,200 requests has drained: 61 healthy cells now hold 16 in flight at 0.1 req/s. kimi-k2m drops 32 -> 0 and kimi-main 16 -> 8, keeping 8 iq cells plus kimi-lowprio as headroom and returning the k2m nodes to the account's quota.
+  - Verified after reconcile: kimi-main 8 running; all kimi-k2m and the 8 surplus kimi-main jobs cancelled (16 still completing at check).
 
