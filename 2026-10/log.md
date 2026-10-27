@@ -1204,4 +1204,7 @@
 - [x] **Cut the opg fleet over to the worker dsh home** (`~/Danus` @ `52ce379`)
   The fleet was drained and resumed so every proving process starts under runtime/dsh-worker-home, and 13,459 old sessions left ~/.dsh. Resubmits shared a same-second list file, so lists now use mktemp; the drain finds verify by name since its id changes.
   - Drain 04:27-07:37Z; new ids: verify 2832419, hub 2832422, pilot 2832429_0, four projects 2832424_0..3, array 2830515_[4-12] released.
+- [x] **Pause the 11 RepoProver book runs** (`/mnt/weka/shrd/k2m/yuekai.sun/formalizations`)
+  Paused at the user's request: all rp-* jobs were cancelled. Hefferon had already stopped at 12:51Z when a supervisor restart's Mathlib re-download raced on the shared ~/.cache/mathlib (curl.cfg vanished). At pause: 115/135 chapters sketched, 2,431 theorems proved, all state.json files valid.
+  - Left resumable: interrupted merges in agent worktrees aborted, and lebl-basic-analysis's base checkout returned to main from an agent branch (its edits stashed as "2026-10-27 pause"). Resume with `pixi run formalize` in undergrad-todo, which defaults to 4 nodes per book.
 
