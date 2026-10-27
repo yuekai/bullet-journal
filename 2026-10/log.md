@@ -1149,6 +1149,8 @@
   - Copies start identical to the previous effective values, so behavior is unchanged; every composed model section matches its pre-split dump. The two copies on a machine are independent and must be edited separately.
   - The local desktop's DeepSeek route is a differently named plugin (`dsh-llm-deepseek-api-key`), so no `llm-deepseek` row was added there; the bundle's own route stays.
   - Spark's `dsh-web` was restarted; m2 hot-reloads; the desktop app needs a quit/reopen before its model list reflects the new rows. Headless one-shots answered on local and spark (`m2`/`deepseek-v4.1-flash`) and on m2 (`comet`/`glm-5.3`, where a placeholder `COMET_API_KEY` suffices because the endpoint ignores auth). Previous files are kept as `*.pre-separate.bak`.
+- [x] **Drop llm-deepseek from local headless**
+  The headless profile no longer declares its own DeepSeek catalog, so the bundle's `llm-deepseek` row applies again. This removes the only local per-profile copy of that row; the default model and the desktop profile are unchanged.
 
 ## Tue, Oct 27, 2026
 
