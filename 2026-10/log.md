@@ -1221,4 +1221,5 @@
 - [x] **Export 40k rollouts to the lean dataset** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `0d824fc`)
   Re-ran the export on the compute node as the 11 book runs continued: 40,128 records / 1.85B tokens, up from 24,375 / 1.09B, verified as a strict superset of the previous ids before replacing the dataset file and refreshing its per-role table.
   Rejection rate fell to 7.8% (invented tool args still dominate). Also wrote down in the plan that excluding status:error segments is an exporter policy rather than a gate rule, with the ~5M tokens of salvageable trajectories it currently costs.
+- [**Mathematicians' ownership of LLMs**](mathematicians-ownership-of-llms.md) (`DSH-session: session-796d11d4-96b8-4129-b087-89a6d3141ab2`)
 
