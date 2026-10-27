@@ -1194,4 +1194,6 @@
 - [x] **Halve glm-5.3 to 8 engines per pool** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `01b39a0`)
   glm-5.3 held 32 cells for ~15 active requests while kimi-k3 queued ~1,200 at 239s average. Each glm pool drops 16 -> 8 so the freed nodes split across both QOS caps: iq runs over its cap and blocks other iq users, and k2m's cap is what holds deepseek-main's pending engines.
   - Verified after reconcile: 8 running jobs per glm pool; the cancelled k2m jobs were still completing.
+- [x] **Raise the sandbox cap from 160 to 256** (`~/science-tasks` @ `9e0f5c0`)
+  Owner decision, to cut the time builders and CI wait for a free sandbox in our own Modal environment (#9865). Load was 66 live sandboxes at the change, so the cap matters at peaks; CI uses it from its next run, builders once their clone merges main.
 
