@@ -1231,4 +1231,8 @@
   Per the owner, the campaign driver now runs with --target 128 (job 2836805, was 64); it adds 10 builders per tick. The builders stay under the k2m QOS on main, recorded in a design row (#9889).
   - Tradeoff: the k2m group's 226-node cap is nearly full (our builders, comet engines and runners hold ~159 nodes; 43 jobs waited on it), so the extra builders queue beside colleagues' jobs and comet's pending engines. main rejects the uncapped lowprio QOS, and cpuonly has 16 nodes.
   - The restart hit a cluster-wide Slurm prolog stall (70 jobs stuck in Prolog). The first new driver hung on fs-mbz-gpu-458 and was cancelled; the resubmitted one runs despite squeue showing Prolog.
+- [x] **Raise kimi-k2m from 8 to 16 engines** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `c1ec162`)
+  Kimi-K3 held ~214 requests on 16 cells, 119 queued, because the 16 kimi-lowprio cells were preempted and are 13-pending on Priority. The k2m pool gains 8 cells so the model has capacity that lowprio cannot take away; kimi-main cannot grow because iq is at its node cap.
+- [x] **Repair two failed deepseek worker registrations** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  fs-mbz-gpu-127 and gpu-649 sat in SMG as status=failed, is_healthy=False, load=0 for days, so deepseek-main served 6 of 8 engines. The engines were fine — /health returned 200 and /v1/completions answered in 0.2s — so the fault was the sticky registry row, not the engine. Deleting both rows from the control plane let the registry loop re-add them from their ready records; both came back ready and healthy within 10s and deepseek now serves 8.
 
