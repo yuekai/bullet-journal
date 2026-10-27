@@ -1245,4 +1245,8 @@
   - Two hazards closed rather than documented. The submission PDFs were untracked but not ignored, so one `git add -A` would have committed papers under double-blind review — they are now gitignored, and a pre-push hook refuses to publish the repo unless ALLOW_CONFIDENTIAL_PUSH=1.
   - The lint is tested the way a lint should be: I broke a draft deliberately and confirmed all twelve checks fire with messages that name the fix and cite the owning doc, then that the exit code reaches the pre-commit hook.
   - Extraction quirks are encoded in a script and a doc instead of being rediscovered. Spliced `±` (`0.6±0.6` extracting as `0.60.6`) is what produced the one fabricated claim in the review batch.
+- [x] **Move own harness paper into the review repo** (`~/iclr2027-reviews`)
+  The reviewer's own ICLR 2027 submission and its LaTeX source sat in Downloads, out of reach while the two submissions it competes with — 4611 on harness component effects and 55520 on how much of a score belongs to the harness — are being drafted. Both files now live in the review repo as reading material, and a recorded decision (docs/design.md D9) keeps them there as background only: no number, framing or citation from that paper may enter a review or an evidence map, since citing it would be an undeclared competing interest on top of a cross-submission leak.
+  - The archive was untracked but not ignored, so one `git add -A` would have committed another anonymous submission's source; it is now gitignored beside the submission PDFs. The five drafts were swept and are clean of any reference to it.
+  - Whether to declare the interest on those two submissions to the area chair is the reviewer's call and is left open in the batch plan.
 
