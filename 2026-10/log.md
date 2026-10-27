@@ -1222,4 +1222,6 @@
   Re-ran the export on the compute node as the 11 book runs continued: 40,128 records / 1.85B tokens, up from 24,375 / 1.09B, verified as a strict superset of the previous ids before replacing the dataset file and refreshing its per-role table.
   Rejection rate fell to 7.8% (invented tool args still dominate). Also wrote down in the plan that excluding status:error segments is an exporter policy rather than a gate rule, with the ~5M tokens of salvageable trajectories it currently costs.
 - [**Mathematicians' ownership of LLMs**](mathematicians-ownership-of-llms.md) (`DSH-session: session-796d11d4-96b8-4129-b087-89a6d3141ab2`)
+- [x] **Restore the 300s submit cooldown** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `2cdbc89`)
+  Every pool is at target with all engines ready, kimi-k2m's 0 -> 8 refill included, so the short cooldown has done its job. At 60s a crash-looping pool would replace itself five times as fast as the controller was designed to allow.
 
