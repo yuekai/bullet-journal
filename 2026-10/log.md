@@ -1169,4 +1169,7 @@
   The README resource table and module list drifted from llama.toml and llama/ with nothing to catch it. scripts/lint.py now checks them, recipe headers, doc paths and plan status, with fix-it errors, and a pre-commit hook runs lint and tests via pixi run check.
 - [x] **Lower the glm-main pool to one replica** (`~/llama` @ `0273abf`)
   glm-main ran two GLM-5.3 engines. Per the user, it now runs one: the controller cancelled the newer job, 2716668, within a cycle and the gateway deregistered it, while 2686423 keeps serving glm-5.3.
+- [x] **Resume the opg fleet on fresh jobs** (`~/Danus` @ `fd9d1ff`)
+  The operator restarted the fleet. All 14 projects were resubmitted at measured memory sizes; gpu-078 lost memory to another user during the pause, so 9 pend until it frees. drain_fleet.sh now finds the hub by name.
+  - The main agent's dsh web had exited during the pause (its re-armed goal spun ~300 idle rounds); it was restarted with its goal left disarmed, on reminders only.
 
