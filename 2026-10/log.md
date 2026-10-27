@@ -1161,4 +1161,6 @@
   Agents started cold from a 297-line README that restated recipe headers and stale model lists. AGENTS.md is now a short map shared by every harness, docs/design.md holds the why, plans and tech debt are tracked, and the README points to the recipes instead of restating them.
 - [x] **Lint docs against fleet config** (`~/llama` @ `7ca020c`)
   The README resource table and module list drifted from llama.toml and llama/ with nothing to catch it. scripts/lint.py now checks them, recipe headers, doc paths and plan status, with fix-it errors, and a pre-commit hook runs lint and tests via pixi run check.
+- [x] **Lower the glm-main pool to one replica** (`~/llama` @ `0273abf`)
+  glm-main ran two GLM-5.3 engines. Per the user, it now runs one: the controller cancelled the newer job, 2716668, within a cycle and the gateway deregistered it, while 2686423 keeps serving glm-5.3.
 
