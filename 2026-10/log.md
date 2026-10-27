@@ -1198,4 +1198,10 @@
   Owner decision, to cut the time builders and CI wait for a free sandbox in our own Modal environment (#9865). Load was 66 live sandboxes at the change, so the cap matters at peaks; CI uses it from its next run, builders once their clone merges main.
 - [x] **Restore glm-5.3 to 12 engines per pool** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `8147a9e`)
   The cut to 8 per pool went further than wanted, so 8 of the 16 shut-down cells come back, split 4 per pool to keep the iq/k2m balance of the cut. The controller submits one cell per pool per 300s cooldown, so all 8 are submitted in ~20 min and serve after their ~20 min boot.
+- [x] **Give proving sessions their own dsh home** (`~/Danus` @ `96d8404`)
+  Workers, verifier and renderers shared ~/.dsh, so 10k+ session logs piled into the operator's chat home and its MCP servers leaked into proofs. They now run under runtime/dsh-worker-home, which borrows only the headless model catalog by symlink.
+  - Adds scripts/migrate_worker_sessions.py (idle-safe, rerunnable) and makes the SFT exporter read both homes.
+- [x] **Cut the opg fleet over to the worker dsh home** (`~/Danus` @ `52ce379`)
+  The fleet was drained and resumed so every proving process starts under runtime/dsh-worker-home, and 13,459 old sessions left ~/.dsh. Resubmits shared a same-second list file, so lists now use mktemp; the drain finds verify by name since its id changes.
+  - Drain 04:27-07:37Z; new ids: verify 2832419, hub 2832422, pilot 2832429_0, four projects 2832424_0..3, array 2830515_[4-12] released.
 
