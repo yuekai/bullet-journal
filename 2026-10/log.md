@@ -1218,4 +1218,7 @@
 - [x] **Drop the submit cooldown to 60s** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `0c57604`)
   kimi-k2m is refilling 0 -> 8 from scratch at one allocation per pool per 300s, about 35 minutes just to submit. At 60s, the reconcile interval, each pool submits once per cycle. The cost is that a crash-looping pool also replaces itself five times faster.
   - Verified: kimi-k2m went 2 -> 4 running jobs in the first two minutes. Still at 60s; previous ramps restored 300 afterwards (e6b6f91).
+- [x] **Export 40k rollouts to the lean dataset** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `0d824fc`)
+  Re-ran the export on the compute node as the 11 book runs continued: 40,128 records / 1.85B tokens, up from 24,375 / 1.09B, verified as a strict superset of the previous ids before replacing the dataset file and refreshing its per-role table.
+  Rejection rate fell to 7.8% (invented tool args still dominate). Also wrote down in the plan that excluding status:error segments is an exporter policy rather than a gate rule, with the ~5M tokens of salvageable trajectories it currently costs.
 
