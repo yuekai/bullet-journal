@@ -1196,4 +1196,6 @@
   - Verified after reconcile: 8 running jobs per glm pool; the cancelled k2m jobs were still completing.
 - [x] **Raise the sandbox cap from 160 to 256** (`~/science-tasks` @ `9e0f5c0`)
   Owner decision, to cut the time builders and CI wait for a free sandbox in our own Modal environment (#9865). Load was 66 live sandboxes at the change, so the cap matters at peaks; CI uses it from its next run, builders once their clone merges main.
+- [x] **Restore glm-5.3 to 12 engines per pool** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `8147a9e`)
+  The cut to 8 per pool went further than wanted, so 8 of the 16 shut-down cells come back, split 4 per pool to keep the iq/k2m balance of the cut. The controller submits one cell per pool per 300s cooldown, so all 8 are submitted in ~20 min and serve after their ~20 min boot.
 
