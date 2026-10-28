@@ -1294,4 +1294,7 @@
 - [x] **Draft GSRA mentoring plan for AI Datasets** (`~/2026-nsf-ai-datasets-proposal`)
   The NSF 26-512 proposal had no mentoring plan. Adapted the 2024 CIF Medium plan into a one-page LaTeX plan (mentoring.tex/.pdf), adding data stewardship, governance and the program's meetings, since the solicitation counts graduate students trained in AI use of scientific datasets as a measure of success.
   - The GSRA count is a placeholder (two) pending the budget.
+- [x] **Check AI Datasets budget against UM template** (`~/2026-nsf-ai-datasets-proposal`)
+  The research admin's 2026-10-14 budget PDF had not been checked. Entering its inputs into a copy of the FY24 LSA template, with no formula changes, reproduces every line to the dollar ($643,984 over 3 years) in LSA-UM-budget-reproduction 2026.10.14.xlsx.
+  - Inputs that differ from FY24: GSRA fringe 30% (was 25%), GSRA base $43,788, candidate tuition $8,348/term, start date 4/1/2027, and new travel costs.
 
