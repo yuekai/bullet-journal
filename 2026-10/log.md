@@ -1280,4 +1280,9 @@
 - [x] **Record stop of lean-lsp runs for task fixes** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `3b16f0c`)
   The tasks are being fixed, so the three lean-lsp runs were stopped after an hour and their partial jobs set aside; a restart begins from scratch on the fixed tasks.
   - Stopped with SIGINT; no Modal containers remain. Partial jobs are at `jobs/aborted-taskfix-arxivlean200-lsp-*`, so the original job names start fresh on restart. The tailnet key minted for these runs stays valid until 2026-11-04.
+- [x] **Grade final workspace once in a hidden verifier** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `e32dbf6`)
+  The judge ran inside the agent container (sforge-submit, autosnap), where agents read and targeted it, and the prompt promised a best score while only some states were judged. Tasks now follow terminal-bench-science: the judge lives only in the verifier image, the final workspace is judged once, and the instruction states the task, rules and time budget, nothing about grading.
+  - Same pass: the judge keeps only build outputs of candidate ProofTask sources (`9e781f4`), closing the out-of-tree-module reward hack, and the 5 defective tasks are excluded with the subset regenerated (`a5aa83e`; 3,264 tasks, 189 of 200 subset ids kept).
+  - Validated on Modal (`8f1c505`): Lean controls 16/16 incl. the hack reproduction, oracle 111/111 on the subset's reference-proof tasks, nop 0/5, and a DeepSeek Claude Code smoke judged once from its final workspace (smoke tailnet key revoked).
+  - The arxivlean-200 baseline and the lean-lsp runs must be rerun on the new tasks before comparisons.
 
