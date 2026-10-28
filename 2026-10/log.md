@@ -1301,4 +1301,7 @@
   The proposal had only the journal plan, sized for $2M with named partners. It now has LaTeX drafts of the Project Summary (1 p), Project Description (11 of 15 pp, the four required sections plus Broader Impacts and prior support) and References Cited, rescoped to the $644K budget (PI + two GSRAs), with no partners named and Hugging Face as host.
   - Aim 1 now frames the open developer as the commons-replenishing mechanism: it collapses under permissive terms and survives under copyleft, so licensing is the sustainment question.
   - All 35 references were checked against primary sources; the 722-paper release facts were corrected (Oct 6, 3 withdrawn and 14 revised Oct 7). Prior NSF Support is a red placeholder; `build.sh` builds all three PDFs with tectonic.
+- [x] **Draft Synergistic Activities; build mentoring plan** (`~/2026-nsf-ai-datasets-proposal` @ `a10c7c8`)
+  The proposal lacked the PI's one-page Synergistic Activities. It leads with the IFM collaboration, which trains open models on the datasets we release, and adds four other verified activities. build.sh now builds it and the mentoring plan.
+  - Other entries: tinyBenchmarks (in the EleutherAI harness), Lean textbook formalization, Statistical Science AE and special issue, MS Data Science program director.
 
