@@ -1297,4 +1297,8 @@
 - [x] **Check AI Datasets budget against UM template** (`~/2026-nsf-ai-datasets-proposal`)
   The research admin's 2026-10-14 budget PDF had not been checked. Entering its inputs into a copy of the FY24 LSA template, with no formula changes, reproduces every line to the dollar ($643,984 over 3 years) in LSA-UM-budget-reproduction 2026.10.14.xlsx.
   - Inputs that differ from FY24: GSRA fringe 30% (was 25%), GSRA base $43,788, candidate tuition $8,348/term, start date 4/1/2027, and new travel costs.
+- [x] **Draft AI Datasets summary, description, refs** (`~/2026-nsf-ai-datasets-proposal`)
+  The proposal had only the journal plan, sized for $2M with named partners. It now has LaTeX drafts of the Project Summary (1 p), Project Description (11 of 15 pp, the four required sections plus Broader Impacts and prior support) and References Cited, rescoped to the $644K budget (PI + two GSRAs), with no partners named and Hugging Face as host.
+  - Aim 1 now frames the open developer as the commons-replenishing mechanism: it collapses under permissive terms and survives under copyleft, so licensing is the sustainment question.
+  - All 35 references were checked against primary sources; the 722-paper release facts were corrected (Oct 6, 3 withdrawn and 14 revised Oct 7). Prior NSF Support is a red placeholder; `build.sh` builds all three PDFs with tectonic.
 
