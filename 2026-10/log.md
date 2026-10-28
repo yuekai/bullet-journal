@@ -1252,4 +1252,8 @@
 - [x] **Add a script to convert PDFs to PDF/A** (`~/2026-nsf-cif-small-annual-report`)
   The three papers for the NSF annual report needed PDF/A versions. to-pdfa.sh converts every PDF in the cwd to PDF/A-2b with Ghostscript via `pixi exec` (no install needed), writing to ./pdfa/ and leaving the originals alone. It embeds an sRGB OutputIntent without the stock PDFA_def.ps, which would overwrite each document's title.
   - All three converted with matching page counts and PDF/A-2 metadata; not checked with a formal validator such as veraPDF. Ghostscript drops non-printing annotations (mostly hyperlinks), as PDF/A requires.
+- [x] **Serve Qwen3.5-27B-FP8 on one engine** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `e3594aa`)
+  Comet never downloads weights, so a model with no Weka mirror cannot be served at all, and Qwen3.5-27B-FP8 had neither mirror nor recipe. The checkpoint is now mirrored under k2pta (30.9 GB, 11 shards), a TP1 recipe serves it, and the new `qwen35-main` pool raises one k2m engine.
+  - The recipe follows the cookbook's single-GPU cell rather than the model card: every card command is `--tp-size 8`, and the cookbook's Qwen3.5 page documents only the 397B MoE, so the TP1 reference is the generator's `modelConfigs['27b'].h200.fp8 = {tp: 1, mem: 0.8}`. The checkpoint's MTP head ships in-shard, so NEXTN needs no draft checkpoint.
+  - Job 2841383 is PENDING on QOSGrpNodeLimit, the k2m group cap already recorded for deepseek growth; iq is over its own cap and every GPU node reports 8 of 8 allocated, so no account or partition can start a 1-GPU allocation right now. The job keeps its queue position instead of being resubmitted for one tuning flag.
 
