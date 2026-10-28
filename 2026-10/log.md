@@ -1287,4 +1287,8 @@
   - The arxivlean-200 baseline and the lean-lsp runs must be rerun on the new tasks before comparisons.
 - [x] **Re-export Danus SFT trajectories** (`~/Danus` @ `d08ea05`)
   Refreshed the quality-filtered glm-5.3 export as Slurm job 2848090 (mid-run snapshot 2026-10-28 17:30Z) into runtime/exports/dsh-20261028T172952Z. 14,579 trajectories pass process_entry, 2.62B tokens, mean 179,576 tokens; workers 1,051 kept (476M tokens), verifier runs 13,368 (2.12B).
+- [x] **Run book agents on deepseek-v4.1-flash** (`/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `af56619`)
+  The paused RepoProver book runs used repoprover's comet default, kimi-k3. `formalize` now passes `--model` to every job (default deepseek-v4.1-flash, checked first against the gateway with repoprover's unchanged request extras and a tool call), so supervisor restarts and resubmits keep it.
+  - All 11 books resumed from saved state on 4 nodes each (jobs 2848324–2848334; Grinstead resubmitted as 2848407). Every coordinator reports comet/deepseek-v4.1-flash and agents are spreading over all four workers.
+  - Grinstead's first job came up with its coordinator thread gone (no error logged) while its four workers kept waiting, so srun never exited and the supervisor could not restart it; resubmitting fixed it. That gap is still open.
 
