@@ -1257,3 +1257,15 @@
   - The recipe follows the cookbook's single-GPU cell rather than the model card: every card command is `--tp-size 8`, and the cookbook's Qwen3.5 page documents only the 397B MoE, so the TP1 reference is the generator's `modelConfigs['27b'].h200.fp8 = {tp: 1, mem: 0.8}`. The checkpoint's MTP head ships in-shard, so NEXTN needs no draft checkpoint.
   - Job 2841383 is PENDING on QOSGrpNodeLimit, the k2m group cap already recorded for deepseek growth; iq is over its own cap and every GPU node reports 8 of 8 allocated, so no account or partition can start a 1-GPU allocation right now. The job keeps its queue position instead of being resubmitted for one tuning flag.
 
+## Wed, Oct 28, 2026
+
+- [x] **Add stratified arxivlean-200 benchmark subset** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `faea5be`)
+  Model comparisons needed a fixed task set smaller than all 3,269 tasks. configs/subsets/arxivlean-200.txt is a seeded sample stratified by category x K3-reference proof (111 with, 89 without), pinned by a test and linted; `pixi run summarize-eval` turns Harbor jobs into pass@1 tables.
+- [x] **Bridge Claude Code trials to the comet tailnet** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `dff4ea0`)
+  Self-hosted models live only on the tailnet, which Modal sandboxes cannot reach. With `--ak tailnet_upstream=...`, each trial joins as an ephemeral tag:comet-client node and forwards a loopback port to svc:comet; the agent reaches only the gateway and never sees the key.
+  - The full runs exposed three harness problems, each fixed and recorded in the plan: Claude Code caps unknown models at 32k output tokens, so gateway models now get 128k; the gateway sometimes returns Kimi thinking blocks without a signature and then rejects them (HTTP 400), so the forwarder adds an empty signature; and cache-aware routing queues Kimi requests for minutes, so the request timeout is now 30 min.
+  - Gateway-side fixes (missing signature, `--balance-abs-threshold 8` piling identical prefixes onto one worker) are in LeanBench's docs/tech-debt.md; sglang-serve was not changed.
+- [x] **Record arxivlean-200 results for three models** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `ea9c897`)
+  EdgeBenchClaudeCode, 2 h, pass@1 on 200 tasks: DeepSeek V4.1 Flash 82 (41.0%), GLM-5.3 66 (33.0%), Kimi K3 62 (31.0%); CIs overlap. Nearly all solves are on tasks with a K3 reference proof (56-72% there, 0-2% elsewhere); 90 tasks solved by any model, 47 by all.
+  - Trials lost to gateway transport errors were re-run for every model (3 DeepSeek, 22 Kimi); Kimi was paused for ~3 h during a gateway capacity drop. The tailnet auth key is revoked and no sandboxes or nodes remain.
+
