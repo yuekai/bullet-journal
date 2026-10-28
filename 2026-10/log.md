@@ -1291,4 +1291,7 @@
   The paused RepoProver book runs used repoprover's comet default, kimi-k3. `formalize` now passes `--model` to every job (default deepseek-v4.1-flash, checked first against the gateway with repoprover's unchanged request extras and a tool call), so supervisor restarts and resubmits keep it.
   - All 11 books resumed from saved state on 4 nodes each (jobs 2848324–2848334; Grinstead resubmitted as 2848407). Every coordinator reports comet/deepseek-v4.1-flash and agents are spreading over all four workers.
   - Grinstead's first job came up with its coordinator thread gone (no error logged) while its four workers kept waiting, so srun never exited and the supervisor could not restart it; resubmitting fixed it. That gap is still open.
+- [x] **Draft GSRA mentoring plan for AI Datasets** (`~/2026-nsf-ai-datasets-proposal`)
+  The NSF 26-512 proposal had no mentoring plan. Adapted the 2024 CIF Medium plan into a one-page LaTeX plan (mentoring.tex/.pdf), adding data stewardship, governance and the program's meetings, since the solicitation counts graduate students trained in AI use of scientific datasets as a measure of success.
+  - The GSRA count is a placeholder (two) pending the budget.
 
