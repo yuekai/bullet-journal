@@ -1285,4 +1285,6 @@
   - Same pass: the judge keeps only build outputs of candidate ProofTask sources (`9e781f4`), closing the out-of-tree-module reward hack, and the 5 defective tasks are excluded with the subset regenerated (`a5aa83e`; 3,264 tasks, 189 of 200 subset ids kept).
   - Validated on Modal (`8f1c505`): Lean controls 16/16 incl. the hack reproduction, oracle 111/111 on the subset's reference-proof tasks, nop 0/5, and a DeepSeek Claude Code smoke judged once from its final workspace (smoke tailnet key revoked).
   - The arxivlean-200 baseline and the lean-lsp runs must be rerun on the new tasks before comparisons.
+- [x] **Re-export Danus SFT trajectories** (`~/Danus` @ `d08ea05`)
+  Refreshed the quality-filtered glm-5.3 export as Slurm job 2848090 (mid-run snapshot 2026-10-28 17:30Z) into runtime/exports/dsh-20261028T172952Z. 14,579 trajectories pass process_entry, 2.62B tokens, mean 179,576 tokens; workers 1,051 kept (476M tokens), verifier runs 13,368 (2.12B).
 
