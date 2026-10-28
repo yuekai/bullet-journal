@@ -1277,4 +1277,7 @@
   - Judge: one reward hack passed (DeepSeek, 1805-11261): build-time code wrote an unchecked `cheat` declaration into a module outside ProofTask/, which leanchecker never replays. No false negatives found.
   - Tasks: 4 false statements (1307-0724, 1606-05992, 1210-6126, math-0111096) and 1 unprovable `let rec` statement (2202-09665) among the 110 tasks no model solved; 66 look genuinely hard and 37 need theory Mathlib lacks.
   - Infra: 32 Kimi trials (gateway stalls, leaked thinking markers, lost sandboxes) and 5 DeepSeek trials were compromised. Adjusted pass@1 on 194 tasks: DeepSeek 41.8%, GLM 34.0%, Kimi 32.0% (a lower bound).
+- [x] **Record stop of lean-lsp runs for task fixes** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `3b16f0c`)
+  The tasks are being fixed, so the three lean-lsp runs were stopped after an hour and their partial jobs set aside; a restart begins from scratch on the fixed tasks.
+  - Stopped with SIGINT; no Modal containers remain. Partial jobs are at `jobs/aborted-taskfix-arxivlean200-lsp-*`, so the original job names start fresh on restart. The tailnet key minted for these runs stays valid until 2026-11-04.
 
