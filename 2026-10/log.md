@@ -1255,7 +1255,7 @@
 - [x] **Serve Qwen3.5-27B-FP8 on one engine** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `e3594aa`)
   Comet never downloads weights, so a model with no Weka mirror cannot be served at all, and Qwen3.5-27B-FP8 had neither mirror nor recipe. The checkpoint is now mirrored under k2pta (30.9 GB, 11 shards), a TP1 recipe serves it, and the new `qwen35-main` pool raises one k2m engine.
   - The recipe follows the cookbook's single-GPU cell rather than the model card: every card command is `--tp-size 8`, and the cookbook's Qwen3.5 page documents only the 397B MoE, so the TP1 reference is the generator's `modelConfigs['27b'].h200.fp8 = {tp: 1, mem: 0.8}`. The checkpoint's MTP head ships in-shard, so NEXTN needs no draft checkpoint.
-  - Job 2841383 is PENDING on QOSGrpNodeLimit, the k2m group cap already recorded for deepseek growth; iq is over its own cap and every GPU node reports 8 of 8 allocated, so no account or partition can start a 1-GPU allocation right now. The job keeps its queue position instead of being resubmitted for one tuning flag.
+  - The engine submitted on its own and sat PENDING on QOSGrpNodeLimit, the k2m group cap already recorded for deepseek growth; iq was over its own cap and every GPU node reported 8 of 8 allocated, so the wait looked unbounded. It started 35 minutes later on fs-mbz-gpu-020 and has served since 05:22 UTC. Boot: 28.5 GB target weights plus a 5.2 GB MTP draft, 142 mamba slots, 674,218 bf16 KV tokens, admission clamped by SGLang to 28. The pre-boot estimate (~27 concurrent, ~154 MB per state slot) came out within a hair, so the recipe and plan now carry the measured numbers instead.
 
 ## Wed, Oct 28, 2026
 
