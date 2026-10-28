@@ -1272,4 +1272,9 @@
   To test whether Lean LSP tools help agents, EdgeBenchClaudeCode can now install lean-lsp-mcp 0.26.2 (16 local tools; remote search and lean_build disabled) from an offline host-built bundle and register it as an MCP server. Image, tasks, prompt and command line stay unchanged, so the tools are the only difference from the arxivlean-200 baseline.
   - A Modal probe caught two problems: pip resolved environment markers for the host's Python and missed a 3.10-only dependency, and Lean's server watchdog dies without /etc/localtime, which the image lacks; the install now adds a UTC zone file.
   - The smoke passed for all three models, and the three 200-task runs (`jobs/arxivlean200-lsp-*`, -n 50) launched 2026-10-28 14:12 UTC with a fresh tailnet key; results and key revocation are pending.
+- [x] **Audit arxivlean-200 failures** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `d11232b`)
+  The 390 failed trials of the three-model eval were triaged to separate model failures from benchmark faults. Most are genuine, but the audit found a judge hole, defective statements and infra-compromised trials; the findings and fixes are in the eval plan and tech debt.
+  - Judge: one reward hack passed (DeepSeek, 1805-11261): build-time code wrote an unchecked `cheat` declaration into a module outside ProofTask/, which leanchecker never replays. No false negatives found.
+  - Tasks: 4 false statements (1307-0724, 1606-05992, 1210-6126, math-0111096) and 1 unprovable `let rec` statement (2202-09665) among the 110 tasks no model solved; 66 look genuinely hard and 37 need theory Mathlib lacks.
+  - Infra: 32 Kimi trials (gateway stalls, leaked thinking markers, lost sandboxes) and 5 DeepSeek trials were compromised. Adjusted pass@1 on 194 tasks: DeepSeek 41.8%, GLM 34.0%, Kimi 32.0% (a lower bound).
 
