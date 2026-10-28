@@ -1268,4 +1268,8 @@
 - [x] **Record arxivlean-200 results for three models** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `ea9c897`)
   EdgeBenchClaudeCode, 2 h, pass@1 on 200 tasks: DeepSeek V4.1 Flash 82 (41.0%), GLM-5.3 66 (33.0%), Kimi K3 62 (31.0%); CIs overlap. Nearly all solves are on tasks with a K3 reference proof (56-72% there, 0-2% elsewhere); 90 tasks solved by any model, 47 by all.
   - Trials lost to gateway transport errors were re-run for every model (3 DeepSeek, 22 Kimi); Kimi was paused for ~3 h during a gateway capacity drop. The tailnet auth key is revoked and no sandboxes or nodes remain.
+- [x] **Add opt-in lean-lsp-mcp tools to Claude Code agent** (`/mnt/weka/shrd/k2m/yuekai.sun/LeanBench` @ `9407614`)
+  To test whether Lean LSP tools help agents, EdgeBenchClaudeCode can now install lean-lsp-mcp 0.26.2 (16 local tools; remote search and lean_build disabled) from an offline host-built bundle and register it as an MCP server. Image, tasks, prompt and command line stay unchanged, so the tools are the only difference from the arxivlean-200 baseline.
+  - A Modal probe caught two problems: pip resolved environment markers for the host's Python and missed a 3.10-only dependency, and Lean's server watchdog dies without /etc/localtime, which the image lacks; the install now adds a UTC zone file.
+  - The smoke passed for all three models, and the three 200-task runs (`jobs/arxivlean200-lsp-*`, -n 50) launched 2026-10-28 14:12 UTC with a fresh tailnet key; results and key revocation are pending.
 
