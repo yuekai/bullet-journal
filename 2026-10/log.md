@@ -1319,3 +1319,11 @@
   - `comet status` had reported `gateway_healthy: true` and 77/77 registered the whole time, because it prints whatever the service last wrote and nothing marks those values stale.
   - Root cause untouched: the checkout holds 582 G, 560 G of it flattened Kimi weights under `state/flat`, so the same write failure can recur until that space is freed or the quota raised.
 
+## Thu, Oct 29, 2026
+
+- [x] **Raise the driver's classify budget to 32768** (`~/science-tasks` @ `76b5f6b`)
+  `classify()` gave glm-5.3 8192 tokens, and on borderline proposals the model spent all of them reasoning and returned no answer at all, so those proposals never classified: every tick retried them, ticks stretched to 20-30 minutes, and some ticks filled none of their free slots. It now gets 32768; a proposal that does answer uses about 4k, and the ones that used to run out answer in about three minutes. Reasoning effort is unchanged on purpose: `reasoning_effort=low` replied in 41 s but chose family R where the default effort chose S on the same proposal, and the family decides what kind of task gets built.
+  - The driver had died at 02:37 UTC (exit 120, a failed flush of its log; `drive()` already guards each tick, so the cause sits outside it) and the campaign sat paused on the comet outage for the 12 h until then. Restarted at 15:15 UTC with --target 128: the first two ticks resumed 20 cut-off runs and logged no blank classifications.
+- [x] **Stop reading AKIA in protein sequences as a key** (`~/science-tasks` @ `76b5f6b`)
+  The secret scan in `scripts/lint_repo.py` matched `AKIA[0-9A-Z]{16}` anywhere, so 33 MSA fixtures in `tasks/life-sciences/biology/msa-scorer-dispatch` were reported as credentials, because protein sequences carry AKIA mid-run (`AINAKIANVEIKEI`). Task PRs skip repo-checks, so main had been red for every pipeline PR since that task merged. The pattern now asks the key to stand alone between non-alphanumerics, clearing all 33 while a real key in a config still matches, and a test covers both directions.
+
