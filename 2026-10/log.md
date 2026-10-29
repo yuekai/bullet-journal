@@ -1304,4 +1304,6 @@
 - [x] **Draft Synergistic Activities; build mentoring plan** (`~/2026-nsf-ai-datasets-proposal` @ `a10c7c8`)
   The proposal lacked the PI's one-page Synergistic Activities. It leads with the IFM collaboration, which trains open models on the datasets we release, and adds four other verified activities. build.sh now builds it and the mentoring plan.
   - Other entries: tinyBenchmarks (in the EleutherAI harness), Lean textbook formalization, Statistical Science AE and special issue, MS Data Science program director.
+- [**RealBench: vericoding with a harness-owned bridge**](realbench-vericoding-design.md) (`DSH-session: session-710b0bc3-674e-4ed4-9d69-60a9889ec32d`)
+  VeriBench verifies a hand-written Lean translation, so its real source of truth is the gold Lean file, not the Python. The replacement keeps the agent writing code and proof together but makes the harness own the bridge (Rust → Charon+Aeneas → Lean) and derive the gold spec from the reference denotation. Working draft: `~/veribench2/DESIGN.md`.
 
