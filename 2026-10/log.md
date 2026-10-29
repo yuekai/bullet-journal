@@ -1346,4 +1346,6 @@
   - Kept the cut rather than reverting it, since kimi-k2m was the idlest pool (8 % of pinned admission, empty queue) and those engines would otherwise compete for the budget as it frees. Only a cap raise with the cluster admins (≥399 nodes, ≥2492 GPUs) or other tenants draining will start the pending engines.
 - [x] **Draft DMSP form responses for tasks and rollouts** (`~/2026-nsf-ai-datasets-proposal` @ `9f27819`)
   research.gov now takes the Data Management and Sharing Plan as per-category form fields, and the proposal had no plan. This drafts entries for the RL tasks and SFT trajectories released on Hugging Face, with open decisions marked for the PI.
+- [x] **Specify Harbor format for RL tasks in DMSP** (`~/2026-nsf-ai-datasets-proposal` @ `18356e8`)
+  The task entry described a generic, unconfirmed task layout. The tasks will ship in the Harbor task format, so the standards field now names it and its files, which tells reviewers the tasks run in existing RL and eval harnesses.
 
