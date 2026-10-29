@@ -1348,4 +1348,6 @@
   research.gov now takes the Data Management and Sharing Plan as per-category form fields, and the proposal had no plan. This drafts entries for the RL tasks and SFT trajectories released on Hugging Face, with open decisions marked for the PI.
 - [x] **Specify Harbor format for RL tasks in DMSP** (`~/2026-nsf-ai-datasets-proposal` @ `18356e8`)
   The task entry described a generic, unconfirmed task layout. The tasks will ship in the Harbor task format, so the standards field now names it and its files, which tells reviewers the tasks run in existing RL and eval harnesses.
+- [x] **Specify ATIF format for trajectories in DMSP** (`~/2026-nsf-ai-datasets-proposal` @ `945fa23`)
+  The trajectory entry described a generic chat-message schema. Rollouts come from Harbor runs, so they ship in Harbor's ATIF schema, which keeps tool observations, token IDs and logprobs that chat formats drop, and links each trajectory to its Harbor task.
 
