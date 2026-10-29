@@ -1314,4 +1314,8 @@
 - [x] **Mirror m2-only agent skills to Mac and spark**
   Five skills in `~/.agents/skills` (harbor-cli, harbor-task-creator, harbor-adapter-creator, hf-mem, modal) existed only on m2, so agents on the Mac and spark couldn't use them. They're now copied to both, and their per-file hashes match on all three machines.
   - spark-only `teleport-m2` was left in place. The directory isn't under version control, so the machines can drift again.
+- [x] **Restart the comet gateway** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  The gateway had been down since 01:13 UTC, when service job 2763376 died on `ENOSPC` while writing its own state files; the SMG gateway, the tailnet Funnel leg and both control loops went with it, leaving 77 engine allocations running but unreachable. Resubmitting the service (job 2855220) had the gateway healthy 8 s after start, all 77 workers re-registered within 20 s, and the reconciler replacing the 5 replicas lost in the outage.
+  - `comet status` had reported `gateway_healthy: true` and 77/77 registered the whole time, because it prints whatever the service last wrote and nothing marks those values stale.
+  - Root cause untouched: the checkout holds 582 G, 560 G of it flattened Kimi weights under `state/flat`, so the same write failure can recur until that space is freed or the quota raised.
 
