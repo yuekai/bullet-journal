@@ -4,7 +4,7 @@ description: Design for a code-verification benchmark that improves on VeriBench
 date: 2026-10-28
 ---
 
-Design discussion for a benchmark to replace [VeriBench](https://huggingface.co/datasets/brando/veribench) as the thing evaluated when measuring end-to-end code verification. Working draft lives at `~/veribench2/DESIGN.md`; relates to the [verified code synthetic data plan](verified-code-synthetic-data-plan.md), which consumes the same look.
+Design discussion for a benchmark to replace [VeriBench](https://huggingface.co/datasets/brando/veribench) as the thing evaluated when measuring end-to-end code verification. Relates to the [verified code synthetic data plan](verified-code-synthetic-data-plan.md), which consumes the same look.
 
 ## The defect being fixed
 
