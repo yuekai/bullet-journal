@@ -1311,4 +1311,7 @@
   - The checkpoint is a Qwen3.5-generation backbone (`Qwen3_5ForConditionalGeneration`), so SGLang needs no new model class: only v0.5.19, the first release that declares Qwen3.8 support, and the cookbook's H200 FP8 cell instead of guessed flags. Its MTP head ships as a separate `mtp.safetensors` and loads as the in-checkpoint draft (accept length 3.92 of 4).
   - The first allocation would have died at the startup deadline: DeepGEMM's JIT warmup sweeps `chunked_prefill_size * 2` M values per GEMM shape, so the cookbook's 32768-token chunks meant 65,536 kernels and a 42-hour ETA. Sampling that grid with `SGLANG_JIT_DEEPGEMM_FAST_WARMUP=1` cut it to 3,584 kernels and the boot to ~11 minutes.
   - Left at the default mamba ratio on purpose: the state pool caps concurrency at 30 while 10.44 GB sits idle, so raising mem-fraction is the free move before re-splitting the pools once a real workload's average context is known.
+- [x] **Mirror m2-only agent skills to Mac and spark**
+  Five skills in `~/.agents/skills` (harbor-cli, harbor-task-creator, harbor-adapter-creator, hf-mem, modal) existed only on m2, so agents on the Mac and spark couldn't use them. They're now copied to both, and their per-file hashes match on all three machines.
+  - spark-only `teleport-m2` was left in place. The directory isn't under version control, so the machines can drift again.
 
