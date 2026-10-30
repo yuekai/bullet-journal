@@ -1420,4 +1420,6 @@
 - [x] **Fix rollout model provenance and export 46k** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `ae0b4c9`)
   The book runs switched to deepseek-v4.1-flash on 2026-10-28, but the exporter stamped a single --model on every record, so this export would have labelled 6k deepseek rollouts as kimi-k3. Recordings do not store the model, so it is now inferred from the run directory's start time (the launcher fixes one model per job and each job writes a new run dir); the report breaks down counts by model for the dataset card.
   Re-exported 46,205 records / 2.31B tokens on the compute node, verified as a strict superset of the previous 40,128 with the earlier records still kimi-k3 and all 6,077 new ones deepseek-v4.1-flash.
+- [x] **Point Danus origin at ancient-ghost** (`~/Danus`)
+  Changed origin from UMich-FATML/Danus to https://github.com/LLM360/ancient-ghost.git before the old repository is deleted. Verified HTTPS fetch and push URLs; no repository content was pushed or deleted.
 
