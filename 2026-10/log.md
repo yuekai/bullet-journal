@@ -1362,6 +1362,12 @@
   - Declaring the platform alone was not enough: Windows Python still defaults to the ANSI code page and the scripts read notes without an explicit encoding, so lint died on the first non-ASCII byte in a note. An activation env sets `PYTHONUTF8=1`, a no-op where UTF-8 is already the default.
   - Hooks were enabled with one line of `git config core.hooksPath .githooks`, not `scripts/install.sh`, whose skill-linking half needs symlink privilege on Windows.
   - The lock moved from format v6 to v7, which pixi recommends. The macOS and Linux pins are otherwise unchanged; win-64 resolved to its own newer patch versions (python 3.14.10, pytest 9.2.0).
+- [x] **Mirror Teleport credentials to spark from tsh**
+  Logging in to m2 needs Okta SSO with biometrics, so only the Mac can do it, and spark works from a copy of `~/.tsh` whose certificate expires after 24h; that copy had to be made by hand after every login, and forgetting it broke every m2 access from spark until the user was back at the Mac. `~/.local/bin/tsh` is now a wrapper that shadows the real client (`/usr/local/bin/tsh`, the Teleport Connect binary) and, right after a successful `tsh login`, runs `~/.local/bin/mirror-tsh` to rsync `~/.tsh` to spark and then verify it there with the skill's own check script.
+  A wrapper rather than a watcher, because the credentials only change when `tsh` runs: that removes the daemon and cannot copy a half-written login. `~/.local/bin` already sits ahead of `/usr/local/bin` on the PATH, so no PATH edit and no sudo were needed.
+  Passthrough stays byte-identical (nothing written to stdout, the real binary exec'd by absolute path so it cannot recurse, exit code forwarded), which is what makes shadowing safe here: `ssh m2`'s ProxyCommand calls `/usr/local/bin/tsh` directly and never enters the wrapper.
+  Unchanged `~/.tsh` costs no network because the tree is hashed first; a push retries once, excludes `bin/` and never uses `--delete`, so spark's own `~/.tsh/bin` survives; and a failed copy is reported after the login without failing the login, leaving `mirror-tsh` to retry and `mirror-tsh --status` to compare both sides.
+  The `teleport-m2` skill on spark no longer has agents ask the user to rsync: its refresh message now asks only for `tsh logout; tsh login`, and the skill documents the wrapper, the Mac-side log and the retry command.
 
 ## Fri, Oct 30, 2026
 
