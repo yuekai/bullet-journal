@@ -1403,4 +1403,6 @@
   - nvm (with codex, pi and task-master, none migrated at the user's choice) and uv with its Python and caches were deleted, about 2.8 GB. The orphaned Codex app-server was stopped, so a remote Codex on spark needs codex reinstalled first.
   - Backups: `~/.bashrc.pre-pixi.bak`, `~/.zshrc.pre-pixi.bak`, `~/.pixi/manifests/pixi-global.toml.pre-pixi.bak`.
   - Verified: DSH 0.2.1-rc.5 serves (3080 401, 3081 200, cookie 303) and the update run was a no-op; `leanprover` and the journal's `pixi run lint` work from plain ssh. Notes in `~/bullet-journal` @ `b5d006b`: [DSH on spark](dsh-on-spark.md).
+- [x] **Audit evaluation measurements on CPU** (`/mnt/weka/shrd/k2m/yuekai.sun/glm-5.3-abliteration`)
+  Added a reproducible offline audit and aggregate report to distinguish measurement defects from model outcomes. Reconstructed token indexing and saved EOS accounting confirm real data-path issues; historical completion metadata is missing. Production code and model weights remain unchanged; 87 targeted tests and repository lint pass.
 
