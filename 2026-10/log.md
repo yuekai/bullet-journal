@@ -1397,4 +1397,10 @@
   - Opening `index.html` from disk hands over to the served page: a navigation started on a `file://` page is cross-site, so DSH's Strict cookie was withheld on the token redirect and it answered 401. legionp reaches its own tailnet name, so the bookmark works there too.
   - The old Startup entry, `%LOCALAPPDATA%\dsh-web`, and the OneDrive setup scripts and doc are deleted. DSH Web now runs rc.5 against the rc.3 desktop app's `~\.dsh`; storages were backed up first.
   - Verified from the Mac (curl and fresh headless Chrome) and on legionp (headless Edge from disk), plus restart, crash recovery, the hold, and a no-op update. Notes in `~/bullet-journal` @ `57d0311`: [DSH on legionp](dsh-on-legionp.md).
+- [x] **Make pixi spark's only Node and Python manager** (`spark:~/dsh-web` @ `3a20caf`)
+  spark had three managers at once. Its pixi was 0.65 and on PATH only in the unused zshrc, so bash and plain ssh commands found no pixi or node. nvm and uv brought their own Node 24 and Python 3.11. DSH Web ran on system python3, and DSH lived inside the pixi nodejs env, so a nodejs re-solve would have deleted it.
+  It now matches legionp. pixi is 0.83 and first on PATH in every bash shell. The global `nodejs` env is pinned to `24.*` (it was at 26.10), next to a new `pnpm` env. Python comes only from pixi projects: there is no global pixi Python, at the user's request, and Ubuntu's `/usr/bin/python3` stays for the OS. `~/dsh-web` runs on its own pixi python 3.13 and installs DSH under a private `npm/` prefix.
+  - nvm (with codex, pi and task-master, none migrated at the user's choice) and uv with its Python and caches were deleted, about 2.8 GB. The orphaned Codex app-server was stopped, so a remote Codex on spark needs codex reinstalled first.
+  - Backups: `~/.bashrc.pre-pixi.bak`, `~/.zshrc.pre-pixi.bak`, `~/.pixi/manifests/pixi-global.toml.pre-pixi.bak`.
+  - Verified: DSH 0.2.1-rc.5 serves (3080 401, 3081 200, cookie 303) and the update run was a no-op; `leanprover` and the journal's `pixi run lint` work from plain ssh. Notes in `~/bullet-journal` @ `b5d006b`: [DSH on spark](dsh-on-spark.md).
 
