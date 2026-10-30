@@ -196,6 +196,10 @@ the authority. Fetch the current policy before each edit.
   UI on tcp:3080 and the DSH bookmark page on http:3081. The member grant to
   `*` covers both ports. A test pins `100.91.181.87:3080` and `100.91.181.87:3081` for a
   member. See [dsh-on-spark.md](dsh-on-spark.md).
+- `legionp` has no service and no tag either. Its Windows `tailscaled` serves
+  the DSH web UI on tcp:3080 and the DSH bookmark page on http:3081, the same
+  layout as spark. The member grant to `*` covers both ports; no test pins
+  them. See [dsh-on-legionp.md](dsh-on-legionp.md).
 - The `tests` section also guards each service. A client accepts its service
   and nothing else. A gateway cannot start a connection. A member accepts
   `svc:m2` on all three ports, and `svc:comet` on port 8000 and port 8088.
@@ -284,3 +288,6 @@ is in `~/.agents/skills/tailscale/references/access-control.md`.
 - 2026-10-29: spark port 3081 changed from a TCP forward to the DSH gate to
   an HTTP rule that serves the static DSH bookmark page. The live policy did
   not change: the member grant and the spark test still cover 3080 and 3081.
+- 2026-10-30: legionp gained serve rules for tcp:3080 (DSH) and http:3081 (the
+  DSH bookmark page). The live policy did not change: the member grant covers
+  both ports.
