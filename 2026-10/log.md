@@ -1443,4 +1443,6 @@
   - Admitting all twelve needs iq to shed 12 nodes and 96 GPUs, exactly the footprint of 6 kimi-k3 engines, and scale-down cancels pending allocations before running ones — so only a pool with live engines can fund them, which makes it a serving-capacity decision rather than a scheduling one.
 - [x] **Switch Danus checkout to codex head** (`~/Danus`)
   Switched the clean checkout from main to codex tracking UMich-FATML/Danus origin/codex at 6d92e8d. Verified HEAD matches the fetched branch tip and the working tree remains clean; no local work was discarded.
+- [**Git snapshots for Danus resume**](danus-git-snapshots-for-resume.md) (`DSH-session: session-d8fdc4c8-cecb-48a2-9b49-ff631759ba41`)
+  Use one git repo per project (workers, global memory and fact graph together), with its git dir outside the work tree and a gateway lock for consistent snapshots.
 
