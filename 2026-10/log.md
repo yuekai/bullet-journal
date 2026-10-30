@@ -1350,4 +1350,11 @@
   The task entry described a generic, unconfirmed task layout. The tasks will ship in the Harbor task format, so the standards field now names it and its files, which tells reviewers the tasks run in existing RL and eval harnesses.
 - [x] **Specify ATIF format for trajectories in DMSP** (`~/2026-nsf-ai-datasets-proposal` @ `945fa23`)
   The trajectory entry described a generic chat-message schema. Rollouts come from Harbor runs, so they ship in Harbor's ATIF schema, which keeps tool observations, token IDs and logprobs that chat formats drop, and links each trajectory to its Harbor task.
+- [x] **Set up DeepSeek Harness Web on localhost:3080**
+  DSH was reachable only through the installed desktop app, which serves its browser UI on a random loopback port chosen per launch, so no address stayed valid between runs. It now runs as a hidden supervised process on 127.0.0.1:3080 that starts at logon and relaunches itself within seconds of a crash, with one control script for status, start, stop, restart and logs.
+  Pinned the npx package to 0.2.1-rc.3 instead of latest because the server and the desktop app both read and write `~/.dsh`, and a newer build could leave session and storage files in formats the older app cannot read.
+  - Mirrored the desktop profile's model route and permission presets into the web profile, so the browser UI works without re-entering an endpoint or key; the desktop's settings-panel disable was left out so the browser keeps its own Settings.
+  - `dsh web` will not serve the UI to an unauthenticated browser: each launch prints a token URL that mints a 30-day cookie, so the control script prints the current one rather than assuming the bare address opens.
+  - Checked rather than assumed: unauthenticated requests get 401, the token URL mints the cookie, and killing the server brings it back in about ten seconds.
+  - Kept the listener loopback-only, since the web profile inherits the desktop's danger-full-access default.
 
