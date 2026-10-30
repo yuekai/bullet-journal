@@ -1452,4 +1452,11 @@
 - [x] **Lock and atomically merge the fact-graph glossary** (`~/Danus` @ `a423a10`)
   Concurrent submits did an unlocked read-modify-write of glossary.json: races dropped entries and a torn file read as {} and was overwritten. Every project had lost most entries (perfect-2 kept 11 of 2,231). Merges now lock and rename atomically, and a rebuild re-derives entries from facts.
   - All 21 opg glossaries rebuilt (backups in `opg/run_logs/glossary-backup-*`); per-job revive steps v2 (`9995568`) cap 8G jobs at 5 loops after OOM kills returned.
+- [x] **Replace Codex runtimes with DSH** (`~/Danus` @ `3394334`)
+  Danus required Codex accounts and launch flags in every role. Use isolated DSH roles with explicit routing and offline readiness checks, keeping the verifier gate and native main-agent scheduling without borrowing the operator's GUI configuration.
+  - Built from the fresh UMich-FATML fork's codex branch, not the archived deployment. The main launcher uses native Web scheduling; headless is an explicit one-shot alternative. No live model calls, GUI restart, deployment migration, or push.
+- [x] **Add project Git checkpoints and restore** (`~/Danus` @ `cb2ca37`)
+  Worker progress had no versioned recovery point. Save best-effort project snapshots after completed turns and rounds, and restore stopped projects into fresh sessions with backups and stale-verdict fencing, without pausing live writers during capture.
+  - Per the operator's clarified choice, snapshots are approximate, not globally consistent. Completed means the entire ReAct loop, not each tool iteration; recovery uses files, not old conversations.
+  - Final checks: 483 offline Python tests and 10 Node tests pass on both Python 3.10 and 3.13; isolated installed-DSH configuration composition and MCP discovery pass. Changes remain local on feat/dsh-git-resume.
 
