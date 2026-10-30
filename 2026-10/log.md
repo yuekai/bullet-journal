@@ -1374,6 +1374,16 @@
   Each destination now keeps its own state, which fixes a bug the single record would have caused: "already copied to spark" would have suppressed the first copy to any new host. The `rsync` transport is joined by `tar` for hosts without rsync, and exit codes aggregate — one unreachable destination fails the run without stopping the others.
   Two bugs surfaced only under test: `ssh` inside the destination loop swallowed the remaining table rows, silently skipping every destination after the first, so remote commands now read `/dev/null` except the tar stream; and the shared `duration` helper printed garbage because bash's `printf` has no `%m`.
   The spark skill and its refresh message point at the new name, and the comment documenting how to retry now names `copy-tsh-credentials`; `--help` prints a heredoc instead of slicing the script's own header comment, which had to be kept in step by hand.
+- [x] **Serve a static bookmark page instead of the gate** (`spark:~/dsh-web` @ `5037ba0`)
+  The :3081 gate redirected a fixed token, a permanent secret in bookmarks. tailscaled now serves public/ on http:3081; its page opens DSH's current URL from public/dsh-url.txt and retries during restarts. Bookmarks need no token; the gate unit is gone.
+  - The bookmark is `http://spark.taildd337d.ts.net:3081/`. A port stays in the URL so other spark services can take other ports. HTTP, not HTTPS, because tailnet HTTPS certificates are off and DSH itself is HTTP on 3080.
+  - Port 3081 keeps the policy test valid, so the live policy did not change, and old `:3081/?token=…` bookmarks still reach the page.
+  - `~/.dsh/web.token` and `state/dsh-gate-url.txt` were deleted. Verified with curl and a fresh headless Chrome profile, which went from `:3081/` straight into DSH.
+  - The update check ran during verification and moved DSH from 0.2.1-rc.4 to 0.2.1-rc.5, the `next` tag the 05:30 timer would have installed anyway.
+  - Notes committed in `~/bullet-journal` @ `0b5b80c`: [DSH on spark](dsh-on-spark.md).
+- [x] **Make spark's DSH browser cookie last 90 days**
+  DSH cookies lasted its default 30 days from when they were set, so a browser that skipped the bookmark for a month had to log in again. The `connection` row in spark's web profile patch now sets `cookieMaxAgeDays: 90`; each visit to the bookmark still mints a fresh one.
+  - A patch replaces a row's whole config, so the row restates `trustedHosts: !!js ctx.webStartup.trustedHosts`. Without it DSH would refuse the tailnet host; `/api` answers 404 for that host and 403 for a foreign one, which confirms the expression survived, including across the rc.5 update.
 
 ## Fri, Oct 30, 2026
 
