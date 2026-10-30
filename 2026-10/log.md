@@ -1427,4 +1427,8 @@
 - [x] **Preserve the old Danus claude branch** (`~/Danus`)
   The old remote's claude branch held nine commits absent from the uploaded branches and tags. Copied it without force to LLM360/ancient-ghost and verified both remote tips match at 1a2cb99; the working tree and old repository remain unchanged.
 - [ICM Conjectures](https://icmconjectures.com/): a good source of open math problems, a searchable directory of conjectures by category.
+- [x] **Add 16 Kimi-K3 engines on the iq account** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve` @ `2a9a841`)
+  Sixteen more Kimi-K3 engines could join either the k2m or the iq account's main-partition pool, and Slurm's group accounting picked iq: it sits on its node cap with 32 GPUs spare, while k2m is 93 nodes over its cap with 61 of its own jobs starving on the node limit. `kimi-main` therefore targets 24 instead of 8, and `kimi-k2m` stays at 4.
+  - The target only queues work: 10 allocations were owned ten minutes in, paced by the 300 s submit cooldown, and both new ones pend on `QOSGrpNodeLimit`. Seating all sixteen needs 32 nodes and 480 GPUs to drain, or the iq caps raised to 378 nodes / 3248 GPUs.
+  - Funding it from the fleet is not possible: the whole iq comet footprint is 32 nodes, exactly the shortfall. Recorded as tech debt, with the plan in `docs/plans/2026-10-30-kimi-k3-sixteen-more-engines.md`.
 
