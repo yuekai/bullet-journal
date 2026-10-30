@@ -1414,4 +1414,7 @@
 - [x] **Add verification discipline to agent prompts** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `63647c1`)
   Agents looped on whole-project `lake build`s — 12.6k in 11 h across the book runs, ~4% of all turns — and each costs minutes of shared CPU, starving every other agent's Lean checks (~1.7k REPL timeouts). The base prompt now asks for `lean_check` per declaration, at most two module builds per task, no bare `lake build`, no re-reading files, and no guessed toolchain paths. Pushed to the UMich-FATML fork.
   - All 11 book runs restarted from saved state (2875873–2875883) and fresh agent recordings show the new section; Laugesen came up with a silently dead coordinator (the second occurrence of that failure) and needed a resubmit as 2875936.
+- [x] **Re-register a stuck engine on the gateway** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  One deepseek engine sat failed in the gateway with its circuit breaker open for about 15 hours: up, holding GPUs, and serving nothing. The registration loop only re-sends a worker whose labels have drifted, so a correctly-labelled but unhealthy entry is never repaired. Deleting that one registration let the loop recreate it on the next cycle; the engine was healthy again in ten seconds and immediately carried traffic, with no gateway restart and no interruption to the other engines.
+  - The engine itself was never broken: health and generation both answered normally while the breaker stayed open, and the breaker had stopped probing because an excluded worker receives no traffic.
 
