@@ -1426,4 +1426,5 @@
   Changing origin had not copied history to the new repository. Pushed all six local branches and three tags atomically to LLM360/ancient-ghost without force, then verified all nine remote object IDs match locally. Uncommitted files and GitHub issues, pull requests, and release assets were not migrated.
 - [x] **Preserve the old Danus claude branch** (`~/Danus`)
   The old remote's claude branch held nine commits absent from the uploaded branches and tags. Copied it without force to LLM360/ancient-ghost and verified both remote tips match at 1a2cb99; the working tree and old repository remain unchanged.
+- [ICM Conjectures](https://icmconjectures.com/): a good source of open math problems, a searchable directory of conjectures by category.
 
