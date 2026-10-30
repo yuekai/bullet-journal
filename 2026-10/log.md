@@ -1357,6 +1357,11 @@
   - `dsh web` will not serve the UI to an unauthenticated browser: each launch prints a token URL that mints a 30-day cookie, so the control script prints the current one rather than assuming the bare address opens.
   - Checked rather than assumed: unauthenticated requests get 401, the token URL mints the cookie, and killing the server brings it back in about ten seconds.
   - Kept the listener loopback-only, since the web profile inherits the desktop's danger-full-access default.
+- [x] **Add win-64 to the journal's pixi platforms** (`~/bullet-journal` @ `073abd3`)
+  `pixi.toml` declared only osx-arm64 and the two Linux targets, so `pixi run` refused to start on the Windows box and the journal's own pre-commit and commit-msg hooks could not fire there, the same failure that kept m2 and spark from logging until their platforms were added. Windows is now a declared platform with both hooks enabled, so a commit there lints and checks itself instead of going out under a manual `--no-verify`.
+  - Declaring the platform alone was not enough: Windows Python still defaults to the ANSI code page and the scripts read notes without an explicit encoding, so lint died on the first non-ASCII byte in a note. An activation env sets `PYTHONUTF8=1`, a no-op where UTF-8 is already the default.
+  - Hooks were enabled with one line of `git config core.hooksPath .githooks`, not `scripts/install.sh`, whose skill-linking half needs symlink privilege on Windows.
+  - The lock moved from format v6 to v7, which pixi recommends. The macOS and Linux pins are otherwise unchanged; win-64 resolved to its own newer patch versions (python 3.14.10, pytest 9.2.0).
 
 ## Fri, Oct 30, 2026
 
