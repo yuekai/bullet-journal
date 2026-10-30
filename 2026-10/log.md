@@ -1405,4 +1405,7 @@
   - Verified: DSH 0.2.1-rc.5 serves (3080 401, 3081 200, cookie 303) and the update run was a no-op; `leanprover` and the journal's `pixi run lint` work from plain ssh. Notes in `~/bullet-journal` @ `b5d006b`: [DSH on spark](dsh-on-spark.md).
 - [x] **Audit evaluation measurements on CPU** (`/mnt/weka/shrd/k2m/yuekai.sun/glm-5.3-abliteration`)
   Added a reproducible offline audit and aggregate report to distinguish measurement defects from model outcomes. Reconstructed token indexing and saved EOS accounting confirm real data-path issues; historical completion metadata is missing. Production code and model weights remain unchanged; 87 targeted tests and repository lint pass.
+- [x] **Revive opg workers inside their own project jobs** (`~/Danus` @ `86cb417`)
+  The shared revive hub filled at ~30G while project jobs had room, since a tripped worker frees its memory where it lived. An overlapping step per project job now hosts that project's revives when its cgroup has headroom; all down workers came back at once.
+  - Context since 10-29: a comet gateway outage (ENOSPC) took the fleet down ~3h; the fleet was relaunched on the moved gateway (gpu-102), and 8G project jobs were found OOM-killing workers, so one worker per project moved to the 32G hub.
 
