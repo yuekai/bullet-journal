@@ -1411,4 +1411,7 @@
 - [x] **Keep hand-enumeration trajectories by default** (`~/Danus` @ `7a3baf4`)
   The finite-lane keyword heuristic also flags general lemmas. Disable its drops by default while retaining the score for later weighting; all other quality gates and mid-run safeguards remain unchanged.
   - All 555 tests pass. Submitted a fresh full export as Slurm job 2875844 to runtime/exports/dsh-20261030T141539Z, without an exclusion manifest so previously filtered sessions are reconsidered. Validation and token totals are pending.
+- [x] **Add verification discipline to agent prompts** (`/mnt/weka/shrd/k2m/yuekai.sun/repoprover` @ `63647c1`)
+  Agents looped on whole-project `lake build`s — 12.6k in 11 h across the book runs, ~4% of all turns — and each costs minutes of shared CPU, starving every other agent's Lean checks (~1.7k REPL timeouts). The base prompt now asks for `lean_check` per declaration, at most two module builds per task, no bare `lake build`, no re-reading files, and no guessed toolchain paths. Pushed to the UMich-FATML fork.
+  - All 11 book runs restarted from saved state (2875873–2875883) and fresh agent recordings show the new section; Laugesen came up with a silently dead coordinator (the second occurrence of that failure) and needed a resubmit as 2875936.
 
