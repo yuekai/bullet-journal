@@ -9,7 +9,7 @@ The DeepSeek Harness (DSH) web UI runs on spark. The permanent bookmark is
 is in `~/dsh-web` on spark. This instance is separate from the DSH instance in
 the llama stack on m2. See [llama-serving-stack.md](llama-serving-stack.md).
 
-This note describes the setup on 2026-10-29. `~/dsh-web/README.md` on spark
+This note describes the setup on 2026-10-30. `~/dsh-web/README.md` on spark
 holds the same detail.
 
 ## Layout
@@ -22,6 +22,9 @@ Linger is on, so the unit runs without a login.
 | 3080 | `dsh-web` unit | `dsh web` on loopback. The token changes at each start. |
 | 3081 | `tailscaled` | The static page in `~/dsh-web/public/`. |
 
+- Both units run `dshweb.py` under the repo's own pixi Python
+  (`~/dsh-web/pixi.toml`, python 3.13, `.pixi/envs/default/bin/python`), not
+  Ubuntu's `/usr/bin/python3`. Run `pixi install` there after a fresh clone.
 - `dshweb.py dsh` starts DSH. The script reads DSH's startup line and writes
   the current address to `public/dsh-url.txt`. The script removes the file
   when DSH exits.
@@ -117,8 +120,10 @@ with the host name `127.0.0.1`.
 
 DSH follows npm's `next` tag (release candidates), not `latest` or `alpha`
 (see [Updates](#updates)). On 2026-10-18 that was 0.2.1-rc.2, the same as m2.
-npm installs DSH in its default global prefix. Node comes from `pixi global install nodejs`, so the binary is
-`~/.pixi/envs/nodejs/bin/dsh`.
+npm installs DSH under the private prefix `~/dsh-web/npm/` (not in git), so
+the binary is `~/dsh-web/npm/bin/dsh`. legionp uses the same layout. Node is
+the `pixi global` env `nodejs`, pinned to `24.*`. `~/.pixi/envs/nodejs/bin`
+comes first on the units' PATH.
 
 Important: the npm install needs `--allow-scripts` for
 `@deepseek-ai/dsh-subprocess-local`, `koffi`, `node-pty`, `@google/genai`, and
@@ -127,8 +132,10 @@ terminal and bash tools need. The arm64 native packages
 (`node-addon-system-linux-arm64`, `node-pty` prebuilds) install without a
 build.
 
-A `pixi global` reinstall of `nodejs` removes DSH. Install DSH again after
-one.
+A `pixi global` reinstall of `nodejs` no longer removes DSH. Native modules
+are built for one Node ABI, though. After the env changes major version, run
+`npm install -g --prefix ~/dsh-web/npm --allow-scripts=<the list above> @deepseek-ai/dsh@next`
+again.
 
 ## Operations
 
@@ -188,3 +195,7 @@ A manual install of another version lasts only until the next run.
   `http://spark.taildd337d.ts.net:3081/` with no token. The DSH cookie
   lifetime went from 30 days to 90 days. A verification run of the update
   moved DSH from 0.2.1-rc.4 to 0.2.1-rc.5.
+- 2026-10-30: Matching legionp, the units moved to a pixi Python in
+  `~/dsh-web` and DSH moved to the private prefix `~/dsh-web/npm/`. The pixi
+  `nodejs` env was pinned to `24.*`, which moved it from 26.10.0 to 24.22.1.
+  DSH stayed at 0.2.1-rc.5.
