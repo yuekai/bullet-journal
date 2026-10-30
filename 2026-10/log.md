@@ -1408,4 +1408,7 @@
 - [x] **Revive opg workers inside their own project jobs** (`~/Danus` @ `86cb417`)
   The shared revive hub filled at ~30G while project jobs had room, since a tripped worker frees its memory where it lived. An overlapping step per project job now hosts that project's revives when its cgroup has headroom; all down workers came back at once.
   - Context since 10-29: a comet gateway outage (ENOSPC) took the fleet down ~3h; the fleet was relaunched on the moved gateway (gpu-102), and 8G project jobs were found OOM-killing workers, so one worker per project moved to the 32G hub.
+- [x] **Keep hand-enumeration trajectories by default** (`~/Danus` @ `7a3baf4`)
+  The finite-lane keyword heuristic also flags general lemmas. Disable its drops by default while retaining the score for later weighting; all other quality gates and mid-run safeguards remain unchanged.
+  - All 555 tests pass. Submitted a fresh full export as Slurm job 2875844 to runtime/exports/dsh-20261030T141539Z, without an exclusion manifest so previously filtered sessions are reconsidered. Validation and token totals are pending.
 
