@@ -1417,4 +1417,7 @@
 - [x] **Re-register a stuck engine on the gateway** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
   One deepseek engine sat failed in the gateway with its circuit breaker open for about 15 hours: up, holding GPUs, and serving nothing. The registration loop only re-sends a worker whose labels have drifted, so a correctly-labelled but unhealthy entry is never repaired. Deleting that one registration let the loop recreate it on the next cycle; the engine was healthy again in ten seconds and immediately carried traffic, with no gateway restart and no interruption to the other engines.
   - The engine itself was never broken: health and generation both answered normally while the breaker stayed open, and the breaker had stopped probing because an excluded worker receives no traffic.
+- [x] **Fix rollout model provenance and export 46k** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `ae0b4c9`)
+  The book runs switched to deepseek-v4.1-flash on 2026-10-28, but the exporter stamped a single --model on every record, so this export would have labelled 6k deepseek rollouts as kimi-k3. Recordings do not store the model, so it is now inferred from the run directory's start time (the launcher fixes one model per job and each job writes a new run dir); the report breaks down counts by model for the dataset card.
+  Re-exported 46,205 records / 2.31B tokens on the compute node, verified as a strict superset of the previous 40,128 with the earlier records still kimi-k3 and all 6,077 new ones deepseek-v4.1-flash.
 
