@@ -1441,4 +1441,6 @@
   A day after the raise, only 12 of the 24 deepseek engines ran: k2m is 93 nodes over its cap, so the other half could never be admitted there. iq is exactly on its node cap with 32 GPUs spare, so those twelve moved to a new `deepseek-iq` pool while `deepseek-main` dropped to 12 and kept the running engines untouched.
   - The move re-queues rather than starts them: the controller cancelled the twelve pending k2m allocations within one reconcile, then submitted the iq ones at one per 300 s, and iq's node usage read 346/346 on eight consecutive one-minute samples with zero turnover. The first three pend on `QOSGrpNodeLimit` behind 30 jobs already held there, including the sixteen kimi-k3 engines queued on iq half an hour earlier.
   - Admitting all twelve needs iq to shed 12 nodes and 96 GPUs, exactly the footprint of 6 kimi-k3 engines, and scale-down cancels pending allocations before running ones — so only a pool with live engines can fund them, which makes it a serving-capacity decision rather than a scheduling one.
+- [x] **Switch Danus checkout to codex head** (`~/Danus`)
+  Switched the clean checkout from main to codex tracking UMich-FATML/Danus origin/codex at 6d92e8d. Verified HEAD matches the fetched branch tip and the working tree remains clean; no local work was discarded.
 
