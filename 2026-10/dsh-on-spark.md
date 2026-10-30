@@ -5,47 +5,72 @@ date: 2026-10-18
 ---
 
 The DeepSeek Harness (DSH) web UI runs on spark. The permanent bookmark is
-`http://spark.taildd337d.ts.net:3081/?token=<fixed>`. The code is in
-`~/dsh-web` on spark. This instance is separate from the DSH instance in the
-llama stack on m2. See [llama-serving-stack.md](llama-serving-stack.md).
+`http://spark.taildd337d.ts.net:3081/`. The bookmark holds no token. The code
+is in `~/dsh-web` on spark. This instance is separate from the DSH instance in
+the llama stack on m2. See [llama-serving-stack.md](llama-serving-stack.md).
 
-This note describes the setup on 2026-10-18. `~/dsh-web/README.md` on spark
+This note describes the setup on 2026-10-29. `~/dsh-web/README.md` on spark
 holds the same detail.
 
 ## Layout
 
-Two systemd user units run the UI. Linger is on, so the units run without a
-login.
+One systemd user unit runs DSH, and spark's `tailscaled` serves a static page.
+Linger is on, so the unit runs without a login.
 
-| Unit | Port | Function |
+| Port | Served by | Function |
 |---|---|---|
-| `dsh-web` | 3080 | `dsh web` on loopback. The token changes at each start. |
-| `dsh-gate` | 3081 | Redirect gate on loopback. It holds a fixed token. |
-
-The two processes come from one script, `~/dsh-web/dshweb.py`. The script
-copies the llama design (`~/llama/llama/dshgate.py` on m2):
+| 3080 | `dsh-web` unit | `dsh web` on loopback. The token changes at each start. |
+| 3081 | `tailscaled` | The static page in `~/dsh-web/public/`. |
 
 - `dshweb.py dsh` starts DSH. The script reads DSH's startup line and writes
-  the current address to `state/dsh-url.txt`. The script removes the file
+  the current address to `public/dsh-url.txt`. The script removes the file
   when DSH exits.
-- `dshweb.py gate` reads the fixed token from `~/.dsh/web.token`. A request
-  with the fixed token gets a redirect to the current DSH address.
-  `state/dsh-gate-url.txt` holds the permanent address.
+- `public/index.html` fetches `dsh-url.txt` without the browser cache and
+  opens that address. DSH then sets its session cookie and moves to its clean
+  root. While DSH starts again, the file is missing, so the page says so and
+  tries again every 2 seconds.
+- The page holds no token, so a cached copy is harmless. The static server
+  ignores the query string, so an old `:3081/?token=…` bookmark still reaches
+  the page.
+- Only `index.html` and `dsh-url.txt` are in `public/`. `tailscaled` serves
+  each file in the folder.
+
+The DSH session cookie lasts 90 days. DSH's default is 30. Each visit to the
+bookmark makes a new cookie. The `connection` row in
+`~/.dsh/profiles/web/cordis.patch.yml` sets `cookieMaxAgeDays: 90`. A patch
+replaces the whole config of a row, so the row also restates
+`trustedHosts: !!js ctx.webStartup.trustedHosts`. That expression carries the
+`--trusted-host spark.taildd337d.ts.net` option of `dshweb.py`. Without it,
+DSH refuses API requests that name the tailnet host. Check the composed row
+after a DSH update with `dsh --profile web --dump-config`.
 
 These results are correct:
 
-- Port 3080 returns 401 without a token.
-- Port 3081 returns 302 to port 3080 without a token. A browser with a live
-  DSH session cookie gets in this way.
-- Port 3081 returns 401 for a wrong token.
-- Port 3081 returns 503 for a few seconds while DSH starts again.
+- Port 3080 returns 401 without a cookie. Its `/api` paths return 403 for a
+  host that is not trusted.
+- Port 3081 returns 200 and the page, with or without a query string.
+- `:3081/dsh-url.txt` returns 200 with the address, or 404 while DSH starts
+  again.
+- The address returns 303 with a cookie of `Max-Age=7776000`.
+
+Anyone who can reach port 3081 can read the current DSH token. Only tailnet
+members can reach spark, and the tailnet has one user.
 
 ## Tailnet
 
 There is no Tailscale Service and no tag. spark's own system `tailscaled`
-serves the two ports with `tailscale serve --tcp=3080` and `--tcp=3081`. The
-daemon runs as root with a persistent state file. `OperatorUser=yuekai`
-permits `tailscale serve` without sudo.
+serves the two ports. The daemon runs as root with a persistent state file,
+so the rules survive a restart. `OperatorUser=yuekai` permits
+`tailscale serve` without sudo.
+
+```bash
+tailscale serve --bg --tcp=3080 tcp://127.0.0.1:3080
+tailscale serve --bg --http=3081 /home/yuekai/dsh-web/public
+```
+
+The rule on port 3081 is HTTP, not HTTPS. HTTPS certificates are off for the
+tailnet, and DSH itself is HTTP on port 3080. Other spark services can use
+other ports.
 
 On 2026-10-18 the machine changed from `dgx-spark` to `spark`. Key expiry is
 disabled, so the node keeps its identity. The member grant covers the two
@@ -108,11 +133,16 @@ one.
 ## Operations
 
 ```bash
-systemctl --user status dsh-web dsh-gate
+systemctl --user status dsh-web
 systemctl --user restart dsh-web       # new DSH token; the bookmark stays correct
-cat ~/dsh-web/state/dsh-gate-url.txt   # the bookmark
-rm ~/.dsh/web.token                    # new bookmark; old bookmarks return 401
+cat ~/dsh-web/public/dsh-url.txt       # the current DSH address
+tailscale serve status                 # tcp:3080 and http:3081
 ```
+
+A restart retires the DSH token. A cookie that DSH already issued stays valid
+until it expires, up to 90 days. To end every cookie at once, delete the
+`client-connection/browser-session` record from `~/.dsh/.credentials.yaml`.
+That record holds the cookie signing key. Then restart `dsh-web`.
 
 `~/dsh-web/logs/dsh.log` holds the DSH output with mode 600. The startup line
 holds the DSH token. Each log in `logs/` rolls over to `<name>.1` past 5 MB.
@@ -152,3 +182,9 @@ A manual install of another version lasts only until the next run.
 - 2026-10-26: The model catalog moved out of the home patch into the `web` and
   `headless` profile patches, so the Settings -> Models page can edit each
   profile again. The home patch keeps only the MCP servers.
+- 2026-10-29: A static page served by `tailscaled` on http:3081 replaced the
+  fixed-token gate. The `dsh-gate` unit, `~/.dsh/web.token`, and
+  `state/dsh-gate-url.txt` were removed. The bookmark became
+  `http://spark.taildd337d.ts.net:3081/` with no token. The DSH cookie
+  lifetime went from 30 days to 90 days. A verification run of the update
+  moved DSH from 0.2.1-rc.4 to 0.2.1-rc.5.

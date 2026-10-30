@@ -108,7 +108,7 @@ the authority. Fetch the current policy before each edit.
 			]
 		},
 		{
-			// Members can reach the DSH web UI and its gate on spark.
+			// Members can reach the DSH web UI and its bookmark page on spark.
 			"src":   "yuekai@gmail.com",
 			"proto": "tcp",
 			"accept": [
@@ -193,8 +193,8 @@ the authority. Fetch the current policy before each edit.
   member must keep this access. A gateway machine and a client machine must
   never get it.
 - `spark` has no service and no tag. Its own `tailscaled` serves the DSH web
-  UI on tcp:3080 and the DSH gate on tcp:3081. The member grant to `*` covers
-  both ports. A test pins `100.91.181.87:3080` and `100.91.181.87:3081` for a
+  UI on tcp:3080 and the DSH bookmark page on http:3081. The member grant to
+  `*` covers both ports. A test pins `100.91.181.87:3080` and `100.91.181.87:3081` for a
   member. See [dsh-on-spark.md](dsh-on-spark.md).
 - The `tests` section also guards each service. A client accepts its service
   and nothing else. A gateway cannot start a connection. A member accepts
@@ -281,3 +281,6 @@ is in `~/.agents/skills/tailscale/references/access-control.md`.
   jobs (2605661, 2763376) were never restarted and the engines kept serving.
   The comet grant and tests still list `tcp:8088`, but the comet Service
   dropped that port earlier; the grant is stale and left in place.
+- 2026-10-29: spark port 3081 changed from a TCP forward to the DSH gate to
+  an HTTP rule that serves the static DSH bookmark page. The live policy did
+  not change: the member grant and the spark test still cover 3080 and 3081.
