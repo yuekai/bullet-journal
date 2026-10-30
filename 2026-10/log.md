@@ -1424,4 +1424,6 @@
   Changed origin from UMich-FATML/Danus to https://github.com/LLM360/ancient-ghost.git before the old repository is deleted. Verified HTTPS fetch and push URLs; no repository content was pushed or deleted.
 - [x] **Upload all Danus branches and tags** (`~/Danus`)
   Changing origin had not copied history to the new repository. Pushed all six local branches and three tags atomically to LLM360/ancient-ghost without force, then verified all nine remote object IDs match locally. Uncommitted files and GitHub issues, pull requests, and release assets were not migrated.
+- [x] **Preserve the old Danus claude branch** (`~/Danus`)
+  The old remote's claude branch held nine commits absent from the uploaded branches and tags. Copied it without force to LLM360/ancient-ghost and verified both remote tips match at 1a2cb99; the working tree and old repository remain unchanged.
 
