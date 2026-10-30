@@ -1391,4 +1391,10 @@
   GLM-5.3 solved 75/111 under final-only grading in the hidden verifier, up from 65 in the baseline. DeepSeek's 26/111 is recorded as serving-limited: its gateway pool was saturated by other jobs, so it got a quarter of the baseline's turns and is not comparable.
   - Task set: the 111 arxivlean-200 tasks with a Kimi K3 reference proof, now a pinned `--reference-only` subset slice (`54f283d`).
   - Gateway transport errors (9) and API-retry stalls (11) were re-run per the plan's policy; all 101 solves audited clean; the tailnet key was revoked.
+- [x] **Add DSH web UI with a bookmark page on legionp** (`legionp:~/dsh-web` @ `00dd2f3`)
+  DSH Web on legionp ran from a batch supervisor on localhost only, pinned to rc.3, and every new browser needed the token from its log. It now copies spark's setup: a pythonw supervisor publishes the current launch URL to a static page that tailscaled serves at `http://legionp.taildd337d.ts.net:3081/`, cookies last 90 days, and a daily task follows npm `next` with rollback.
+  - Windows parts: Python from a pixi project in the repo; scheduled tasks for logon and the 02:30 Pacific update; a named pipe instead of flock for single-instance, stop and an update hold, since Windows locks DSH's files while it runs.
+  - Opening `index.html` from disk hands over to the served page: a navigation started on a `file://` page is cross-site, so DSH's Strict cookie was withheld on the token redirect and it answered 401. legionp reaches its own tailnet name, so the bookmark works there too.
+  - The old Startup entry, `%LOCALAPPDATA%\dsh-web`, and the OneDrive setup scripts and doc are deleted. DSH Web now runs rc.5 against the rc.3 desktop app's `~\.dsh`; storages were backed up first.
+  - Verified from the Mac (curl and fresh headless Chrome) and on legionp (headless Edge from disk), plus restart, crash recovery, the hold, and a no-op update. Notes in `~/bullet-journal` @ `57d0311`: [DSH on legionp](dsh-on-legionp.md).
 
