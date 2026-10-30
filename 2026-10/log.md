@@ -1358,3 +1358,10 @@
   - Checked rather than assumed: unauthenticated requests get 401, the token URL mints the cookie, and killing the server brings it back in about ten seconds.
   - Kept the listener loopback-only, since the web profile inherits the desktop's danger-full-access default.
 
+## Fri, Oct 30, 2026
+
+- [x] **Record K3-reference rerun results** (`~/LeanBench` @ `f5c5d3a`)
+  GLM-5.3 solved 75/111 under final-only grading in the hidden verifier, up from 65 in the baseline. DeepSeek's 26/111 is recorded as serving-limited: its gateway pool was saturated by other jobs, so it got a quarter of the baseline's turns and is not comparable.
+  - Task set: the 111 arxivlean-200 tasks with a Kimi K3 reference proof, now a pinned `--reference-only` subset slice (`54f283d`).
+  - Gateway transport errors (9) and API-retry stalls (11) were re-run per the plan's policy; all 101 solves audited clean; the tailnet key was revoked.
+
