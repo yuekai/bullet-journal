@@ -1422,4 +1422,6 @@
   Re-exported 46,205 records / 2.31B tokens on the compute node, verified as a strict superset of the previous 40,128 with the earlier records still kimi-k3 and all 6,077 new ones deepseek-v4.1-flash.
 - [x] **Point Danus origin at ancient-ghost** (`~/Danus`)
   Changed origin from UMich-FATML/Danus to https://github.com/LLM360/ancient-ghost.git before the old repository is deleted. Verified HTTPS fetch and push URLs; no repository content was pushed or deleted.
+- [x] **Upload all Danus branches and tags** (`~/Danus`)
+  Changing origin had not copied history to the new repository. Pushed all six local branches and three tags atomically to LLM360/ancient-ghost without force, then verified all nine remote object IDs match locally. Uncommitted files and GitHub issues, pull requests, and release assets were not migrated.
 
