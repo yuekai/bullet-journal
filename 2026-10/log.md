@@ -1504,4 +1504,8 @@
   - legionp runs Windows OpenSSH, and the account is a local Administrator, so sshd reads ProgramData's administrators_authorized_keys rather than the per-user file; the key went there to keep the existing SYSTEM/Administrators-only ACL, and the addition was verified by an actual batch-mode login from spark.
 - [x] **Enable Keenable search for research agents** (`~/Danus` @ `0b5f935`)
   Isolated Danus roles lacked generic web search. Add opt-in Keenable for mains and workers with private credential references, readiness checks and explicit live diagnostics; keep verifiers and authoring unchanged.
+- [x] **Stop running static-checks out of disk** (`~/science-tasks` @ `a475d72`)
+  The PR checkout fetched full history, 19 GB against a hosted runner's ~14 GB, so every run died with ENOSPC and nothing merged for two days. It is shallow now and `changed.txt` comes from the API. The open-PR similarity reference, which never collected anything because the private repo refused every unauthenticated fetch, now fetches blob-less and keeps only `instruction.md`.
+  - Two bugs hid behind the one disk error. The last *successful* run logged `collected: 0 task dirs`: `persist-credentials: false` meant all ~600 `git fetch pull/N/head` calls failed into `|| continue`, so duplicate detection between racing agents never worked. And the script exported whole task dirs, up to 200 MB each, for a check that reads `instruction.md` and nothing else.
+  - The reference now costs a 464 KB blob-less clone plus about 1.3 s per PR, so the window defaults to the 150 most recently created PRs (`OPEN_PR_REFS`); verified in production at `collected: 150` in a 3m33s job, with the next 13 runs green and no ENOSPC.
 
