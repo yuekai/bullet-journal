@@ -1497,4 +1497,6 @@
 - [x] **Launch a bounded Danus pilot main** (`~/Danus`)
   Prepared the Garden's undergraduate-labelled Odd perfect numbers project, three stopped worker homes, and a resident main supervised by an operator agent. Pinned main, workers, and verifier to glm-5.3/max; checked streaming/tool calls and verifier health, then started the one-hour main session with independent deadline cleanup. Research and end-to-end verification results remain pending.
   - Used a deployment-local compatibility overlay to restore isolated Web authentication without changing repository launchers or the existing GUI.
+- [x] **Stage the remaining undergraduate Garden projects** (`~/Danus`)
+  Prepared 64 open-catalogue projects beside the untouched pilot, with source statements, provenance, main-agent handoffs, and 192 inactive worker homes. Unconfigured models and expired deadlines prevent accidental inference. Flagged stale solved notices; catalogue membership is not current-open certification.
 
