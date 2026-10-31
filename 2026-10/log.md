@@ -1550,4 +1550,6 @@
 - [x] **Simplify recovery and checkpoint every round** (`~/Danus` @ `9066072`)
   Recovery coupled routine writes to speculative locks and missed agent roles. Checkpoint every terminal round, restore stopped projects and restart fresh agents, accepting uncommitted loss. Remove speculative gates without adding replacement locks.
   - Applied on dsh and native-operator-control (`1e20bc3`). Full offline checks passed: 704 Python and 12 Node tests on dsh (one native-only skip); 834 Python and 29 Node tests on the native branch. No live research or real project restoration was performed; user configuration edits were preserved.
+- [x] **Resume only the unused pilot time** (`~/Danus`)
+  The human reauthorized only the unused portion of the stopped Odd Perfect Numbers pilot. Started a fresh bounded continuation from all 40 accepted facts, without rollback, for 18m41s using the same glm-5.3/max route and three-worker roster. Research deadline is 18:18:38Z, with at most 60 seconds of shutdown grace; supervision and final shutdown verification remain in progress.
 
