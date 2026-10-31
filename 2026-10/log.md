@@ -1544,4 +1544,7 @@
 - [x] **Make worker acknowledgements sandbox-safe** (`~/Danus` @ `a1a4326`)
   Confined CLI calls could not lock shared state, and local receipts were forgeable. Move authority outside worker workspaces and use host-side acknowledgements with caller validation; preserve sandbox limits and pin trusted imports.
   - Passed 799 Python and 27 Node tests. A real Comet worker in a non-temporary-directory workspace passed parent-write denial, kernel-attested managed CLI ACK and forged-local-receipt rejection without widening the sandbox. Also scoped managed checkpoints and pending intents to their run/project.
+- [x] **Stop the replacement pilot on request** (`~/Danus`)
+  The operator stopped the replacement before its full hour. Cancelled the main, drained and terminated owned workers/verifier, and independently confirmed all owned processes inactive and both service ports closed at 16:39Z. Paused goals and removed schedules; no restart is authorized.
+  - Preserved 40 accepted facts (10 new beyond the replacement baseline) in snap-42. Protected host acknowledgements and mid-round updates worked; the conjecture remains unsolved. The proposed quiescent-only restore simplification was discussed, not implemented.
 
