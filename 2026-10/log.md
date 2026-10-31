@@ -1466,4 +1466,8 @@
   Duplicated guidance and disconnected checks invited drift. Keep one operating contract behind a short map, and gate docs, imports and skill metadata through shared offline checks and a local pre-commit hook so failures are caught early.
   - The operator approved consolidation: root AGENTS.md shrank from 236 to 79 lines, with the mathematical rules preserved in the full main-agent contract. Local and CI commands now include the existing worker/verifier skill checks.
   - Both Python 3.10 and 3.13 pass 565 Python tests and 10 Node tests. The repository-local hook is installed and verified; no global hook replacement, live Danus inference, deployment change, or push.
+- [x] **Trace numbers to stats.json, cite by heading** (`~/llm-market` @ `d4685a0`)
+  The first layout copied llm-marketplace: hand-typed result numbers, global section numbers, one 585-line script and a hand-written audit table. Now result tables are generated from results/stats.json, and the lint checks every other decimal in the spec, results and verdicts against the configurations its paragraph cites. Docs cite heading anchors, the code is the `llm_market` package with `scripts/run.py`, exploration is committed under `explore/`, and `pixi run audit` computes the harness audit.
+  - On its first run the number lint caught two hand-typing errors: ΔQ_sym was written 0.754 instead of 0.7546, and a rival's ratio 0.69 instead of 0.6846. No verdict changed. The audit also found six lint messages that didn't say how to fix the problem.
+  - A full rerun with the package reproduced all 53 result files and stats.json byte for byte. CI passes.
 
