@@ -1559,4 +1559,6 @@
 - [x] **Merge sandbox-safe worker acknowledgements** (`~/Danus` @ `619be10`)
   The tested fix lived only on the native-control branch. Merge its required configuration and controller dependencies into dsh, preserving simplified recovery, scoped checkpoints, and the recorded coordination debt.
   - Resolved overlapping recovery changes against the tested native implementation. Full offline validation passed: 834 Python tests and 29 Node tests. Preserved both worktrees' local operator preferences; no source push, deployment change or live research launch.
+- [x] **Simplify worker task steering** (`~/Danus`)
+  Assignment changes carried full text and required acknowledgements before proof submission. Workers now receive only a prompt to reread their task file; receipt machinery and assignment submission checks are removed. Verifier and run limits remain. Applied to dsh and native-operator-control, with offline regressions and local operator preferences preserved; no live restart.
 
