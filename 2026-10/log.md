@@ -1483,4 +1483,6 @@
   - Serving capacity was unchanged at 58 healthy replicas — the two had been serving nothing — and the SMG registry now reports 58 of 58 healthy instead of 60 with two dead entries.
   - Both replacements queued rather than started: the kimi replica hit the iq QOS node cap and the deepseek replica the k2m QOS GRES cap, and both groups are past their caps on other tenants' running work, so admission depends on that work finishing. The freed kimi pair was reused by the next queued kimi replica in the same pool, which landed on the same two nodes and registered healthy 22 minutes later; the deepseek replacement is still queued.
   - Also weighed moving six pending deepseek-iq engines to k2m, and left them where they are: k2m is 698 nodes over its cap against iq's 14, which is the reason the iq pool exists at all, and cancelling pending jobs frees no nodes. No configuration changed.
+- [x] **Default to three max-effort workers** (`~/Danus`)
+  New projects defaulted to three high-effort and four xhigh-effort workers. Change the default to three max-effort workers as requested, with matching documentation and regression coverage; preserve existing projects and explicit roster overrides.
 
