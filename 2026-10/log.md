@@ -1478,4 +1478,8 @@
   - HTTPS authentication was unavailable, so the push used a command-scoped SSH push URL; saved remote URLs were left unchanged.
 - [x] **Run CI on the dsh branch** (`~/Danus` @ `a11baf2`)
   The dsh branch carried the migration work but the push filter omitted it, so its commits ran no CI. Include it so pushes to the working branch are tested like main and codex.
+- [x] **Drain two wedged Comet engine jobs** (`/mnt/weka/shrd/k2m/yuekai.sun/sglang-serve`)
+  Two engine allocations stopped serving while their processes stayed alive: the kimi-k3 job's detokenizer heartbeat froze and its health checks failed for 7.7h, and the deepseek-v4.1-flash job finished its last decode 10.5h earlier while still answering /metrics. Nothing replaced them, because an allocation only ends when a rank process exits, so both squatted nodes while the gateway counted them unhealthy. Cancelled both through the repo's cancellation guard, and the replicas loop resubmitted replacements on the next cycle.
+  - Serving capacity was unchanged at 58 healthy replicas — the two had been serving nothing — and the SMG registry now reports 58 of 58 healthy instead of 60 with two dead entries.
+  - Both replacements are queued rather than running: the kimi replica hit the iq QOS node cap and the deepseek replica the k2m QOS GRES cap, and other tenants are already past both caps, so admission depends on their jobs finishing. The freed nodes were absorbed by the same QOS groups immediately.
 
