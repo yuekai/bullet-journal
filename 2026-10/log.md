@@ -1539,4 +1539,9 @@
 - [x] **Re-trigger static-checks across the 645-PR backlog**
   350 `workflow_dispatch` runs re-ran the checks but cleared nothing: `static-checks` is the *job* name, so a dispatched run posts that check on `main`, while the gate reads the check run on the PR head. The `edited` event does fire `pull_request_target`, whose job check does land on the head, so 210 PRs got a body edit that only appends a trailing newline.
   - Result: 639 of 645 open PRs are green on the head SHA; 5 fail their own checks (proposal link and scope, plus one task's canary/readme) and 1 was still running. This was also the check that had been silently collecting zero reference instructions, so the green results are the first real ones since Oct 28.
+- [x] **Stop the failed native ACK pilot** (`~/Danus`)
+  The production worker sandbox blocked the CLI's shared lock, and workers used unsupported receipt edits or lock patches. Ended the attempt early at 12:16Z instead of counting those as clean acknowledgement successes; verified all owned processes stopped, the main goal paused and schedules cleared. Preserved 30 accepted facts and 4 recorded wrong verdicts; the verifier gate remained intact. A fresh one-hour replacement was explicitly authorized after repair.
+- [x] **Make worker acknowledgements sandbox-safe** (`~/Danus` @ `a1a4326`)
+  Confined CLI calls could not lock shared state, and local receipts were forgeable. Move authority outside worker workspaces and use host-side acknowledgements with caller validation; preserve sandbox limits and pin trusted imports.
+  - Passed 799 Python and 27 Node tests. A real Comet worker in a non-temporary-directory workspace passed parent-write denial, kernel-attested managed CLI ACK and forged-local-receipt rejection without widening the sandbox. Also scoped managed checkpoints and pending intents to their run/project.
 
