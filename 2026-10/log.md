@@ -1502,4 +1502,6 @@
 - [x] **Enable passwordless SSH from spark to legionp**
   spark already had its own ed25519 key but legionp did not trust it, so every spark-to-legionp login needed a password. Appended spark's public key to legionp's authorized-keys file and added a `legionp` host alias to spark's SSH config so plain `ssh legionp` resolves.
   - legionp runs Windows OpenSSH, and the account is a local Administrator, so sshd reads ProgramData's administrators_authorized_keys rather than the per-user file; the key went there to keep the existing SYSTEM/Administrators-only ACL, and the addition was verified by an actual batch-mode login from spark.
+- [x] **Enable Keenable search for research agents** (`~/Danus` @ `0b5f935`)
+  Isolated Danus roles lacked generic web search. Add opt-in Keenable for mains and workers with private credential references, readiness checks and explicit live diagnostics; keep verifiers and authoring unchanged.
 
