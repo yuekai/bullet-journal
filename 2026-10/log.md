@@ -1487,7 +1487,7 @@
   New projects defaulted to three high-effort and four xhigh-effort workers. Change the default to three max-effort workers as requested, with matching documentation and regression coverage; preserve existing projects and explicit roster overrides.
   - Passed 568 Python tests and 10 Node tests; committed and pushed to origin/dsh.
 - [x] **Submit a fresh Danus SFT export** (`~/Danus`)
-  Submitted full mid-run export job 2884201 to runtime/exports/dsh-20261031T083434Z, keeping hand enumeration and operator instructions with the other filters unchanged. Validation and refreshed token totals are pending; the last completed snapshot held 4,361,359,212 tokens. No fleet or exporter code changes.
+  Full mid-run export job 2884201 completed in 48 minutes at runtime/exports/dsh-20261031T083434Z, snapshot Oct 31 01:51 PDT. Keeping hand enumeration and operator instructions with other filters unchanged, 26,028 trajectories passed validation (93.3%): 5,153,749,799 tokens, mean 198,008 and median 166,612. Workers: 3,214 / 1.437B tokens; verifiers: 22,590 / 3.691B. Up 792M tokens from Oct 30; 130 sessions deferred. No fleet or exporter code changes.
 - [x] **Cut the opg fleet roster to max:3** (`~/Danus` @ `02aeda3`)
   The opg campaign ran 7 max-effort workers per project (94 loops), which overfilled the 8G Slurm jobs. Per operator ruling every project now runs only max, max2 and max3: the 14 live projects got .stop on max4..max7 (graceful at round boundary), and the 14 never-started projects had those workers moved to workers-retired/.
   - The deploy/opg branch default and the opg scaffolder also moved to max:3, OPERATOR.md records the ruling, and the main agent was steered to re-plan each project for 3 lanes.
