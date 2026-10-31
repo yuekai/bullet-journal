@@ -1536,4 +1536,7 @@
 - [x] **Realign harness audit with the updated skill** (`~/llm-market` @ `d23b8bb`)
   An audit against the rewritten harness-engineering skill found every capability in place but three gaps. The audit script mirrored the old skill, twelve string-presence probes and a test asserting their count; it now prints one row per capability and executes the cheap evidence (a forbidden import, a stale result file, a hand-typed number, a bad commit message, a quick simulation), and the test asserts only that no row is a gap.
   BLAS threads are now pinned in pixi's activation env: the test suite imported numpy before the package's pin, so every pre-commit run burned 3 min of CPU in 15 s; now 11 s. The plan rule asks for a re-read of the two prose sections no check covers before a plan is marked Done.
+- [x] **Re-trigger static-checks across the 645-PR backlog**
+  350 `workflow_dispatch` runs re-ran the checks but cleared nothing: `static-checks` is the *job* name, so a dispatched run posts that check on `main`, while the gate reads the check run on the PR head. The `edited` event does fire `pull_request_target`, whose job check does land on the head, so 210 PRs got a body edit that only appends a trailing newline.
+  - Result: 639 of 645 open PRs are green on the head SHA; 5 fail their own checks (proposal link and scope, plus one task's canary/readme) and 1 was still running. This was also the check that had been silently collecting zero reference instructions, so the green results are the first real ones since Oct 28.
 
