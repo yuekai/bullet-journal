@@ -1553,4 +1553,7 @@
 - [x] **Resume only the unused pilot time** (`~/Danus`)
   The human reauthorized only the unused portion of the stopped Odd Perfect Numbers pilot. Continued from all 40 accepted facts without rollback for 18m41s on the same glm-5.3/max route and three-worker roster. Research ended at 18:18:38Z; all owned processes stopped by 18:18:44Z, with ports closed, the main goal paused and schedules cleared.
   - Preserved 44 accepted facts in snap-61: four new classical-style results covering the conditional t=3 capstone, totient foundations and multiplicativity, and a prime-power-index bridge. No new recorded verifier rejections; the conjecture remains unsolved. Flagged a speculative exponent mismatch and redirected a worker lingering on completed work. No further run is authorized.
+- [x] **Record completed-assignment coordination debt** (`~/Danus` @ `774a24c`)
+  Workers can retain accepted targets across rounds while status breadcrumbs lag. Record the observed handoff gap, interim ledger-based review, and regression scope separately from the acknowledgement fix.
+  - Documentation only on dsh; no runtime change or restart. Full offline checks passed: 704 Python tests and 12 Node tests, with one Python skip.
 
