@@ -1488,4 +1488,7 @@
   - Passed 568 Python tests and 10 Node tests; committed and pushed to origin/dsh.
 - [x] **Submit a fresh Danus SFT export** (`~/Danus`)
   Submitted full mid-run export job 2884201 to runtime/exports/dsh-20261031T083434Z, keeping hand enumeration and operator instructions with the other filters unchanged. Validation and refreshed token totals are pending; the last completed snapshot held 4,361,359,212 tokens. No fleet or exporter code changes.
+- [x] **Cut the opg fleet roster to max:3** (`~/Danus` @ `02aeda3`)
+  The opg campaign ran 7 max-effort workers per project (94 loops), which overfilled the 8G Slurm jobs. Per operator ruling every project now runs only max, max2 and max3: the 14 live projects got .stop on max4..max7 (graceful at round boundary), and the 14 never-started projects had those workers moved to workers-retired/.
+  - The deploy/opg branch default and the opg scaffolder also moved to max:3, OPERATOR.md records the ruling, and the main agent was steered to re-plan each project for 3 lanes.
 
