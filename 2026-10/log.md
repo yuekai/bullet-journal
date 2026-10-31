@@ -1556,4 +1556,7 @@
 - [x] **Record completed-assignment coordination debt** (`~/Danus` @ `774a24c`)
   Workers can retain accepted targets across rounds while status breadcrumbs lag. Record the observed handoff gap, interim ledger-based review, and regression scope separately from the acknowledgement fix.
   - Documentation only on dsh; no runtime change or restart. Full offline checks passed: 704 Python tests and 12 Node tests, with one Python skip.
+- [x] **Merge sandbox-safe worker acknowledgements** (`~/Danus` @ `619be10`)
+  The tested fix lived only on the native-control branch. Merge its required configuration and controller dependencies into dsh, preserving simplified recovery, scoped checkpoints, and the recorded coordination debt.
+  - Resolved overlapping recovery changes against the tested native implementation. Full offline validation passed: 834 Python tests and 29 Node tests. Preserved both worktrees' local operator preferences; no source push, deployment change or live research launch.
 
