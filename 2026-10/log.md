@@ -1530,4 +1530,7 @@
   m2, spark and legionp still had the old skill. Copied the rewritten local version to each host's shared skill directory, preserving existing harness links, and verified all three copies match the source by SHA-256.
 - [x] **Retire opg max4..max7 workers and pause oversight** (`~/Danus`)
   The operator stopped the Danus fleet at 10:38Z. The lead's next oversight round then moved every live project's max4..max7 dirs to workers-retired/, which completes the max:3 roster but ran while the fleet was down. It deleted the hourly oversight reminder until an explicit resume, and the retire helper now refuses an empty health snapshot.
+- [x] **Adopt native config and bounded operator runs** (`~/Danus` @ `9f06ef8`)
+  Env-based launches lost settings and task changes waited for new rounds. Use native scoped profiles, bounded operator leases and explicit assignment receipts; fence stale results while preserving verifier authority.
+  - Passed 761 Python and 22 Node tests; real DSH with a synthetic fixture exercised authentication, worker launch, acknowledgement and shutdown. Native Keenable search/fetch checks and a Comet glm-5.3/max probe with 128000 output tokens passed. The next one-hour pilot remains separate from this implementation result.
 
