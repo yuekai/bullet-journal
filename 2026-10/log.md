@@ -1476,4 +1476,6 @@
 - [x] **Publish the Danus DSH branch** (`~/Danus` @ `a3131c2`)
   The migration, Git recovery, and harness improvements were local on feat/dsh-git-resume. Renamed the branch to dsh, pushed it to UMich-FATML/Danus without force, set origin/dsh tracking, and verified both tips match.
   - HTTPS authentication was unavailable, so the push used a command-scoped SSH push URL; saved remote URLs were left unchanged.
+- [x] **Run CI on the dsh branch** (`~/Danus` @ `a11baf2`)
+  The dsh branch carried the migration work but the push filter omitted it, so its commits ran no CI. Include it so pushes to the working branch are tested like main and codex.
 
