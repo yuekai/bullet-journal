@@ -1528,4 +1528,6 @@
   The installed skill emphasized docs and fixed layouts over working feedback loops. It now guides evidence-based audits, minimal interventions and real-task validation, with harness-aware discovery and explicit scope safeguards. Structure checks and independent review passed.
 - [x] **Mirror the harness-engineering skill to remotes**
   m2, spark and legionp still had the old skill. Copied the rewritten local version to each host's shared skill directory, preserving existing harness links, and verified all three copies match the source by SHA-256.
+- [x] **Retire opg max4..max7 workers and pause oversight** (`~/Danus`)
+  The operator stopped the Danus fleet at 10:38Z. The lead's next oversight round then moved every live project's max4..max7 dirs to workers-retired/, which completes the max:3 roster but ran while the fleet was down. It deleted the hourly oversight reminder until an explicit resume, and the retire helper now refuses an empty health snapshot.
 
