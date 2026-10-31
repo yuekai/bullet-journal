@@ -38,6 +38,12 @@ twice before suspecting anything else. Keep long work detached (`sbatch`, or `tm
 
 ## Failure modes
 
+- A login that produced **no copy** (no `tsh: copying Teleport credentials...` line) ran
+  the real binary rather than the wrapper. zsh caches a command's resolved path the first
+  time it runs it, so a terminal opened before `~/.local/bin` gained the wrapper keeps
+  calling `/usr/local/bin/tsh` no matter what the PATH says. `rehash` in that shell, or
+  open a new one; `which tsh` shows which one a terminal will use, and
+  `copy-tsh-credentials` repairs a missed copy in seconds.
 - `certificate has expired`, `ssh: cert is not yet valid`, `Permission denied
   (publickey)`, or a sudden attempt to open a browser: the copy on that host is stale.
   Log in again on the Mac; do not retry in a loop.
