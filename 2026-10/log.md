@@ -1533,4 +1533,7 @@
 - [x] **Adopt native config and bounded operator runs** (`~/Danus` @ `9f06ef8`)
   Env-based launches lost settings and task changes waited for new rounds. Use native scoped profiles, bounded operator leases and explicit assignment receipts; fence stale results while preserving verifier authority.
   - Passed 761 Python and 22 Node tests; real DSH with a synthetic fixture exercised authentication, worker launch, acknowledgement and shutdown. Native Keenable search/fetch checks and a Comet glm-5.3/max probe with 128000 output tokens passed. The next one-hour pilot remains separate from this implementation result.
+- [x] **Realign harness audit with the updated skill** (`~/llm-market` @ `d23b8bb`)
+  An audit against the rewritten harness-engineering skill found every capability in place but three gaps. The audit script mirrored the old skill, twelve string-presence probes and a test asserting their count; it now prints one row per capability and executes the cheap evidence (a forbidden import, a stale result file, a hand-typed number, a bad commit message, a quick simulation), and the test asserts only that no row is a gap.
+  BLAS threads are now pinned in pixi's activation env: the test suite imported numpy before the package's pin, so every pre-commit run burned 3 min of CPU in 15 s; now 11 s. The plan rule asks for a re-read of the two prose sections no check covers before a plan is marked Done.
 
