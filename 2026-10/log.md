@@ -1526,4 +1526,6 @@
   - Still pending: the decisive `ssh m2 hostname` from legionp needs one login on the Mac. Both hosts currently fall through to a browser login because the certificate expired on 2026-10-30; legionp's `tsh status` already reports the copied profile and roles, so only the credential is stale.
 - [x] **Rewrite the harness-engineering skill**
   The installed skill emphasized docs and fixed layouts over working feedback loops. It now guides evidence-based audits, minimal interventions and real-task validation, with harness-aware discovery and explicit scope safeguards. Structure checks and independent review passed.
+- [x] **Mirror the harness-engineering skill to remotes**
+  m2, spark and legionp still had the old skill. Copied the rewritten local version to each host's shared skill directory, preserving existing harness links, and verified all three copies match the source by SHA-256.
 
