@@ -1494,4 +1494,7 @@
 - [x] **Export 49.5k rollouts to the lean dataset** (`k2m:/mnt/weka/shrd/k2m/yuekai.sun/undergrad-todo` @ `fe9fbc0`)
   Re-ran the export on the compute node as the book runs continued overnight: 49,510 records / 2.57B tokens, up from 46,205 / 2.31B, verified as a strict superset of the previous ids before replacing the dataset file.
   The runs are still on deepseek-v4.1-flash, so the model labels needed no change (all 9,382 deepseek records match their run era, and the 40,128 kimi-k3 ones are untouched). Repoprover's 2026-10-30 change was prompt-only, which needs no exporter action because system prompts are recorded per rollout rather than rebuilt.
+- [x] **Launch a bounded Danus pilot main** (`~/Danus`)
+  Prepared the Garden's undergraduate-labelled Odd perfect numbers project, three stopped worker homes, and a resident main supervised by an operator agent. Pinned main, workers, and verifier to glm-5.3/max; checked streaming/tool calls and verifier health, then started the one-hour main session with independent deadline cleanup. Research and end-to-end verification results remain pending.
+  - Used a deployment-local compatibility overlay to restore isolated Web authentication without changing repository launchers or the existing GUI.
 
