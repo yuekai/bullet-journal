@@ -1462,4 +1462,8 @@
 - [x] **Bump CI actions off the removed Node 20 runtime** (`~/llm-market` @ `bb943e8`)
   Both action tags declared `runs.using: node20`, a runtime GitHub has since removed from its runners: the job still passed because the runner silently rewrites the declaration to node24, but it annotates every run and executes each action's code on a runtime its authors never tested there. Moved to `checkout@v7` and `setup-pixi@v0.11.2`, the first majors declaring node24 (checkout v5, setup-pixi v0.9), chosen by reading each tag's `action.yml` rather than trusting release notes — artifact actions have announced Node 24 while still declaring node20.
   - The only breaking change in that range blocks fork-PR checkouts under `pull_request_target` and `workflow_run`; this workflow triggers on `push` and `pull_request`, so fork PRs still check out normally. Verified in CI run 41143964802: 33s, 48 tests pass, Node 20 annotation gone.
+- [x] **Adopt tested harness-engineering practices** (`~/Danus` @ `a3131c2`)
+  Duplicated guidance and disconnected checks invited drift. Keep one operating contract behind a short map, and gate docs, imports and skill metadata through shared offline checks and a local pre-commit hook so failures are caught early.
+  - The operator approved consolidation: root AGENTS.md shrank from 236 to 79 lines, with the mathematical rules preserved in the full main-agent contract. Local and CI commands now include the existing worker/verifier skill checks.
+  - Both Python 3.10 and 3.13 pass 565 Python tests and 10 Node tests. The repository-local hook is installed and verified; no global hook replacement, live Danus inference, deployment change, or push.
 
