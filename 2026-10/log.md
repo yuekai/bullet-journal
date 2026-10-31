@@ -1524,4 +1524,6 @@
   legionp has no rsync, so its copies go by tar over ssh into Git bash, with the archive written without AppleDouble or xattr headers so no `._*` files land. Its PATH gained `%USERPROFILE%\.local\bin` through the .NET API rather than `setx`, which truncates, and its ssh config took spark's tsh-generated block with Windows paths plus the m2 and m1 aliases.
   The skill's operational content is preserved as [m2-teleport-access.md](m2-teleport-access.md), since nothing else on spark documented how to reach m2.
   - Still pending: the decisive `ssh m2 hostname` from legionp needs one login on the Mac. Both hosts currently fall through to a browser login because the certificate expired on 2026-10-30; legionp's `tsh status` already reports the copied profile and roles, so only the credential is stale.
+- [x] **Rewrite the harness-engineering skill**
+  The installed skill emphasized docs and fixed layouts over working feedback loops. It now guides evidence-based audits, minimal interventions and real-task validation, with harness-aware discovery and explicit scope safeguards. Structure checks and independent review passed.
 
