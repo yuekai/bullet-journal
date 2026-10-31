@@ -1547,4 +1547,7 @@
 - [x] **Stop the replacement pilot on request** (`~/Danus`)
   The operator stopped the replacement before its full hour. Cancelled the main, drained and terminated owned workers/verifier, and independently confirmed all owned processes inactive and both service ports closed at 16:39Z. Paused goals and removed schedules; no restart is authorized.
   - Preserved 40 accepted facts (10 new beyond the replacement baseline) in snap-42. Protected host acknowledgements and mid-round updates worked; the conjecture remains unsolved. The proposed quiescent-only restore simplification was discussed, not implemented.
+- [x] **Simplify recovery and checkpoint every round** (`~/Danus` @ `9066072`)
+  Recovery coupled routine writes to speculative locks and missed agent roles. Checkpoint every terminal round, restore stopped projects and restart fresh agents, accepting uncommitted loss. Remove speculative gates without adding replacement locks.
+  - Applied on dsh and native-operator-control (`1e20bc3`). Full offline checks passed: 704 Python and 12 Node tests on dsh (one native-only skip); 834 Python and 29 Node tests on the native branch. No live research or real project restoration was performed; user configuration edits were preserved.
 
