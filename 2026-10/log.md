@@ -1471,3 +1471,9 @@
   - On its first run the number lint caught two hand-typing errors: ΔQ_sym was written 0.754 instead of 0.7546, and a rival's ratio 0.69 instead of 0.6846. No verdict changed. The audit also found six lint messages that didn't say how to fix the problem.
   - A full rerun with the package reproduced all 53 result files and stats.json byte for byte. CI passes.
 
+## Sat, Oct 31, 2026
+
+- [x] **Publish the Danus DSH branch** (`~/Danus` @ `a3131c2`)
+  The migration, Git recovery, and harness improvements were local on feat/dsh-git-resume. Renamed the branch to dsh, pushed it to UMich-FATML/Danus without force, set origin/dsh tracking, and verified both tips match.
+  - HTTPS authentication was unavailable, so the push used a command-scoped SSH push URL; saved remote URLs were left unchanged.
+
